@@ -1,0 +1,198 @@
+package com.app.newsonrun;
+
+/**
+ * Created by malik on 28/6/15.
+ */
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
+
+public class SavingPublicId {
+
+
+    public static final String History_sno="sno";
+    public static final String History__id = "id";
+    public static final String History_public_id = "publicid";
+    public static final String History_timestampcreated = "timestampcreated";
+    public static final String History_category = "category";
+    public static final String History_issimplified = "issimplified";
+    public static final String History_editorsrating = "editorRating";
+    public static final String History_state = "state";
+    public static final String History_breakingNews = "breakingNews";
+    public static final String History_enabled = "enabled";
+    public static final String DATABASE_NAME="comappnewsonrunpublicid";
+    public static final String DATABASE_TABLE1="publicid_table";
+
+    public static final int DATABASE_VERSION=1;
+
+    private SHHelper ourHelper;
+    private final Context ourcontext;
+    private static SQLiteDatabase ourdatabase;
+
+
+
+
+    private static class SHHelper extends SQLiteOpenHelper{
+
+        public SHHelper(Context context){
+            super(context,DATABASE_NAME	,null, DATABASE_VERSION);
+            // TODO Auto-generated constructor stub
+        }
+
+        @Override
+        public void onCreate(SQLiteDatabase db) {
+            // TODO Auto-generated method stub
+            db.execSQL("CREATE TABLE " + DATABASE_TABLE1 + " (" +
+                            History_sno + " INTEGER ," +
+                            History_public_id + " VARCHAR2(400) PRIMARY KEY , " +
+                            History__id + " VARCHAR2(400), " +
+                            History_timestampcreated + " VARCHAR2(400), " +
+                            History_category + " VARCHAR2(40), " +
+                            History_issimplified + " VARCHAR2(10), " +
+                            History_editorsrating + " INTEGER, " +
+                            History_state + " VARCHAR2(20), " +
+                            History_breakingNews + " VARCHAR2(10), " +
+                            History_enabled + " VARCHAR2(10));"
+            );
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int arg1, int arg2) {
+            // TODO Auto-generated method stub
+            db.execSQL("Drop table if exists " + DATABASE_TABLE1);
+            onCreate(db);
+
+
+        }
+
+    }
+
+    public SavingPublicId(Context c){
+        ourcontext =c;
+    }
+
+    public SavingPublicId open()throws Exception{
+        ourHelper = new SHHelper(ourcontext);
+        ourdatabase = ourHelper.getWritableDatabase();
+        return this;
+    }
+
+    public void close() throws Exception{
+        // TODO Auto-generated method stub
+        ourHelper.close();
+    }
+
+    public long createEntry(int sno,
+                            String _id,
+                            String publicid,
+                            String timestampcreated,
+                            String category,
+                            String issimplified,
+                            int editorRating,
+                            String state,
+                            String breakingNews,
+                            String enabled
+                            )throws Exception {
+        // TODO Auto-generated method stub
+        ContentValues cv = new ContentValues();
+        cv.put(History_sno,sno);
+        cv.put(History_public_id,publicid);
+        cv.put(History__id,_id);
+        cv.put(History_timestampcreated,timestampcreated);
+        cv.put(History_category,category);
+        cv.put(History_issimplified,issimplified);
+        cv.put(History_editorsrating,editorRating);
+        cv.put(History_state,state);
+        cv.put(History_breakingNews,breakingNews);
+        cv.put(History_enabled,enabled);
+
+        return ourdatabase.insert(DATABASE_TABLE1, null, cv);
+    }
+
+
+
+    public String get_id(String publicid) {
+        String result="";
+        String colums[] = new String[]{History__id,History_public_id};
+        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums, History_public_id+"='"+publicid+"'",null, null,  null,null);
+        int iurl = c.getColumnIndex(History__id);
+        int i = 0;
+        for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
+            result=c.getString(iurl);
+        }
+        return  result;
+    }
+    public boolean getData() {
+        // TODO Auto-generated method stub
+
+        boolean result=false;
+        String colums[] = new String[]{History_sno};
+        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums, null,null, null,  null,null);
+        int iurl = c.getColumnIndex(History_sno);
+        int i = 0;
+        for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
+            result=true;
+        }
+        return result;
+    }
+
+
+    public ArrayList<String> getByCategory(String category) {
+        // TODO Auto-generated method stub
+        String colums[] = new String[]{History_public_id,History_category,History_timestampcreated};
+        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums,History_category+"='"+category+"'",null, null,  null,History_timestampcreated+" ASC");
+        ArrayList<String> result = new ArrayList<String>();
+        //int i_id = c.getColumnIndex(History__id);
+        int i_pid = c.getColumnIndex(History_public_id);
+
+        int i = 0;
+        for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
+            //result.add(c.getString(i_id));
+                result.add(c.getString(i_pid));
+
+        }
+        return result;
+    }
+
+
+    public ArrayList<String> getSimplified(String aTrue) {
+        String colums[] = new String[]{History_public_id,History_issimplified,History_timestampcreated};
+        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums,History_issimplified+"='"+aTrue+"'",null, null,  null,History_timestampcreated+" ASC");
+        ArrayList<String> result = new ArrayList<String>();
+        //int i_id = c.getColumnIndex(History__id);
+        int i_pid = c.getColumnIndex(History_public_id);
+
+        int i = 0;
+        for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
+            //result.add(c.getString(i_id));
+            result.add(c.getString(i_pid));
+
+        }
+        return result;
+    }
+    public ArrayList<String> getAll() {
+        // TODO Auto-generated method stub
+        String colums[] = new String[]{History__id,History_public_id};
+        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums, null,null, null,  null,History_timestampcreated+" ASC");
+        ArrayList<String> result = new ArrayList<String>();
+        //int i_id = c.getColumnIndex(History__id);
+        int i_pid = c.getColumnIndex(History_public_id);
+
+        int i = 0;
+        for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
+            //result.add(c.getString(i_id));
+            result.add(c.getString(i_pid));
+
+        }
+        return result;
+    }
+    public void dropdb(){
+
+        ourcontext.deleteDatabase(DATABASE_NAME);
+    }
+
+}

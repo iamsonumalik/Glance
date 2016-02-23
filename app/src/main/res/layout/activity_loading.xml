@@ -1,0 +1,116 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/background"
+    android:background="#000">
+
+    <GridView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/loadinggridview"
+        android:numColumns="6"
+        android:clickable="false"
+        android:stretchMode="columnWidth"
+
+        android:minHeight="0dp"
+        />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="#cc000000"
+        android:layout_height="match_parent">
+
+
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/pagecurlimageView"
+        android:background="@drawable/pagecurl"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:text="date"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/white"
+        android:id="@+id/datetv"
+        android:gravity="center"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="- Abraham Maslow"
+            android:textSize="16dp"
+        android:textColor="@color/white"
+        android:id="@+id/quotesby"
+        android:gravity="center"
+        android:paddingBottom="15dp"
+        android:layout_above="@+id/pagecurlimageView"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Quote \nis \nhere"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:id="@+id/quotes"
+        android:layout_margin="3dp"
+        android:textSize="16dp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:layout_above="@+id/quotesby" />
+
+    <ProgressBar
+        android:id="@+id/firstBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_alignLeft="@+id/quotesby"
+        android:layout_alignStart="@+id/quotesby"
+        android:layout_alignTop="@+id/pagecurlimageView"
+        android:layout_alignRight="@+id/quotesby"
+        android:layout_alignEnd="@+id/quotesby" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/datetv"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="65dp"
+            android:layout_above="@+id/quotes">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#FFF"
+                android:gravity="center"
+                android:textSize="66dp"
+                android:text="GLANCE"
+                android:id="@+id/loadingglace"
+                android:layout_gravity="center_horizontal" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FFF"
+                android:textSize="16dp"
+                android:gravity="center"
+                android:text="Everythig you need to know today."
+                android:id="@+id/loadingmoto" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    xmlns:ptr="http://schemas.android.com/apk/res-auto"
+
+    >
+
+    <com.handmark.pulltorefresh.library.PullToRefreshScrollView
+        android:id="@+id/allscrollView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#EFEFEF"
+        ptr:ptrAnimationStyle="flip"
+        android:fillViewport="true"
+        ptr:ptrMode="pullDownFromTop"
+
+        >
+
+    <RelativeLayout
+        android:id="@+id/alllinearLayoutGeneral"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+       >
+
+        <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/allpager"
+        />
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/alllistView"
+            android:layout_below="@+id/allpager"
+            android:dividerHeight="0dp"
+            android:divider="@null"
+
+            />
+    </RelativeLayout>
+    </com.handmark.pulltorefresh.library.PullToRefreshScrollView>
+    <RelativeLayout
+        android:id="@+id/allviewbuttonlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:background="#aa000000"
+
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <Button
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/allviewbutton"
+            android:background="@drawable/readmore"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="15dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <Button
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="15dp"
+            android:layout_toRightOf="@+id/allviewbutton"
+            android:id="@+id/allviewrefresh"
+            android:background="@drawable/refresh"
+
+            />
+
+        <Button
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="15dp"
+            android:layout_toRightOf="@+id/allviewrefresh"
+            android:id="@+id/allviewshare"
+            android:background="@drawable/share"
+            />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:orientation="horizontal"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/allviewwatchvideolayout"
+            android:layout_toRightOf="@+id/allviewshare"
+            >
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_toRightOf="@+id/allviewrefresh"
+                android:id="@+id/allviewwatchvideo"
+                android:background="@drawable/video"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:text="Watch Video"
+                android:gravity="center_vertical"
+                android:textColor="#fff"
+                />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>
