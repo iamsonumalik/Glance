@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.util.Log;
 
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -19,14 +22,63 @@ public class MainActivity extends Activity {
 
     private String deviceId;
     private String gettoken;
+    private File directory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (Environment.getExternalStorageState() == null) {
+            //create new file directory object
+            directory = new File(Environment.getDataDirectory()
+                    + "/Android/data/com.app.newsonrun/cache");
+            File file = new File(directory, ".nomedia");
+
+            /*
+             * this checks to see if there are any previous test photo files
+             * if there are any photos, they are deleted for the sake of
+             * memory
+             */
+            // if no directory exists, create new directory
+            if (!directory.exists()) {
+                try {
+                    directory.mkdirs();
+                    FileOutputStream out = new FileOutputStream(file);
+                    out.flush();
+                    out.close();
+                }catch (Exception e){
+
+                }
+                Log.e("Path",file.getAbsolutePath());
+            }
+
+            // if phone DOES have sd card
+        } else if (Environment.getExternalStorageState() != null) {
+            // search for directory on SD card
+            directory = new File(Environment.getExternalStorageDirectory()
+                    + "/Android/data/com.app.newsonrun/cache");
+            File file = new File(directory, ".nomedia");
+
+            // if no directory exists, create new directory to store test
+            // results
+            if (!directory.exists()) {
+                try {
+                    directory.mkdirs();
+                    FileOutputStream out = new FileOutputStream(file);
+                    out.flush();
+                    out.close();
+                }catch (Exception e){
+
+                }
+                Log.e("Path", file.getAbsolutePath());
+            }
+        }// end of SD card checking
+
         deviceId = Settings.Secure.getString(this.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
+
+        startService(new Intent(this, RemoveCache.class));
 
         try {
             SavingToken token = new SavingToken(this);

@@ -5,9 +5,11 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.util.Log;
+import android.os.Environment;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,10 +21,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class Custom_view extends ArrayAdapter {
     private final ArrayList<String> timelinepublicid;
     private final int width;
     private final int height;
+    private File directory = null;
     private int prev;
     TextView headlinestv;
     TextView contentstv;
@@ -78,6 +80,27 @@ public class Custom_view extends ArrayAdapter {
         Display display = _activity.getWindowManager().getDefaultDisplay();
         width = display.getWidth();  // deprecated
         height = display.getHeight();  // deprecated
+
+        if (Environment.getExternalStorageState() == null) {
+            //create new file directory object
+            directory = new File(Environment.getDataDirectory()
+                    + "/Android/data/com.app.newsonrun/cache");
+
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            // if phone DOES have sd card
+        } else if (Environment.getExternalStorageState() != null) {
+            // search for directory on SD card
+            directory = new File(Environment.getExternalStorageDirectory()
+                    + "/Android/data/com.app.newsonrun/cache");
+
+
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+        }// end of SD card checking
 
         // TODO Auto-generated constructor stub
     }
@@ -166,38 +189,20 @@ public class Custom_view extends ArrayAdapter {
                         });
 
                         //Log.e("Prints", finalItem_headline);
+                        File file = new File(directory, finalItem_timeline_public_id + ".jpg");
+                        if (file.exists()) {
 
-                        final String imgageUrl = "http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + finalItem_timeline_public_id + ".jpg?_=4";
-                        Picasso.with(context)
-                                .load(imgageUrl)
-                                .networkPolicy(NetworkPolicy.OFFLINE)
-                                .into(show, new Callback.EmptyCallback() {
-                                    @Override
-                                    public void onSuccess() {
-
-                                        Log.e("ERROR", "Its OFFLIne");
-                                    }
-
-                                    @Override
-                                    public void onError() {
-                                        //Try again online if cache failed
-                                        Log.e("ERROR", "Its Online");
-                                        Picasso.with(context)
-                                                .load(imgageUrl)
-                                                        //.error(R.drawable.header)
-                                                .into(show, new Callback() {
-                                                    @Override
-                                                    public void onSuccess() {
-
-                                                    }
-
-                                                    @Override
-                                                    public void onError() {
-                                                        Log.v("Picasso", "Could not fetch image");
-                                                    }
-                                                });
-                                    }
-                                });
+                            String imgPath = file.getAbsolutePath();
+                            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+                            Bitmap bp = BitmapFactory.decodeFile(imgPath, bmOptions);
+                            show.setImageBitmap(bp);
+                        }else {
+                            final String imgageUrl = "http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + finalItem_timeline_public_id + ".jpg";
+                            Picasso.with(context)
+                                    .load(imgageUrl)
+                                    .into(show);
+                        }
+                        //final String imgageUrl = "http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + finalItem_timeline_public_id + ".jpg?_=4";
 
                         dialog.show();
 

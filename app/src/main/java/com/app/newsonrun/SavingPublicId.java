@@ -20,6 +20,7 @@ public class SavingPublicId {
     public static final String History_timestampcreated = "timestampcreated";
     public static final String History_category = "category";
     public static final String History_issimplified = "issimplified";
+    public static final String History_isviral = "isviral";
     public static final String History_editorsrating = "editorRating";
     public static final String History_state = "state";
     public static final String History_breakingNews = "breakingNews";
@@ -53,6 +54,7 @@ public class SavingPublicId {
                             History_timestampcreated + " VARCHAR2(400), " +
                             History_category + " VARCHAR2(40), " +
                             History_issimplified + " VARCHAR2(10), " +
+                            History_isviral + " VARCHAR2(10), " +
                             History_editorsrating + " INTEGER, " +
                             History_state + " VARCHAR2(20), " +
                             History_breakingNews + " VARCHAR2(10), " +
@@ -92,6 +94,7 @@ public class SavingPublicId {
                             String timestampcreated,
                             String category,
                             String issimplified,
+                            String isviral,
                             int editorRating,
                             String state,
                             String breakingNews,
@@ -105,6 +108,7 @@ public class SavingPublicId {
         cv.put(History_timestampcreated,timestampcreated);
         cv.put(History_category,category);
         cv.put(History_issimplified,issimplified);
+        cv.put(History_isviral,isviral);
         cv.put(History_editorsrating,editorRating);
         cv.put(History_state,state);
         cv.put(History_breakingNews,breakingNews);
@@ -143,8 +147,8 @@ public class SavingPublicId {
 
     public ArrayList<String> getByCategory(String category) {
         // TODO Auto-generated method stub
-        String colums[] = new String[]{History_public_id,History_category,History_timestampcreated};
-        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums,History_category+"='"+category+"'",null, null,  null,History_timestampcreated+" ASC");
+        String colums[] = new String[]{History_public_id,History_category,History_timestampcreated,History_isviral};
+        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums,History_category+"='"+category+"' AND "+History_isviral+"='false'",null, null,  null,History_timestampcreated+" ASC");
         ArrayList<String> result = new ArrayList<String>();
         //int i_id = c.getColumnIndex(History__id);
         int i_pid = c.getColumnIndex(History_public_id);
@@ -160,8 +164,23 @@ public class SavingPublicId {
 
 
     public ArrayList<String> getSimplified(String aTrue) {
-        String colums[] = new String[]{History_public_id,History_issimplified,History_timestampcreated};
-        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums,History_issimplified+"='"+aTrue+"'",null, null,  null,History_timestampcreated+" ASC");
+        String colums[] = new String[]{History_public_id,History_issimplified,History_timestampcreated,History_isviral};
+        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums,History_issimplified+"='"+aTrue+"' AND "+History_isviral+"='false'",null, null,  null,History_timestampcreated+" ASC");
+        ArrayList<String> result = new ArrayList<String>();
+        //int i_id = c.getColumnIndex(History__id);
+        int i_pid = c.getColumnIndex(History_public_id);
+
+        int i = 0;
+        for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
+            //result.add(c.getString(i_id));
+            result.add(c.getString(i_pid));
+
+        }
+        return result;
+    }
+    public ArrayList<String> getviral() {
+        String colums[] = new String[]{History_public_id,History_issimplified,History_timestampcreated,History_isviral};
+        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums,History_isviral+"='true'",null, null,  null,History_timestampcreated+" ASC");
         ArrayList<String> result = new ArrayList<String>();
         //int i_id = c.getColumnIndex(History__id);
         int i_pid = c.getColumnIndex(History_public_id);
@@ -176,8 +195,8 @@ public class SavingPublicId {
     }
     public ArrayList<String> getAll() {
         // TODO Auto-generated method stub
-        String colums[] = new String[]{History__id,History_public_id};
-        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums, null,null, null,  null,History_timestampcreated+" ASC");
+        String colums[] = new String[]{History__id,History_public_id,History_isviral};
+        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums, History_isviral+"='false'",null, null,  null,History_timestampcreated+" ASC");
         ArrayList<String> result = new ArrayList<String>();
         //int i_id = c.getColumnIndex(History__id);
         int i_pid = c.getColumnIndex(History_public_id);

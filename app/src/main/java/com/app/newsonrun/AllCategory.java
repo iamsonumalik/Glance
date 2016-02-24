@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -22,6 +24,7 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
 
 import org.json.JSONArray;
@@ -29,13 +32,14 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class AllCategory extends Activity implements View.OnClickListener  {
+public class AllCategory extends Activity implements View.OnClickListener {
 
     Button readmore,share,refresh;
     LinearLayout watch;
@@ -46,23 +50,28 @@ public class AllCategory extends Activity implements View.OnClickListener  {
     private String name;
     private RelativeLayout buttonlayout;
     private String youtubelink;
-    private ListView listview;
+    private PullToRefreshListView listview;
     private String result;
     private ArrayList<String> headlines;
     private ArrayList<String> contents;
     private ArrayList<String> timelinepublicid;
     private ArrayList<String> timelinedate;
-    private FetchTimeline mTask;
     private Custom_view cv;
     private int width;
     private int height;
     private String getting_id;
     private PullToRefreshScrollView scrollview;
     boolean doubleBackToExitPressedOnce = false;
+    private int scrollposition=5;
+    private File directory;
+    private FrameLayout onborading;
+    private Button allgo;
+
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_category);
-
+        MyDirectory myDirectory = new MyDirectory();
+        directory = myDirectory.getDirectory();
         //Intialize
         contents = new ArrayList<String>();
         headlines = new ArrayList<String>();
@@ -76,15 +85,34 @@ public class AllCategory extends Activity implements View.OnClickListener  {
         watch = (LinearLayout) findViewById(R.id.allviewwatchvideolayout);
         buttonlayout = (RelativeLayout) findViewById(R.id.allviewbuttonlayout);
         viewPager = (ViewPager) findViewById(R.id.allpager);
-        listview = (ListView) findViewById(R.id.alllistView);
+        listview = (PullToRefreshListView) findViewById(R.id.alllistview);
         scrollview = (PullToRefreshScrollView) findViewById(R.id.allscrollView);
+        onborading = (FrameLayout)findViewById(R.id.onboarding);
+        allgo = (Button) findViewById(R.id.allgo);
+        allgo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buttonlayout.setVisibility(View.VISIBLE);
+                onborading.setVisibility(View.GONE);
+            }
+        });
         //BUtton Clicks
         readmore.setOnClickListener(this);
         share.setOnClickListener(this);
         refresh.setOnClickListener(this);
         watch.setOnClickListener(this);
 
-       //Fetching assesstoken
+        //ListView Setting
+        listview.setVisibility(View.GONE);
+        listview.setPullLabel("Pull down for News");
+        listview.setReleaseLabel("Release for News");
+        if (!(CheckNetworkConnection.isConnectionAvailable(getBaseContext()))){
+
+        //}else {
+            Toast.makeText(getBaseContext(),"you are offline",Toast.LENGTH_SHORT)
+                    .show();
+        }
+        //Fetching assesstoken
         try {
             SavingToken token = new SavingToken(this);
             token.open();
@@ -128,8 +156,7 @@ public class AllCategory extends Activity implements View.OnClickListener  {
             Log.e("_id inAdapter", e.toString());
 
         }
-        mTask = new FetchTimeline();
-        mTask.start();
+
         getLink();
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -139,9 +166,10 @@ public class AllCategory extends Activity implements View.OnClickListener  {
 
             @Override
             public void onPageSelected(int position) {
-
-               //mTask.destroy();
                 name = public_idlist.get(position);
+                if (!(CheckNetworkConnection.isConnectionAvailable(getBaseContext()))) {
+                    Toast.makeText(getBaseContext(), "you are offline", Toast.LENGTH_SHORT).show();
+                }
                 if (buttonlayout.getVisibility() == View.VISIBLE) {
                     buttonlayout.setVisibility(View.GONE);
                     Animation anim = AnimationUtils.loadAnimation(
@@ -151,17 +179,25 @@ public class AllCategory extends Activity implements View.OnClickListener  {
 
                     buttonlayout.setAnimation(anim);
                 }
-
+                //listview.removeAllViews();
                 listview.setVisibility(View.GONE);
-                mTask.interrupt();
-                 FetchTimeline fetchTimeline = new FetchTimeline();
-                fetchTimeline.start();
-
-                //mTask.doInBackground(getting_idd);
-                //Toast.makeText(getBaseContext(), "THis->" + viewPager.getCurrentItem()+"or"+position+"\n"+name, Toast.LENGTH_SHORT).show();
-                //Log.e("NAme",name);
-
-
+                getLink();
+                setVisiblityofwatchbutton();
+                /*
+                if (scrollposition < public_idlist.size()) {
+                    File file = new File(directory, public_idlist.get(scrollposition) + ".png");
+                    if (!file.exists())
+                        new SetImageView(null, public_idlist.get(scrollposition++), getBaseContext(), file);
+                    else
+                        scrollposition++;
+                }
+                if (scrollposition < public_idlist.size()) {
+                    File file = new File(directory, public_idlist.get(scrollposition) + ".png");
+                    if (!file.exists())
+                        new SetImageView(null, public_idlist.get(scrollposition++), getBaseContext(), file);
+                    else
+                        scrollposition++;
+                }*/
             }
 
             @Override
@@ -183,7 +219,27 @@ public class AllCategory extends Activity implements View.OnClickListener  {
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<ScrollView> refreshView) {
+                if (listview.getVisibility()==View.GONE) {
+                    FetchTimeline fetchTimeline = new FetchTimeline();
+                    fetchTimeline.start();
+                }else {
+                    scrollview.setVisibility(View.GONE);
+                    scrollview.onRefreshComplete();
+                }
 
+
+            }
+        });
+
+        listview.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
+            @Override
+            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
+                scrollview.setVisibility(View.VISIBLE);
+                listview.onRefreshComplete();
+            }
+
+            @Override
+            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
             }
         });
 
@@ -230,30 +286,12 @@ public class AllCategory extends Activity implements View.OnClickListener  {
         }
     }
 
+
     private class FetchTimeline extends Thread {
-
-
-        private boolean worling=true;
-
-        @Override
-        public void interrupt() {
-            super.interrupt();
-            if (worling)
-            worling = false;
-
-        }
 
         @Override
         public synchronized void  run() {
             super.run();
-            worling=true;
-            getLink();
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    setVisiblityofwatchbutton();
-                }
-            });
 
             try {
                 SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
@@ -271,10 +309,6 @@ public class AllCategory extends Activity implements View.OnClickListener  {
             contents.removeAll(contents);
             timelinedate.removeAll(timelinedate);
             timelinepublicid.removeAll(timelinepublicid);
-            headlines.add(0, "Please Wait");
-            contents.add(0,"");
-            timelinedate.add(0,"");
-            timelinepublicid.add(0,"");
             String _idl = getting_id;
             InputStream is = null;
             String line;
@@ -285,16 +319,12 @@ public class AllCategory extends Activity implements View.OnClickListener  {
                 URL url = new URL(strUrl);
                 HttpURLConnection urlConnection = null;
                 urlConnection = (HttpURLConnection) url.openConnection();
-
-
                 urlConnection.connect();
-
-
                 is = urlConnection.getInputStream();
                 Log.e("pass 1", "connection success ");
 
                 BufferedReader reader = new BufferedReader
-                        (new InputStreamReader(is, "UTF-8"), 8000);
+                        (new InputStreamReader(is, "UTF-8"), 8);
                 StringBuilder sb = new StringBuilder();
                 while ((line = reader.readLine()) != null) {
                     sb.append(line + "\n");
@@ -312,38 +342,28 @@ public class AllCategory extends Activity implements View.OnClickListener  {
                 JSONArray array = json_data.getJSONArray("data");
                 int count = json_data.getInt("count");
                 for (int i=0;i<count;i++){
-                    if (worling) {
                         JSONObject data = array.getJSONObject(i);
                         JSONObject publish = data.getJSONObject("publish");
                         JSONObject portrait = publish.getJSONObject("portrait");
                         JSONObject url_id = portrait.getJSONObject("url");
                         JSONObject content = data.getJSONObject("content");
-
-
                         //URLDecoder.decode(data.getString("headline"), "UTF-8");
                         String h = data.getString("headline");
-
                         headlines.add(i, h);
                         //temp_header = temp_header + data.getString("headline");
-                        contents.add(i, Jsoup.parse(content.getString("html")).text());
 
+                    String com = Jsoup.parse(content.getString("html")).text().replaceAll("\\[b\\]", "");
+                    com = com.replaceAll("\\[/b\\]","");
+                    com = com.replaceAll("\\[/i\\]","");
+                    com = com.replaceAll("\\[i\\]","");
+                    contents.add(i,com );
                         //temp_content = temp_content + Html.fromHtml(content.getString("html"));
-
                         timelinepublicid.add(i, url_id.getString("public_id"));
                         //temp_public_ids = temp_public_ids + url_id.getString("public_id");
                         //Log.e("Public" ,url_id.getString("public_id"));
                         //Log.e("_id", _idl);
-
-
                         timelinedate.add(i, data.getString("timestampCreated"));
                         //temp_date = temp_date + data.getString("timestampCreated");
-                    }else {
-                        headlines.removeAll(headlines);
-                        contents.removeAll(contents);
-                        timelinedate.removeAll(timelinedate);
-                        timelinepublicid.removeAll(timelinepublicid);
-                        //run();
-                    }
                 }
 
                 //currentImage.setImageDrawable(imgDisplay.getDrawable());
@@ -355,28 +375,24 @@ public class AllCategory extends Activity implements View.OnClickListener  {
             }
 
 
-            if (headlines.size()>0&&worling) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         cv = new Custom_view(getBaseContext(), headlines, contents, timelinedate, timelinepublicid, getResources(), AllCategory.this);
                         listview.setVisibility(View.VISIBLE);
                         listview.setAdapter(cv);
-                        //cv.notifyDataSetChanged();
-                        setListViewHeightBasedOnChildren(listview, headlines.size());
+                        scrollview.setVisibility(View.GONE);
+                        scrollview.onRefreshComplete();
 
                     }
                 });
-            }
-            worling=false;
-
         }
 
 
 
     }
 
-    public void setListViewHeightBasedOnChildren(ListView listView,int size) {
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null) {
             // pre-condition
@@ -395,9 +411,9 @@ public class AllCategory extends Activity implements View.OnClickListener  {
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();
 
-        int sizeextra = (height / 160) * 20;
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1)) + sizeextra*(listAdapter.getCount());
-        listView.setLayoutParams(params);
+        //int sizeextra = (height / 160) * 20;
+        //params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1)) + sizeextra*(listAdapter.getCount());
+       // listView.setLayoutParams(params);
     }
 
     private void callMenu() {
@@ -491,28 +507,50 @@ public class AllCategory extends Activity implements View.OnClickListener  {
 
     @Override
     public void onBackPressed() {
-        if (scrollview.getVerticalScrollbarPosition()>1){
-                    scrollview.scrollTo(0,0);
-        }else
-        if (!(viewPager.getCurrentItem() > 0)) {
-            if (doubleBackToExitPressedOnce) {
-                super.onBackPressed();
-                return;
-            }
-
-            this.doubleBackToExitPressedOnce = true;
-            Toast.makeText(this, "Press again to exit", Toast.LENGTH_SHORT).show();
-
-            new Handler().postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    doubleBackToExitPressedOnce = false;
+        if (scrollview.getVisibility()==View.GONE) {
+            scrollview.setVisibility(View.VISIBLE);
+        }else  if (!(viewPager.getCurrentItem() > 0)) {
+                if (doubleBackToExitPressedOnce) {
+                    super.onBackPressed();
+                    return;
                 }
-            }, 2000);
-        } else {
-            viewPager.setCurrentItem(0);
-        }
+
+                this.doubleBackToExitPressedOnce = true;
+                Toast.makeText(this, "Press again to exit", Toast.LENGTH_SHORT).show();
+
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        doubleBackToExitPressedOnce = false;
+                    }
+                }, 2000);
+            } else {
+                viewPager.setCurrentItem(0);
+            }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        timer.cancel();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        timer.start() ;
+    }
+    CountDownTimer timer = new CountDownTimer(5 *60 * 1000, 1000) {
+
+        public void onTick(long millisUntilFinished) {
+            //Some code
+        }
+
+        public void onFinish() {
+            //Logout
+            finish();
+        }
+    };
 }
+

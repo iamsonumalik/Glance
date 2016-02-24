@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
     xmlns:ptr="http://schemas.android.com/apk/res-auto"
 
     >
+    <com.handmark.pulltorefresh.library.PullToRefreshListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/alllistview"
+        android:background="#EFEFEF"
+        android:dividerHeight="0dp"
+        ptr:ptrAnimationStyle="flip"
+        android:divider="@null"
+
+        />
 
     <com.handmark.pulltorefresh.library.PullToRefreshScrollView
         android:id="@+id/allscrollView"
@@ -14,7 +24,7 @@
         android:background="#EFEFEF"
         ptr:ptrAnimationStyle="flip"
         android:fillViewport="true"
-        ptr:ptrMode="pullDownFromTop"
+        ptr:ptrMode="both"
 
         >
 
@@ -30,27 +40,22 @@
         android:id="@+id/allpager"
         />
 
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/alllistView"
-            android:layout_below="@+id/allpager"
-            android:dividerHeight="0dp"
-            android:divider="@null"
 
-            />
+
     </RelativeLayout>
     </com.handmark.pulltorefresh.library.PullToRefreshScrollView>
+
     <RelativeLayout
         android:id="@+id/allviewbuttonlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
+        android:visibility="gone"
         android:background="#aa000000"
-
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_gravity="center_horizontal|bottom">
 
         <Button
             android:layout_width="30dp"
@@ -112,4 +117,27 @@
 
     </RelativeLayout>
 
-</RelativeLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:id="@+id/onboarding"
+        android:background="#cc000000"
+        android:clickable="true"
+        android:layout_height="match_parent">
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="#00000000"
+            android:id="@+id/allgo"
+            android:layout_gravity="right|bottom" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:background="@drawable/landing"
+            android:layout_gravity="right|bottom" />
+
+    </FrameLayout>
+
+</FrameLayout>

@@ -18,11 +18,16 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -92,6 +97,14 @@ public class LoadingActivity extends Activity {
                                 int six = random.nextInt(54);
                                 int seven = random.nextInt(54);
                                 int eight = random.nextInt(54);
+                                int nine = random.nextInt(54);
+                                int ten = random.nextInt(54);
+                                int eleven = random.nextInt(54);
+                                int twelve = random.nextInt(54);
+                                int thirteen = random.nextInt(54);
+                                int fourteen = random.nextInt(54);
+                                int fifteen = random.nextInt(54);
+                                int sixteen = random.nextInt(54);
                                 Bitmap temp = ((BitmapDrawable) ((ImageView) gridview.getChildAt(one)).getDrawable()).getBitmap();
                                         ((ImageView) gridview.getChildAt(one))
                                             .setImageBitmap(((BitmapDrawable) ((ImageView) gridview.getChildAt(two)).getDrawable()).getBitmap());
@@ -111,6 +124,26 @@ public class LoadingActivity extends Activity {
                                 ((ImageView) gridview.getChildAt(seven))
                                         .setImageBitmap(((BitmapDrawable) ((ImageView) gridview.getChildAt(eight)).getDrawable()).getBitmap());
                                 ((ImageView) gridview.getChildAt(eight)).setImageBitmap(temp);
+
+                                temp = ((BitmapDrawable) ((ImageView) gridview.getChildAt(nine)).getDrawable()).getBitmap();
+                                ((ImageView) gridview.getChildAt(nine))
+                                        .setImageBitmap(((BitmapDrawable) ((ImageView) gridview.getChildAt(ten)).getDrawable()).getBitmap());
+                                ((ImageView) gridview.getChildAt(ten)).setImageBitmap(temp);
+
+                                temp = ((BitmapDrawable) ((ImageView) gridview.getChildAt(eleven)).getDrawable()).getBitmap();
+                                ((ImageView) gridview.getChildAt(eleven))
+                                        .setImageBitmap(((BitmapDrawable) ((ImageView) gridview.getChildAt(twelve)).getDrawable()).getBitmap());
+                                ((ImageView) gridview.getChildAt(twelve)).setImageBitmap(temp);
+
+                                temp = ((BitmapDrawable) ((ImageView) gridview.getChildAt(thirteen)).getDrawable()).getBitmap();
+                                ((ImageView) gridview.getChildAt(thirteen))
+                                        .setImageBitmap(((BitmapDrawable) ((ImageView) gridview.getChildAt(fourteen)).getDrawable()).getBitmap());
+                                ((ImageView) gridview.getChildAt(fourteen)).setImageBitmap(temp);
+
+                                temp = ((BitmapDrawable) ((ImageView) gridview.getChildAt(fifteen)).getDrawable()).getBitmap();
+                                ((ImageView) gridview.getChildAt(fifteen))
+                                        .setImageBitmap(((BitmapDrawable) ((ImageView) gridview.getChildAt(sixteen)).getDrawable()).getBitmap());
+                                ((ImageView) gridview.getChildAt(sixteen)).setImageBitmap(temp);
 
                                 ObjectAnimator anim = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
                                 anim.setTarget(((ImageView) gridview.getChildAt(one)));
@@ -160,6 +193,53 @@ public class LoadingActivity extends Activity {
                                 anim8.setDuration(500);
                                 anim8.start();
 
+                                ObjectAnimator anim9 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim9.setTarget(((ImageView) gridview.getChildAt(nine)));
+                                anim9.setDuration(3000);
+                                anim9.setDuration(500);
+                                anim9.start();
+
+                                ObjectAnimator anim10 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim10.setTarget(((ImageView) gridview.getChildAt(ten)));
+                                anim10.setDuration(3000);
+                                anim10.setDuration(500);
+                                anim10.start();
+
+                                ObjectAnimator anim11 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim11.setTarget(((ImageView) gridview.getChildAt(eleven)));
+                                anim11.setDuration(3000);
+                                anim11.setDuration(500);
+                                anim11.start();
+
+                                ObjectAnimator anim12 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim12.setTarget(((ImageView) gridview.getChildAt(twelve)));
+                                anim12.setDuration(3000);
+                                anim12.setDuration(500);
+                                anim12.start();
+
+                                ObjectAnimator anim13 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim13.setTarget(((ImageView) gridview.getChildAt(thirteen)));
+                                anim13.setDuration(3000);
+                                anim13.setDuration(500);
+                                anim13.start();
+
+                                ObjectAnimator anim14 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim14.setTarget(((ImageView) gridview.getChildAt(fourteen)));
+                                anim14.setDuration(3000);
+                                anim14.setDuration(500);
+                                anim14.start();
+
+                                ObjectAnimator anim15 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim15.setTarget(((ImageView) gridview.getChildAt(fifteen)));
+                                anim15.setDuration(3000);
+                                anim15.setDuration(500);
+                                anim15.start();
+
+                                ObjectAnimator anim16 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim16.setTarget(((ImageView) gridview.getChildAt(sixteen)));
+                                anim16.setDuration(3000);
+                                anim16.setDuration(500);
+                                anim16.start();
 
                                 /*((ImageView) gridview.getChildAt(one)).startAnimation(anim);
                                 ((ImageView) gridview.getChildAt(two)).startAnimation(anim);
@@ -462,6 +542,8 @@ public class LoadingActivity extends Activity {
                 JSONObject json_data = new JSONObject(result);
                 JSONArray array = json_data.getJSONArray("data");
                 for (int i=0;i<array.length();i++){
+
+
                     JSONObject data = array.getJSONObject(i);
                     JSONObject publish =data.getJSONObject("publish");
                     JSONObject portrait =publish.getJSONObject("portrait");
@@ -469,8 +551,10 @@ public class LoadingActivity extends Activity {
                     JSONObject attributes =data.getJSONObject("attributes");
                     JSONObject tags =data.getJSONObject("tags");
                     String issimplified="false";
+                    String isviral="false";
                     try{
                         issimplified = String.valueOf(tags.getBoolean("isSimplified"));
+                        isviral = String.valueOf(tags.getBoolean("isViral"));
                     }catch (Exception e){
 
                     }
@@ -492,6 +576,7 @@ public class LoadingActivity extends Activity {
                                 data.getString("timestampCreated"),
                                 tags.getString("category"),
                                 issimplified,
+                                isviral,
                                 attributes.getInt("editorRating"),
                                 attributes.getString("state"),
                                 String.valueOf(attributes.getBoolean("breakingNews")),
@@ -500,13 +585,13 @@ public class LoadingActivity extends Activity {
                         savingPublicId.close();
                     }catch (Exception e){
                             Log.e("Error Sql",e.toString());
-                            //break;
+
                     }
 
+                    if (i<0)
+                    saveImage(url_id.getString("public_id"));
+
                 }
-                //System.out.println(result);
-                //startActivity(i);
-                //finish();
 
             } catch (Exception e) {
                 // TODO: handle exception
@@ -521,6 +606,38 @@ public class LoadingActivity extends Activity {
             Intent i = new Intent(getBaseContext(), AllCategory.class);
             startActivity(i);
             finish();
+        }
+    }
+
+    private void saveImage(String name) {
+
+        File directory;
+        File file = null;
+        // end of SD card checking
+
+        MyDirectory myDirectory = new MyDirectory();
+        directory = myDirectory.getDirectory();
+        file = new File(directory, name + ".jpg");
+        if (!file.exists()) {
+
+            String imgageUrl = "http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + name + ".jpg";
+
+            try {
+                InputStream in = new java.net.URL(imgageUrl).openStream();
+                Bitmap mIcon11 = BitmapFactory.decodeStream(in);
+                FileOutputStream ourstream = new FileOutputStream(file);
+                mIcon11.compress(Bitmap.CompressFormat.JPEG, 85, ourstream);
+                ourstream.flush();
+                ourstream.close();
+            } catch (FileNotFoundException e) {
+                // TODO Auto-generated catch block
+                Toast.makeText(getBaseContext(), e.toString(), Toast.LENGTH_LONG).show();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                Toast.makeText(getBaseContext(), e.toString(), Toast.LENGTH_LONG).show();
+            } catch (Exception e) {
+
+            }
         }
     }
 

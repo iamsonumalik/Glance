@@ -9,10 +9,11 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +24,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class FullScreenImageAdapter extends PagerAdapter {
@@ -125,37 +125,27 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 }
             }
         });
-        final String imgageUrl = "http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + _imagePaths.get(position) + ".jpg?_=4";
-        Picasso.with(getcontext)
-                .load(imgageUrl)
-                .networkPolicy(NetworkPolicy.OFFLINE)
-                .into(imgDisplay, new Callback.EmptyCallback() {
-                    @Override
-                    public void onSuccess() {
 
-                        Log.e("ERROR","Its OFFLIne");
-                    }
+        final String imagename = _imagePaths.get(position);
+        File directory = null;
+        final File file;
+        MyDirectory myDirectory = new MyDirectory();
+        directory = myDirectory.getDirectory();
+        file = new File(directory, imagename+".jpg");
+        if (file.exists()) {
 
-                    @Override
-                    public void onError() {
-                        //Try again online if cache failed
-                        Log.e("ERROR","Its Online");
-                        Picasso.with(getcontext)
-                                .load(imgageUrl)
-                                        //.error(R.drawable.header)
-                                .into(imgDisplay, new Callback() {
-                                    @Override
-                                    public void onSuccess() {
+            String imgPath = file.getAbsolutePath();
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            Bitmap bp = BitmapFactory.decodeFile(imgPath, bmOptions);
+            imgDisplay.setImageBitmap(bp);
+        }else {
+            final String imgageUrl = "http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + imagename + ".jpg";
+            Picasso.with(getcontext)
+                    .load(imgageUrl)
+                    .into(imgDisplay);
+           //new SetImageView(imgDisplay,imagename,getcontext,file);
+        }
 
-                                    }
-
-                                    @Override
-                                    public void onError() {
-                                        Log.v("Picasso", "Could not fetch image");
-                                    }
-                                });
-                    }
-                });
 
         ((ViewPager) container).addView(viewLayout);
 

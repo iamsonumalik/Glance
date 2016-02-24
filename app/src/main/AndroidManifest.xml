@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <permission
         android:name="com.app.newsonrun.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
@@ -32,7 +33,7 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -90,13 +91,13 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity
+            android:name=".VideoPlayer"
             android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:name=".VideoPlayer"></activity>
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
 
         <receiver
             android:name=".gcm.GCMBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
 
                 <!-- Receives the actual messages. -->
@@ -109,7 +110,10 @@
         </receiver>
 
         <service android:name=".GCMIntentService" />
-
+        <service
+            android:name=".RemoveCache"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

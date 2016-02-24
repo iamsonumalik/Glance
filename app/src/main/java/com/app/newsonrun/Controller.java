@@ -11,8 +11,6 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import com.app.newsonrun.gcm.GCMRegistrar;
-import com.squareup.picasso.OkHttpDownloader;
-import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,13 +32,13 @@ public class Controller extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
+/*
         Picasso.Builder builder = new Picasso.Builder(this);
         builder.downloader(new OkHttpDownloader(this,Integer.MAX_VALUE));
         Picasso built = builder.build();
         //built.setIndicatorsEnabled(true);
         built.setLoggingEnabled(true);
-        Picasso.setSingletonInstance(built);
+        Picasso.setSingletonInstance(built);*/
 
     }
 
