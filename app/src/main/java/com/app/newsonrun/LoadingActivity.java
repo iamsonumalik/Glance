@@ -4,6 +4,7 @@ import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
@@ -32,6 +33,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +43,7 @@ import java.util.TimeZone;
 
 public class LoadingActivity extends Activity {
 
+    private static final String MY_PREFS_NAME = "MySetting";
     private RelativeLayout backgroundlayout;
     private ImageView backgroundimageview;
     private TextView quotestv;
@@ -54,12 +57,21 @@ public class LoadingActivity extends Activity {
     ArrayList<Bitmap> image_clips ;
     private TextView loadingglance;
     private TextView loadingmoto;
+    private String fetchnew;
+    private SavingPublicId savingPublicId;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
+        savingPublicId = new SavingPublicId(LoadingActivity.this);
+        try {
+            savingPublicId.open();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         Random random = new Random();
         image_clips = new ArrayList<Bitmap>();
 
@@ -72,8 +84,30 @@ public class LoadingActivity extends Activity {
         gridview = (GridView) findViewById(R.id.loadinggridview);
         loadingglance = (TextView) findViewById(R.id.loadingglace);
         loadingmoto = (TextView) findViewById(R.id.loadingmoto);
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, 0);
+        final boolean isfirst = prefs.getBoolean("isfirst",false);
+        if (!isfirst){
+            fetchnew = "-1";
+        }else {
 
+                    String timest = savingPublicId.getLatetsTime();
 
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    String dateget = timest;
+            Date date = null;
+            try {
+                date = sdf.parse(dateget);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            long st = date.getTime();
+                    fetchnew = String.valueOf(st);
+
+        }
+
+        Log.e("Get TIme", String.valueOf(fetchnew));
 
         gridview.setAdapter(new ImageAdapter(LoadingActivity.this,this,getArrayBitmap()));
         Thread t2 = new Thread(){
@@ -105,6 +139,103 @@ public class LoadingActivity extends Activity {
                                 int fourteen = random.nextInt(54);
                                 int fifteen = random.nextInt(54);
                                 int sixteen = random.nextInt(54);
+
+                                ObjectAnimator anim = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim.setTarget(((ImageView) gridview.getChildAt(one)));
+                                //anim.setDuration(3000);
+                                anim.setDuration(500);
+                                anim.start();
+
+                                ObjectAnimator anim2 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim2.setTarget(((ImageView) gridview.getChildAt(two)));
+                                //anim2.setDuration(3000);
+                                anim2.setDuration(500);
+                                anim2.start();
+
+                                ObjectAnimator anim3 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim3.setTarget(((ImageView) gridview.getChildAt(three)));
+                                //anim3.setDuration(3000);
+                                anim3.setDuration(500);
+                                anim3.start();
+
+                                ObjectAnimator anim4 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim4.setTarget(((ImageView) gridview.getChildAt(four)));
+                                //anim4.setDuration(3000);
+                                anim4.setDuration(500);
+                                anim4.start();
+
+                                ObjectAnimator anim5 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim5.setTarget(((ImageView) gridview.getChildAt(five)));
+                                //anim5.setDuration(3000);
+                                anim5.setDuration(500);
+                                anim5.start();
+
+                                ObjectAnimator anim6 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim6.setTarget(((ImageView) gridview.getChildAt(six)));
+                                //anim6.setDuration(3000);
+                                anim6.setDuration(500);
+                                anim6.start();
+
+                                ObjectAnimator anim7 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim7.setTarget(((ImageView) gridview.getChildAt(seven)));
+                                anim7.setDuration(3000);
+                                anim7.setDuration(500);
+                                anim7.start();
+
+                                ObjectAnimator anim8 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim8.setTarget(((ImageView) gridview.getChildAt(eight)));
+                                //anim8.setDuration(3000);
+                                anim8.setDuration(500);
+                                anim8.start();
+
+                                ObjectAnimator anim9 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim9.setTarget(((ImageView) gridview.getChildAt(nine)));
+                                //anim9.setDuration(3000);
+                                anim9.setDuration(500);
+                                anim9.start();
+
+                                ObjectAnimator anim10 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim10.setTarget(((ImageView) gridview.getChildAt(ten)));
+                                //anim10.setDuration(3000);
+                                anim10.setDuration(500);
+                                anim10.start();
+
+                                ObjectAnimator anim11 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim11.setTarget(((ImageView) gridview.getChildAt(eleven)));
+                                //anim11.setDuration(3000);
+                                anim11.setDuration(500);
+                                anim11.start();
+
+                                ObjectAnimator anim12 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim12.setTarget(((ImageView) gridview.getChildAt(twelve)));
+                                //anim12.setDuration(3000);
+                                anim12.setDuration(500);
+                                anim12.start();
+
+                                ObjectAnimator anim13 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim13.setTarget(((ImageView) gridview.getChildAt(thirteen)));
+                                //anim13.setDuration(3000);
+                                anim13.setDuration(500);
+                                anim13.start();
+
+                                ObjectAnimator anim14 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim14.setTarget(((ImageView) gridview.getChildAt(fourteen)));
+                                //anim14.setDuration(3000);
+                                anim14.setDuration(500);
+                                anim14.start();
+
+                                ObjectAnimator anim15 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim15.setTarget(((ImageView) gridview.getChildAt(fifteen)));
+                                //anim15.setDuration(3000);
+                                anim15.setDuration(500);
+                                anim15.start();
+
+                                ObjectAnimator anim16 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                anim16.setTarget(((ImageView) gridview.getChildAt(sixteen)));
+                                //anim16.setDuration(3000);
+                                anim16.setDuration(500);
+                                anim16.start();
+
                                 Bitmap temp = ((BitmapDrawable) ((ImageView) gridview.getChildAt(one)).getDrawable()).getBitmap();
                                         ((ImageView) gridview.getChildAt(one))
                                             .setImageBitmap(((BitmapDrawable) ((ImageView) gridview.getChildAt(two)).getDrawable()).getBitmap());
@@ -145,101 +276,6 @@ public class LoadingActivity extends Activity {
                                         .setImageBitmap(((BitmapDrawable) ((ImageView) gridview.getChildAt(sixteen)).getDrawable()).getBitmap());
                                 ((ImageView) gridview.getChildAt(sixteen)).setImageBitmap(temp);
 
-                                ObjectAnimator anim = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
-                                anim.setTarget(((ImageView) gridview.getChildAt(one)));
-                                anim.setDuration(3000);
-                                anim.setDuration(500);
-                                anim.start();
-
-                                ObjectAnimator anim2 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
-                                anim2.setTarget(((ImageView) gridview.getChildAt(two)));
-                                anim2.setDuration(3000);
-                                anim2.setDuration(500);
-                                anim2.start();
-
-                                ObjectAnimator anim3 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
-                                anim3.setTarget(((ImageView) gridview.getChildAt(three)));
-                                anim3.setDuration(3000);
-                                anim3.setDuration(500);
-                                anim3.start();
-
-                                ObjectAnimator anim4 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
-                                anim4.setTarget(((ImageView) gridview.getChildAt(four)));
-                                anim4.setDuration(3000);
-                                anim4.setDuration(500);
-                                anim4.start();
-
-                                ObjectAnimator anim5 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
-                                anim5.setTarget(((ImageView) gridview.getChildAt(five)));
-                                anim5.setDuration(3000);
-                                anim5.setDuration(500);
-                                anim5.start();
-
-                                ObjectAnimator anim6 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
-                                anim6.setTarget(((ImageView) gridview.getChildAt(six)));
-                                anim6.setDuration(3000);
-                                anim6.setDuration(500);
-                                anim6.start();
-
-                                ObjectAnimator anim7 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
-                                anim7.setTarget(((ImageView) gridview.getChildAt(seven)));
-                                anim7.setDuration(3000);
-                                anim7.setDuration(500);
-                                anim7.start();
-
-                                ObjectAnimator anim8 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
-                                anim8.setTarget(((ImageView) gridview.getChildAt(eight)));
-                                anim8.setDuration(3000);
-                                anim8.setDuration(500);
-                                anim8.start();
-
-                                ObjectAnimator anim9 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
-                                anim9.setTarget(((ImageView) gridview.getChildAt(nine)));
-                                anim9.setDuration(3000);
-                                anim9.setDuration(500);
-                                anim9.start();
-
-                                ObjectAnimator anim10 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
-                                anim10.setTarget(((ImageView) gridview.getChildAt(ten)));
-                                anim10.setDuration(3000);
-                                anim10.setDuration(500);
-                                anim10.start();
-
-                                ObjectAnimator anim11 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
-                                anim11.setTarget(((ImageView) gridview.getChildAt(eleven)));
-                                anim11.setDuration(3000);
-                                anim11.setDuration(500);
-                                anim11.start();
-
-                                ObjectAnimator anim12 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
-                                anim12.setTarget(((ImageView) gridview.getChildAt(twelve)));
-                                anim12.setDuration(3000);
-                                anim12.setDuration(500);
-                                anim12.start();
-
-                                ObjectAnimator anim13 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
-                                anim13.setTarget(((ImageView) gridview.getChildAt(thirteen)));
-                                anim13.setDuration(3000);
-                                anim13.setDuration(500);
-                                anim13.start();
-
-                                ObjectAnimator anim14 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
-                                anim14.setTarget(((ImageView) gridview.getChildAt(fourteen)));
-                                anim14.setDuration(3000);
-                                anim14.setDuration(500);
-                                anim14.start();
-
-                                ObjectAnimator anim15 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
-                                anim15.setTarget(((ImageView) gridview.getChildAt(fifteen)));
-                                anim15.setDuration(3000);
-                                anim15.setDuration(500);
-                                anim15.start();
-
-                                ObjectAnimator anim16 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
-                                anim16.setTarget(((ImageView) gridview.getChildAt(sixteen)));
-                                anim16.setDuration(3000);
-                                anim16.setDuration(500);
-                                anim16.start();
 
                                 /*((ImageView) gridview.getChildAt(one)).startAnimation(anim);
                                 ((ImageView) gridview.getChildAt(two)).startAnimation(anim);
@@ -262,14 +298,7 @@ public class LoadingActivity extends Activity {
                 }
             }
         };t2.start();
-         //RandomImage
 
-        //int x = random.nextInt(6);
-        //RandomBackground randomBackground = new RandomBackground(getBaseContext());
-        //Bitmap bitmap = randomBackground.getBitmap(x);
-        //backgroundimageview.setImageBitmap(bitmap);
-
-        //Random Quotes
         int y = random.nextInt(10);
         Quotes q = new Quotes();
         quotestv.setText("\"" + q.getQuoteslist(y) + "\"");
@@ -514,7 +543,7 @@ public class LoadingActivity extends Activity {
 
             try {
 
-                String strUrl = "http://52.25.155.157:8080/api/v1/news/feed/-1?apiKey="+gettoken;
+                String strUrl = "http://52.25.155.157:8080/api/v1/news/feed/"+fetchnew+"?apiKey="+gettoken;
                 strUrl = strUrl.replaceAll(" ", "%20");
                 URL url = new URL(strUrl);
                 HttpURLConnection urlConnection = null;
@@ -541,58 +570,95 @@ public class LoadingActivity extends Activity {
 
                 JSONObject json_data = new JSONObject(result);
                 JSONArray array = json_data.getJSONArray("data");
-                for (int i=0;i<array.length();i++){
+                SavingYoutubeLink savingYoutubeLink;
+                savingYoutubeLink = new SavingYoutubeLink(LoadingActivity.this);
+                savingYoutubeLink.open();
 
 
-                    JSONObject data = array.getJSONObject(i);
-                    JSONObject publish =data.getJSONObject("publish");
-                    JSONObject portrait =publish.getJSONObject("portrait");
-                    JSONObject url_id =portrait.getJSONObject("url");
-                    JSONObject attributes =data.getJSONObject("attributes");
-                    JSONObject tags =data.getJSONObject("tags");
-                    String issimplified="false";
-                    String isviral="false";
-                    try{
-                        issimplified = String.valueOf(tags.getBoolean("isSimplified"));
-                        isviral = String.valueOf(tags.getBoolean("isViral"));
-                    }catch (Exception e){
+                if (array.length()>0) {
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject data = array.getJSONObject(i);
+                        JSONObject publish = data.getJSONObject("publish");
+                        JSONObject portrait = publish.getJSONObject("portrait");
+                        JSONObject url_id = portrait.getJSONObject("url");
+                        JSONObject attributes = data.getJSONObject("attributes");
+                        JSONObject tags = data.getJSONObject("tags");
+                        JSONArray others = tags.getJSONArray("other");
+                        String othertags="";
+                        for (int j=0;j<others.length();j++){
+                            String temptag = others.getString(j);
+                            if(others.length()==1){
+                                othertags += temptag;
+                            }else if (j==0){
+                                othertags += temptag;
+                            }else if (j==(others.length()-1)){
+                                othertags +=" and "+ temptag;
+                            }else {
+                                othertags +=","+ temptag;
 
-                    }
-                    try{
-                        SavingYoutubeLink savingYoutubeLink = new SavingYoutubeLink(LoadingActivity.this);
-                        savingYoutubeLink.open();
-                        if (!(data.getString("youtubeVideoId").equals("")||data.getString("youtubeVideoId").equals(null)))
-                        savingYoutubeLink.createEntry(1,url_id.getString("public_id"),data.getString("youtubeVideoId"));
-                        savingYoutubeLink.close();
-                    }catch (Exception e){
+                            }
+                        }
+                        Log.e("Tags",othertags);
+                        //Temp Variables
+                        String _id = data.getString("_id");
+                        String p_id = url_id.getString("public_id");
+                        String timestamp = data.getString("timestampCreated");
+                        String category = tags.getString("category");
+                        int editorRating= attributes.getInt("editorRating");
+                        String state = attributes.getString("state");
+                        String breakingNews =String.valueOf(attributes.getBoolean("breakingNews"));
+                        String enabled = String.valueOf(attributes.getBoolean("enabled"));
+                        String linkedToNews="";
+                        String issimplified = "false";
+                        String isviral = "false";
+                        try {
+                            issimplified = String.valueOf(tags.getBoolean("isSimplified"));
+                            isviral = String.valueOf(tags.getBoolean("isViral"));
+                        } catch (Exception e) {
 
-                    }
-                    try{
-                        SavingPublicId savingPublicId = new SavingPublicId(LoadingActivity.this);
-                        savingPublicId.open();
+                        }
+                        try{
+                            linkedToNews = data.getString("linkedToNews");
+                        }catch (Exception e){
+
+                        }
+                        //Saving YouTubeLink
+                        try{
+                        if (!(data.getString("youtubeVideoId").equals("") || data.getString("youtubeVideoId").equals(null))) {
+                            String youtubeVideoId = data.getString("youtubeVideoId");
+                            savingYoutubeLink.createEntry(1, p_id, youtubeVideoId);
+                        }}catch (Exception e){
+
+                        }
+
+                        //Saving Recent Posts
                         savingPublicId.createEntry(i,
-                                data.getString("_id"),
-                                url_id.getString("public_id"),
-                                data.getString("timestampCreated"),
-                                tags.getString("category"),
-                                issimplified,
-                                isviral,
-                                attributes.getInt("editorRating"),
-                                attributes.getString("state"),
-                                String.valueOf(attributes.getBoolean("breakingNews")),
-                                String.valueOf(attributes.getBoolean("enabled"))
-                        );
-                        savingPublicId.close();
-                    }catch (Exception e){
-                            Log.e("Error Sql",e.toString());
+                                    _id,
+                                    p_id,
+                                    timestamp,
+                                    category,
+                                    issimplified,
+                                    isviral,
+                                    editorRating,
+                                    state,
+                                    breakingNews,
+                                   enabled,
+                                othertags,
+                                linkedToNews
+                            );
+
+
+                        if (i < 1) {
+                            saveImage(p_id);
+                        }
 
                     }
-
-                    if (i<0)
-                    saveImage(url_id.getString("public_id"));
+                }else {
+                        String pi = savingPublicId.getPublicID();
+                    saveImage(pi);
 
                 }
-
+                savingYoutubeLink.close();
             } catch (Exception e) {
                 // TODO: handle exception
                 Log.e("log_tag", "Error parsing data " + e.toString());
@@ -603,9 +669,14 @@ public class LoadingActivity extends Activity {
         }
 
         protected void onPostExecute(Void v) {
+            try {
+                savingPublicId.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             Intent i = new Intent(getBaseContext(), AllCategory.class);
             startActivity(i);
-            finish();
+           finish();
         }
     }
 
@@ -613,8 +684,6 @@ public class LoadingActivity extends Activity {
 
         File directory;
         File file = null;
-        // end of SD card checking
-
         MyDirectory myDirectory = new MyDirectory();
         directory = myDirectory.getDirectory();
         file = new File(directory, name + ".jpg");

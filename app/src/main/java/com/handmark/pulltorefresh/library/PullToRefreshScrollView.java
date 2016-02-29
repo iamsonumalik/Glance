@@ -30,10 +30,6 @@ import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 public class PullToRefreshScrollView extends PullToRefreshBase<ScrollView> {
 
 
-	@Override
-	public void scrollTo(int x, int y) {
-		super.scrollTo(x, y);
-	}
 
 	public PullToRefreshScrollView(Context context) {
 		super(context);

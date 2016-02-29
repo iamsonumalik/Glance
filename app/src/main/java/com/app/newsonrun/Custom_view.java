@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -160,8 +162,9 @@ public class Custom_view extends ArrayAdapter {
                 Date date = null;
 
                     date = sdf.parse(dateget);
-
-                dateFormatGmt.setTimeZone(TimeZone.getDefault());
+                    long st = date.getTime();
+            //Log.e("Get TIme" , String.valueOf(st));
+                dateFormatGmt.setTimeZone(TimeZone.getTimeZone("UTC"));
                 String formattedDate = dateFormatGmt.format(date);
                 datetv.setText(formattedDate);
         } catch (ParseException e) {
@@ -175,21 +178,64 @@ public class Custom_view extends ArrayAdapter {
         timelinelayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final Dialog dialog = new Dialog(_activity, android.R.style.Theme_Translucent_NoTitleBar);
+                        Controller.getInstance().trackEvent("TimelineClicked", finalItem_timeline_public_id, "user");
+                        final Dialog dialog = new Dialog(_activity, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+                        String youtubelink = "";
+                        final File file = new File(directory, finalItem_timeline_public_id + ".jpg");
+                        try{
+                            SavingYoutubeLink savingYoutubeLink = new SavingYoutubeLink(_activity);
+                            savingYoutubeLink.open();
+                            youtubelink= savingYoutubeLink.get_youtubeVideoId(finalItem_timeline_public_id);
+                            savingYoutubeLink.close();
+                        }catch (Exception e){
 
-
+                        }
                         dialog.setContentView(R.layout.timeline_dialog);
                         final ImageButton show = (ImageButton) dialog.findViewById(R.id.timelinedialogimageView);
-                        LinearLayout close = (LinearLayout) dialog.findViewById(R.id.timelinedialogbackground);
+                        final RelativeLayout sharevideolayout = (RelativeLayout) dialog.findViewById(R.id.dialogviewbuttonlayout);
+                        FrameLayout close = (FrameLayout) dialog.findViewById(R.id.timelinedialogbackground);
+                        Button shareit = (Button) dialog.findViewById(R.id.dialogshare);
+                        LinearLayout dialogviewwatchvideolayout = (LinearLayout) dialog.findViewById(R.id.dialogviewwatchvideolayout);
+                        if (youtubelink.equals(null)||youtubelink.equals("")){
+                            dialogviewwatchvideolayout.setVisibility(View.GONE);
+                        }else {
+                            dialogviewwatchvideolayout.setVisibility(View.VISIBLE);
+                        }
                         close.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
                             }
                         });
+                        final String finalYoutubelink = youtubelink;
+                        dialogviewwatchvideolayout.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent k = new Intent(_activity,VideoPlayer.class);
+                                k.putExtra("watch", finalYoutubelink);
+                                _activity.startActivity(k);
+                            }
+                        });
+                        show.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
+                                    if (sharevideolayout.getVisibility()==View.VISIBLE){
+                                        sharevideolayout.setVisibility(View.GONE);
+                                    }else {
+                                        sharevideolayout.setVisibility(View.VISIBLE);
+                                    }                                }
+
+
+                        });
                         //Log.e("Prints", finalItem_headline);
-                        File file = new File(directory, finalItem_timeline_public_id + ".jpg");
+                        shareit.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                new DownloadImageTask(_activity,finalItem_timeline_public_id);
+                            }
+                        });
+
                         if (file.exists()) {
 
                             String imgPath = file.getAbsolutePath();

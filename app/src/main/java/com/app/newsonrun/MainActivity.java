@@ -29,6 +29,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        Controller.getInstance().trackEvent("OpenApp", "Splash Screen", "user");
         if (Environment.getExternalStorageState() == null) {
             //create new file directory object
             directory = new File(Environment.getDataDirectory()

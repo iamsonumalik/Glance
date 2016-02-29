@@ -25,6 +25,8 @@ public class SavingPublicId {
     public static final String History_state = "state";
     public static final String History_breakingNews = "breakingNews";
     public static final String History_enabled = "enabled";
+    public static final String History_othertags = "othertags";
+    public static final String History_linkedToNews = "linkedToNews";
     public static final String DATABASE_NAME="comappnewsonrunpublicid";
     public static final String DATABASE_TABLE1="publicid_table";
 
@@ -58,7 +60,9 @@ public class SavingPublicId {
                             History_editorsrating + " INTEGER, " +
                             History_state + " VARCHAR2(20), " +
                             History_breakingNews + " VARCHAR2(10), " +
-                            History_enabled + " VARCHAR2(10));"
+                            History_enabled + " VARCHAR2(10), " +
+                            History_othertags + " VARCHAR2(400), " +
+                            History_linkedToNews + " VARCHAR2(400));"
             );
         }
 
@@ -98,8 +102,9 @@ public class SavingPublicId {
                             int editorRating,
                             String state,
                             String breakingNews,
-                            String enabled
-                            )throws Exception {
+                            String enabled,
+                            String othertags,
+                            String linkedToNews)throws Exception {
         // TODO Auto-generated method stub
         ContentValues cv = new ContentValues();
         cv.put(History_sno,sno);
@@ -113,6 +118,8 @@ public class SavingPublicId {
         cv.put(History_state,state);
         cv.put(History_breakingNews,breakingNews);
         cv.put(History_enabled,enabled);
+        cv.put(History_othertags,othertags);
+        cv.put(History_linkedToNews,linkedToNews);
 
         return ourdatabase.insert(DATABASE_TABLE1, null, cv);
     }
@@ -135,7 +142,7 @@ public class SavingPublicId {
 
         boolean result=false;
         String colums[] = new String[]{History_sno};
-        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums, null,null, null,  null,null);
+        Cursor c= ourdatabase.query(DATABASE_TABLE1, colums, null, null, null, null, null);
         int iurl = c.getColumnIndex(History_sno);
         int i = 0;
         for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
@@ -147,16 +154,21 @@ public class SavingPublicId {
 
     public ArrayList<String> getByCategory(String category) {
         // TODO Auto-generated method stub
-        String colums[] = new String[]{History_public_id,History_category,History_timestampcreated,History_isviral};
+        String colums[] = new String[]{History__id,History_public_id,History_category,History_timestampcreated,History_isviral,History_othertags,History_linkedToNews};
         Cursor c= ourdatabase.query(DATABASE_TABLE1,colums,History_category+"='"+category+"' AND "+History_isviral+"='false'",null, null,  null,History_timestampcreated+" ASC");
         ArrayList<String> result = new ArrayList<String>();
         //int i_id = c.getColumnIndex(History__id);
+        int i_id = c.getColumnIndex(History__id);
         int i_pid = c.getColumnIndex(History_public_id);
-
+        int i_othertags = c.getColumnIndex(History_othertags);
+        int i_linkedToNews = c.getColumnIndex(History_linkedToNews);
         int i = 0;
         for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
             //result.add(c.getString(i_id));
-                result.add(c.getString(i_pid));
+            result.add(c.getString(i_pid));
+            result.add(c.getString(i_othertags));
+            result.add(c.getString(i_id));
+            result.add(c.getString(i_linkedToNews));
 
         }
         return result;
@@ -164,51 +176,130 @@ public class SavingPublicId {
 
 
     public ArrayList<String> getSimplified(String aTrue) {
-        String colums[] = new String[]{History_public_id,History_issimplified,History_timestampcreated,History_isviral};
+        String colums[] = new String[]{History__id,History_public_id,History_issimplified,History_timestampcreated,History_isviral,History_othertags,History_linkedToNews};
         Cursor c= ourdatabase.query(DATABASE_TABLE1,colums,History_issimplified+"='"+aTrue+"' AND "+History_isviral+"='false'",null, null,  null,History_timestampcreated+" ASC");
         ArrayList<String> result = new ArrayList<String>();
         //int i_id = c.getColumnIndex(History__id);
+        int i_id = c.getColumnIndex(History__id);
         int i_pid = c.getColumnIndex(History_public_id);
+        int i_othertags = c.getColumnIndex(History_othertags);
+        int i_linkedToNews = c.getColumnIndex(History_linkedToNews);
+
 
         int i = 0;
+
         for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
             //result.add(c.getString(i_id));
             result.add(c.getString(i_pid));
+            result.add(c.getString(i_othertags));
+            result.add(c.getString(i_id));
+            result.add(c.getString(i_linkedToNews));
 
         }
         return result;
     }
     public ArrayList<String> getviral() {
-        String colums[] = new String[]{History_public_id,History_issimplified,History_timestampcreated,History_isviral};
-        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums,History_isviral+"='true'",null, null,  null,History_timestampcreated+" ASC");
+        String colums[] = new String[]{History__id,History_public_id,History_issimplified,History_timestampcreated,History_isviral,History_othertags,History_linkedToNews};
+        Cursor c= ourdatabase.query(DATABASE_TABLE1, colums, History_isviral+"='true'",null, null,  null,History_timestampcreated+" ASC");
         ArrayList<String> result = new ArrayList<String>();
         //int i_id = c.getColumnIndex(History__id);
+        int i_id = c.getColumnIndex(History__id);
         int i_pid = c.getColumnIndex(History_public_id);
+        int i_othertags = c.getColumnIndex(History_othertags);
+        int i_linkedToNews = c.getColumnIndex(History_linkedToNews);
+
 
         int i = 0;
+
         for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
             //result.add(c.getString(i_id));
             result.add(c.getString(i_pid));
+            result.add(c.getString(i_othertags));
+            result.add(c.getString(i_id));
+            result.add(c.getString(i_linkedToNews));
 
         }
         return result;
     }
     public ArrayList<String> getAll() {
         // TODO Auto-generated method stub
-        String colums[] = new String[]{History__id,History_public_id,History_isviral};
+        String colums[] = new String[]{History__id,History_public_id,History_isviral,History_othertags,History_linkedToNews};
         Cursor c= ourdatabase.query(DATABASE_TABLE1,colums, History_isviral+"='false'",null, null,  null,History_timestampcreated+" ASC");
         ArrayList<String> result = new ArrayList<String>();
+        int i_id = c.getColumnIndex(History__id);
+        int i_pid = c.getColumnIndex(History_public_id);
+        int i_othertags = c.getColumnIndex(History_othertags);
+        int i_linkedToNews = c.getColumnIndex(History_linkedToNews);
+
+
+        int i = 0;
+
+        for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
+            //result.add(c.getString(i_id));
+                result.add(c.getString(i_pid));
+                result.add(c.getString(i_othertags));
+                result.add(c.getString(i_id));
+                result.add(c.getString(i_linkedToNews));
+
+        }
+
+        return result;
+    }
+
+    public String getLatetsTime() {
+        // TODO Auto-generated method stub
+        String colums[] = new String[]{History__id,History_public_id,History_isviral,History_timestampcreated};
+        Cursor c= ourdatabase.query(DATABASE_TABLE1, colums, null, null, null, null, History_timestampcreated + " ASC");
+        String result = "-1";
+        //int i_id = c.getColumnIndex(History__id);
+        int i_pid = c.getColumnIndex(History_timestampcreated);
+
+        int i = 0;
+        for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
+            //result.add(c.getString(i_id));
+            result=c.getString(i_pid);
+            break;
+
+        }
+        return result;
+    }
+
+    public String getPublicID() {
+        // TODO Auto-generated method stub
+        String colums[] = new String[]{History__id,History_public_id,History_isviral,History_timestampcreated};
+        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums, History_isviral+"='false'",null, null,  null,History_timestampcreated+" ASC");
+        String result = "-1";
         //int i_id = c.getColumnIndex(History__id);
         int i_pid = c.getColumnIndex(History_public_id);
 
         int i = 0;
         for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
             //result.add(c.getString(i_id));
-            result.add(c.getString(i_pid));
+            result=c.getString(i_pid);
+            break;
 
         }
         return result;
     }
+    public String gettimestampcreated(String public_id) {
+        // TODO Auto-generated method stub
+        String colums[] = new String[]{History__id,History_public_id,History_isviral,History_timestampcreated};
+        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums, History_public_id+"='"+public_id+"'",null, null,  null,History_timestampcreated+" ASC");
+        String result = "-1";
+        //int i_id = c.getColumnIndex(History__id);
+        int i_pid = c.getColumnIndex(History_public_id);
+        int i_tstmp = c.getColumnIndex(History_timestampcreated);
+
+        int i = 0;
+        for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
+            //result.add(c.getString(i_id));
+            result=c.getString(i_tstmp);
+            break;
+
+        }
+        return result;
+    }
+
     public void dropdb(){
 
         ourcontext.deleteDatabase(DATABASE_NAME);

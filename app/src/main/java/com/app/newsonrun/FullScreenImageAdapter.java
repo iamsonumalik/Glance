@@ -8,6 +8,7 @@ package com.app.newsonrun;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -31,6 +33,7 @@ import java.util.ArrayList;
 
 public class FullScreenImageAdapter extends PagerAdapter {
 
+    private final boolean isviral;
     ArrayList<String> size;
     private final Context getcontext;
    private Activity _activity;
@@ -55,7 +58,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
                                   String gettoken,
                                   ArrayList<String> imagePaths,
 
-                                  Resources resources, Context context, RelativeLayout menu) {
+                                  Resources resources, Context context, RelativeLayout menu, boolean isviral) {
 
         this._activity = activity;
         this._imagePaths = imagePaths;
@@ -67,6 +70,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         size.add("1");
         getmenu = menu;
         getmenu.setVisibility(View.VISIBLE);
+        this.isviral = isviral;
 
     }
 
@@ -96,6 +100,14 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 false);
 
         imgDisplay = (ImageView) viewLayout.findViewById(R.id.imgDisplay);
+        Button playit = (Button) viewLayout.findViewById(R.id.playit);
+
+        if (isviral){
+            playit.setVisibility(View.VISIBLE);
+        }else {
+            playit.setVisibility(View.GONE);
+        }
+
         imgDisplay.setScaleType(ImageView.ScaleType.FIT_XY);
         //imgDisplay.setTag("header");
         Display display = _activity.getWindowManager().getDefaultDisplay();
@@ -125,8 +137,25 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 }
             }
         });
-
         final String imagename = _imagePaths.get(position);
+        playit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String youtubelink = "";
+                try{
+                    SavingYoutubeLink savingYoutubeLink = new SavingYoutubeLink(_activity);
+                    savingYoutubeLink.open();
+                    youtubelink= savingYoutubeLink.get_youtubeVideoId(imagename);
+                    savingYoutubeLink.close();
+                }catch (Exception e){
+
+                }
+                Intent k = new Intent(_activity,VideoPlayer.class);
+                k.putExtra("watch", youtubelink);
+                _activity.startActivity(k);
+            }
+        });
+
         File directory = null;
         final File file;
         MyDirectory myDirectory = new MyDirectory();

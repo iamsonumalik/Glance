@@ -3,9 +3,14 @@ package com.app.newsonrun;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,7 +33,34 @@ public class SetImageView {
         this.getcontext = getcontext;
         this.file = file;
 
-        new  SaveImage().execute();
+        final String imgageUrl = "http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + name + ".jpg";
+        Picasso.with(getcontext)
+                .load(imgageUrl)
+                .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom loadedFrom) {
+                        try {
+                            FileOutputStream ourstream = new FileOutputStream(file);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ourstream);
+                            ourstream.flush();
+                            ourstream.close();
+                            Log.e("Saved","Done");
+                        }catch (Exception e){
+
+                        }
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Drawable drawable) {
+
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable drawable) {
+
+                    }
+                });
+        //new  SaveImage().execute();
 
 
 

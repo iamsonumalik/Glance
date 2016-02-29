@@ -30,6 +30,7 @@ public class VideoPlayer extends YouTubeBaseActivity implements YouTubePlayer.On
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
         if (!wasRestored) {
+            Controller.getInstance().trackEvent("Video", watchthis, "user");
             player.loadVideo(watchthis);
             //player.cueVideo("7779JrWy04g"); // Plays https://www.youtube.com/watch?v=fhWaJi1Hsfo
         }
