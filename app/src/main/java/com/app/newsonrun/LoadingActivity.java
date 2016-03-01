@@ -319,14 +319,10 @@ public class LoadingActivity extends Activity {
         Drawable draw = getResources().getDrawable(R.drawable.custom_progressbar);
 // set the drawable as progress drawable
         firstBar.setProgressDrawable(draw);
-        try {
-            SavingToken token = new SavingToken(this);
-            token.open();
-            gettoken = token.getDataString();
-            token.close();
-        }catch (Exception e){
 
-        }
+        gettoken  = prefs.getString("token", "");
+
+
 
         new task().execute();
         Thread t = new Thread() {
@@ -575,8 +571,9 @@ public class LoadingActivity extends Activity {
                 savingYoutubeLink.open();
 
 
-                if (array.length()>0) {
+                //if (array.length()>0) {
                     for (int i = 0; i < array.length(); i++) {
+                        //Log.e("L", String.valueOf(i));
                         JSONObject data = array.getJSONObject(i);
                         JSONObject publish = data.getJSONObject("publish");
                         JSONObject portrait = publish.getJSONObject("portrait");
@@ -598,7 +595,7 @@ public class LoadingActivity extends Activity {
 
                             }
                         }
-                        Log.e("Tags",othertags);
+                        //Log.e("Tags",othertags);
                         //Temp Variables
                         String _id = data.getString("_id");
                         String p_id = url_id.getString("public_id");
@@ -608,7 +605,7 @@ public class LoadingActivity extends Activity {
                         String state = attributes.getString("state");
                         String breakingNews =String.valueOf(attributes.getBoolean("breakingNews"));
                         String enabled = String.valueOf(attributes.getBoolean("enabled"));
-                        String linkedToNews="";
+                        String linkedToNews="n";
                         String issimplified = "false";
                         String isviral = "false";
                         try {
@@ -648,16 +645,17 @@ public class LoadingActivity extends Activity {
                             );
 
 
-                        if (i < 1) {
-                            saveImage(p_id);
-                        }
+                        //if (i < 1) {
+                            //saveImage(p_id);
+                        //}
+                        //Log.e("end", String.valueOf(i));
 
                     }
-                }else {
-                        String pi = savingPublicId.getPublicID();
-                    saveImage(pi);
+                //}else {
+                       // String pi = savingPublicId.getPublicID();
+                    //saveImage(pi);
 
-                }
+                //}
                 savingYoutubeLink.close();
             } catch (Exception e) {
                 // TODO: handle exception
@@ -669,6 +667,8 @@ public class LoadingActivity extends Activity {
         }
 
         protected void onPostExecute(Void v) {
+            //String pi = savingPublicId.getPublicID();
+            //saveImage(pi);
             try {
                 savingPublicId.close();
             } catch (Exception e) {

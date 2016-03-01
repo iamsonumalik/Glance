@@ -2,6 +2,7 @@ package com.app.newsonrun;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,13 +24,17 @@ public class MainActivity extends Activity {
     private String deviceId;
     private String gettoken;
     private File directory;
+    private SharedPreferences prefs;
+    private static final String MY_PREFS_NAME = "MySetting";
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        prefs = getSharedPreferences(MY_PREFS_NAME, 0);
+        editor = getSharedPreferences(MY_PREFS_NAME, 0).edit();
         Controller.getInstance().trackEvent("OpenApp", "Splash Screen", "user");
         if (Environment.getExternalStorageState() == null) {
             //create new file directory object
@@ -82,14 +87,7 @@ public class MainActivity extends Activity {
 
         startService(new Intent(this, RemoveCache.class));
 
-        try {
-            SavingToken token = new SavingToken(this);
-            token.open();
-            new AuthIt().execute();
-            token.close();
-        }catch (Exception e){
-
-        }
+        new AuthIt().execute();
 
     }
 
@@ -128,12 +126,9 @@ public class MainActivity extends Activity {
                 System.out.println("bta" + sb.toString());
                 JSONObject json_data = new JSONObject(String.valueOf(sb));
                 gettoken=(json_data.getString("accessToken"));
-                System.out.println(gettoken);
-                SavingToken token = new SavingToken(this);
-                token.open();
-                token.createEntry(gettoken);
-                token.close();
-
+                editor.putString("token", gettoken);
+                editor.commit();
+                editor.apply();
                 new Storinggcm(MainActivity.this,gettoken);
 
             } else {
@@ -152,7 +147,6 @@ public class MainActivity extends Activity {
         @Override
         protected String doInBackground(String... params) {
             sendJson("", "");
-
 
             return null;
         }

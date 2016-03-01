@@ -2,6 +2,7 @@ package com.app.newsonrun;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.app.newsonrun.gcm.GCMBaseIntentService;
@@ -9,7 +10,7 @@ import com.app.newsonrun.gcm.GCMBaseIntentService;
 public class GCMIntentService extends GCMBaseIntentService {
 
 	private static final String TAG = "GCMIntentService";
-	
+    private static final String MY_PREFS_NAME = "MySetting";
 	private Controller aController = null;
 
     public GCMIntentService() {
@@ -31,14 +32,9 @@ public class GCMIntentService extends GCMBaseIntentService {
         aController.displayMessageOnScreen(context, "Your device registred with GCM");
         //Log.d("NAME", GCMMainActivity.name);
         String accesstoken = null;
-        try {
-            SavingToken token = new SavingToken(this);
-            token.open();
-            accesstoken = token.getDataString();
-            token.close();
-        }catch (Exception e){
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, 0);
 
-        }
+        accesstoken  = prefs.getString("token", "");
         aController.register(context, accesstoken, registrationId);
     }
 
@@ -52,14 +48,12 @@ public class GCMIntentService extends GCMBaseIntentService {
         Log.i(TAG, "Device unregistered");
         aController.displayMessageOnScreen(context, getString(R.string.gcm_unregistered));
         String accesstoken = null;
-        try {
-            SavingToken token = new SavingToken(this);
-            token.open();
-            accesstoken = token.getDataString();
-            token.close();
-        }catch (Exception e){
 
-        }
+
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, 0);
+
+        accesstoken  = prefs.getString("token", "");
+
         aController.unregister(context, accesstoken,registrationId);
     }
 

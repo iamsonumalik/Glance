@@ -1,6 +1,7 @@
 package com.app.newsonrun;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -11,6 +12,8 @@ import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -84,6 +87,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_category);
+
         //Directory
         MyDirectory myDirectory = new MyDirectory();
         directory = myDirectory.getDirectory();
@@ -144,20 +148,12 @@ public class AllCategory extends Activity implements View.OnClickListener {
         listview.setPullLabel("Pull down for News");
         listview.setReleaseLabel("Release for News");
         if (!(CheckNetworkConnection.isConnectionAvailable(getBaseContext()))){
-            Toast.makeText(getBaseContext(),"you are offline",Toast.LENGTH_SHORT)
-                    .show();
+            showCustomAlert();
         }
 
         //Fetching assesstoken
-        try {
-            SavingToken token = new SavingToken(this);
-            token.open();
-            gettoken = token.getDataString();
-            token.close();
-        }catch (Exception e){
 
-        }
-
+        gettoken = prefs.getString("token", "");
         Typeface head = Typeface.createFromAsset(getAssets(), "content.otf");
         timelineheader.setTypeface(head);
 
@@ -180,6 +176,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
         viewPager.setLayoutParams(layoutParams);
         //Setting ViewPager
         settingViewPager();
+        //savingImage();
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -188,7 +185,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
             @Override
             public void onPageSelected(int position) {
-                if (count[0] >22 && !israted){
+                if (count[0] >30 && !israted){
                     new MakeRatingDialog(AllCategory.this,editor,didyes);
                     count[0]=0;
                     editor.putInt("count",count[0]);
@@ -201,17 +198,9 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 name = public_idlist.get(position);
                 timelineheader.setText("More on "+othertags.get(position));
                 if (!(CheckNetworkConnection.isConnectionAvailable(getBaseContext()))) {
-                    Toast.makeText(getBaseContext(), "you are offline", Toast.LENGTH_SHORT).show();
+                    showCustomAlert();
                 }
-                if (buttonlayout.getVisibility() == View.VISIBLE) {
-                    buttonlayout.setVisibility(View.GONE);
-                    Animation anim = AnimationUtils.loadAnimation(
-                            AllCategory.this, R.anim.slide_out_to_bottom
-                    );
-                    anim.setDuration(500);
-
-                    buttonlayout.setAnimation(anim);
-                }
+               removeOptions();
                 listview.setVisibility(View.GONE);
                 getLink();
                 setVisiblityofwatchbutton();
@@ -244,7 +233,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<ScrollView> refreshView) {
                 Controller.getInstance().trackEvent("Visited Timeline", "Timeline", "user");
-                     scrollview.setVisibility(View.GONE);
+                    scrollview.setVisibility(View.GONE);
+                    removeOptions();
                     scrollview.onRefreshComplete();
                 }
         });
@@ -263,6 +253,18 @@ public class AllCategory extends Activity implements View.OnClickListener {
             }
         });
 
+    }
+
+    private void removeOptions() {
+        if (buttonlayout.getVisibility() == View.VISIBLE) {
+            buttonlayout.setVisibility(View.GONE);
+            Animation anim = AnimationUtils.loadAnimation(
+                    AllCategory.this, R.anim.slide_out_to_bottom
+            );
+            anim.setDuration(500);
+
+            buttonlayout.setAnimation(anim);
+        }
     }
 
     private void fromdatabase(ArrayList<String> temp) {
@@ -285,7 +287,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
         int t=0;
             while (tempPid.size()>0){
-            if(templinktonews.get(t).equals("")){
+            if(templinktonews.get(t).equals("n")){
                 setArraylists(t,tempPid,tempothertags,temp_id,templinktonews);
             }else {
                 searchLink(tempPid, tempothertags, temp_id, templinktonews.get(t), templinktonews);
@@ -884,7 +886,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
                         String state = attributes.getString("state");
                         String breakingNews =String.valueOf(attributes.getBoolean("breakingNews"));
                         String enabled = String.valueOf(attributes.getBoolean("enabled"));
-                        String linkedToNews="";
+                        String linkedToNews="n";
                         String issimplified = "false";
                         String isviral = "false";
                         try {
@@ -946,6 +948,28 @@ public class AllCategory extends Activity implements View.OnClickListener {
             return null;
         }
     }
+
+    public void showCustomAlert()
+    {
+
+        Context context = getApplicationContext();
+        // Create layout inflator object to inflate toast.xml file
+        LayoutInflater inflater = getLayoutInflater();
+
+        // Call toast.xml file for toast layout
+        View toastRoot = inflater.inflate(R.layout.toast, null);
+
+        Toast toast = new Toast(context);
+
+        // Set layout to toast
+        toast.setView(toastRoot);
+        toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL,
+                0, 0);
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.show();
+
+    }
+
 
 }
 

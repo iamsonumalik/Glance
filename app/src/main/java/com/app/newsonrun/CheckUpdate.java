@@ -119,6 +119,7 @@ public class CheckUpdate  extends AsyncTask<String,Boolean,Boolean>{
             update.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    alertDialog.dismiss();
                     final String appPackageName = activity.getPackageName(); // getPackageName() from Context or Activity object
                     try {
                         activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));

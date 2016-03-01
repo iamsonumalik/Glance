@@ -27,7 +27,7 @@ public class SetImageView {
     private final Context getcontext;
     private final File file;
 
-    SetImageView(final ImageView imageView, String name, Context getcontext, final File file){
+    SetImageView(final ImageView imageView, final String name, final Context getcontext, final File file){
         this.imageView = imageView;
         this.name = name;
         this.getcontext = getcontext;
@@ -44,7 +44,19 @@ public class SetImageView {
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ourstream);
                             ourstream.flush();
                             ourstream.close();
-                            Log.e("Saved","Done");
+
+                            try {
+                            SavingPublicId savingPublicId = new SavingPublicId(getcontext);
+                                SavingCache savingCache = new SavingCache(getcontext);
+                                savingPublicId.open();
+                                savingCache.open();
+                                savingCache.createEntry(1, name, savingPublicId.gettimestampcreated(name));
+                                savingCache.close();
+                                savingPublicId.close();
+                                Log.e("Saved", "Done");
+                            }catch (Exception e){
+
+                            }
                         }catch (Exception e){
 
                         }
