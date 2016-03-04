@@ -27,13 +27,21 @@
         android:layout_below="@+id/timelineheader" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="45dp"
             android:padding="10dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="More on: "
+            android:singleLine="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:freezesText="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
             android:background="@drawable/timelineheader"
-            android:textSize="16dp"
+            android:textSize="15dp"
+            android:textColor="#e4e4e4"
             android:id="@+id/timelineheader"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"

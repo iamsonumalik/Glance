@@ -3,11 +3,13 @@ package com.app.newsonrun;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.TextView;
 
 import org.json.JSONObject;
 
@@ -32,7 +34,9 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        TextView tv = (TextView) findViewById(R.id.textView);
+        Typeface face = Typeface.createFromAsset(getAssets(), "lodingfont.ttf");
+        tv.setTypeface(face);
         prefs = getSharedPreferences(MY_PREFS_NAME, 0);
         editor = getSharedPreferences(MY_PREFS_NAME, 0).edit();
         Controller.getInstance().trackEvent("OpenApp", "Splash Screen", "user");

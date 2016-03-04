@@ -45,6 +45,8 @@
     <string name="submittitle">Sorry for the inconvinience.</string>
     <string name="submitdescription">Please tell us how we can improve the app?</string>
     <string name="submitsend">Send</string>
+    <string name="trends"><b>TRENDS</b></string>
+    <string name="news"><b>NEWS</b></string>
 
 
 </resources>

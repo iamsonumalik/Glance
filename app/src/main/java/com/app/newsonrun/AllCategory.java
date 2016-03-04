@@ -154,7 +154,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
         //Fetching assesstoken
 
         gettoken = prefs.getString("token", "");
-        Typeface head = Typeface.createFromAsset(getAssets(), "content.otf");
+        Typeface head = Typeface.createFromAsset(getAssets(), "headline.otf");
         timelineheader.setTypeface(head);
 
         new CheckUpdate(gettoken,AllCategory.this).execute();
@@ -196,7 +196,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 }
                 Controller.getInstance().trackScreenView("http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/"+name+".jpg");
                 name = public_idlist.get(position);
-                timelineheader.setText("More on "+othertags.get(position));
+                timelineheader.setText("More on "+othertags.get(position)+".");
                 if (!(CheckNetworkConnection.isConnectionAvailable(getBaseContext()))) {
                     showCustomAlert();
                 }
@@ -338,7 +338,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
         name = public_idlist.get(0);
         Log.e("Name " ,name);
         Controller.getInstance().trackScreenView("http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/"+name+".jpg");
-        timelineheader.setText("More on " + othertags.get(0));
+        timelineheader.setText("More on " + othertags.get(0)+".");
         try {
             SavingPublicId savingPublicId = new SavingPublicId(this);
             savingPublicId.open();
@@ -905,16 +905,17 @@ public class AllCategory extends Activity implements View.OnClickListener {
                             if (!(data.getString("youtubeVideoId").equals("") || data.getString("youtubeVideoId").equals(null))) {
                                 String youtubeVideoId = data.getString("youtubeVideoId");
                                 savingYoutubeLink.createEntry(1, p_id, youtubeVideoId);
-                            }}catch (Exception e){
+                            }
+                        }catch (Exception e){
 
                         }
 
-                        public_idlist.add(p_id);
-                        othertags.add(othert);
+                        //public_idlist.add(p_id);
+                        //othertags.add(othert);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                adapter.notifyDataSetChanged();
+                               // adapter.notifyDataSetChanged();
 
                             }
                         });
@@ -946,6 +947,13 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            adapter.notifyDataSetChanged();
         }
     }
 

@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -58,6 +59,7 @@ public class Custom_view extends ArrayAdapter {
     ReturnColor  returnColor ;
     private Resources getres;
     private Activity _activity;
+    private long currenttime;
 
 
     public Custom_view(Context context,
@@ -155,18 +157,18 @@ public class Custom_view extends ArrayAdapter {
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                 sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-
+                Date date = null;
         try {
                 SimpleDateFormat dateFormatGmt = new SimpleDateFormat("d MMM yyyy");
                 String dateget = item_timeline_date;
-                Date date = null;
 
-                    date = sdf.parse(dateget);
-                    long st = date.getTime();
+                date = sdf.parse(dateget);
+
             //Log.e("Get TIme" , String.valueOf(st));
                 dateFormatGmt.setTimeZone(TimeZone.getTimeZone("UTC"));
                 String formattedDate = dateFormatGmt.format(date);
                 datetv.setText(formattedDate);
+
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -175,9 +177,25 @@ public class Custom_view extends ArrayAdapter {
                 datetv.setTypeface(cont);
 
         final String finalItem_timeline_public_id = item_timeline_public_id;
+        final Date finalDate = date;
         timelinelayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        String t = "1 Feb 2016";
+                        currenttime = finalDate.getTime();
+
+                        SimpleDateFormat format  = new SimpleDateFormat("d MMM yyyy");
+                        long customtime = 0;
+                        try {
+                            Date tempdate = format.parse(t);
+                             customtime = tempdate.getTime();
+                        } catch (ParseException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+
+
                         Controller.getInstance().trackEvent("TimelineClicked", finalItem_timeline_public_id, "user");
                         final Dialog dialog = new Dialog(_activity, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
                         String youtubelink = "";
@@ -191,10 +209,18 @@ public class Custom_view extends ArrayAdapter {
 
                         }
                         dialog.setContentView(R.layout.timeline_dialog);
+
                         final ImageButton show = (ImageButton) dialog.findViewById(R.id.timelinedialogimageView);
                         final RelativeLayout sharevideolayout = (RelativeLayout) dialog.findViewById(R.id.dialogviewbuttonlayout);
                         FrameLayout close = (FrameLayout) dialog.findViewById(R.id.timelinedialogbackground);
                         Button shareit = (Button) dialog.findViewById(R.id.dialogshare);
+                        ImageView logohide = (ImageView) dialog.findViewById(R.id.logohide);
+                        if (currenttime<customtime){
+                            logohide.setVisibility(View.VISIBLE);
+                        }else {
+                            logohide.setVisibility(View.GONE);
+
+                        }
                         LinearLayout dialogviewwatchvideolayout = (LinearLayout) dialog.findViewById(R.id.dialogviewwatchvideolayout);
                         if (youtubelink.equals(null)||youtubelink.equals("")){
                             dialogviewwatchvideolayout.setVisibility(View.GONE);

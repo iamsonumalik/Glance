@@ -245,6 +245,35 @@ public class SavingPublicId {
 
         return result;
     }
+    public ArrayList<String> getthree() {
+        // TODO Auto-generated method stub
+        String colums[] = new String[]{History__id,History_public_id,History_isviral,History_othertags,History_linkedToNews};
+        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums, History_isviral+"='false'",null, null,  null,History_timestampcreated+" ASC");
+        ArrayList<String> result = new ArrayList<String>();
+
+        int i_pid = c.getColumnIndex(History_public_id);
+
+
+
+
+        int i = 0;
+
+        for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
+            //result.add(c.getString(i_id));
+            if (i<1) {
+                        result.add(c.getString(i_pid));
+                        i++;
+            }else {
+                break;
+            }
+
+
+
+
+        }
+
+        return result;
+    }
 
     public String getLatetsTime() {
         // TODO Auto-generated method stub
