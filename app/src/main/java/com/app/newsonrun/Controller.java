@@ -215,7 +215,6 @@ public class Controller extends Application {
 
         urlConnection.connect();
 
-
         InputStream is = urlConnection.getInputStream();
       }
     
@@ -296,5 +295,7 @@ public class Controller extends Application {
     public  void releaseWakeLock() {
         if (wakeLock != null) wakeLock.release(); wakeLock = null;
     }
+
+
    
 }

@@ -1,7 +1,6 @@
 package com.app.newsonrun;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -12,24 +11,23 @@ import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Display;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -50,10 +48,10 @@ import java.util.TimeZone;
 public class AllCategory extends Activity implements View.OnClickListener {
 
     private static final String MY_PREFS_NAME = "MySetting";
-    Button share,refresh;
+    RelativeLayout share;
+    RelativeLayout refresh;
     LinearLayout watch;
     TextView timelineheader;
-
     private ViewPager viewPager;
     private String gettoken;
     private FullScreenImageAdapter adapter;
@@ -64,37 +62,62 @@ public class AllCategory extends Activity implements View.OnClickListener {
     private String name;
     private RelativeLayout buttonlayout;
     private String youtubelink;
-    private PullToRefreshListView listview;
+    private ListView listview;
     private String result;
     private ArrayList<String> headlines;
     private ArrayList<String> contents;
     private ArrayList<String> timelinepublicid;
     private ArrayList<String> timelinedate;
-    private Custom_view cv;
     private int width;
     private int height;
     private String getting_id;
-    private PullToRefreshScrollView scrollview;
+    //private ScrollView scrollview;
     boolean doubleBackToExitPressedOnce = false;
-    private int scrollposition=1;
+    private int scrollposition=0;
     private File directory;
     private FrameLayout onborading;
     private Button allgo;
     private ArrayList<String> temp;
     private boolean isviral;
     private  String currentCategory;
+    private TextView newstv;
+    private TextView viraltv;
+    private Typeface face;
+    private ImageView viralimageview;
+    private ImageView newsimageview;
+    private RelativeLayout loadingnewpost;
+    private ProgressBar firstBar;
+    private VerticalPager pager;
+    private RelativeLayout close2;
+    private String moveto="";
+    private boolean isnews;
+    private Switch switchCompat;
+    private LinearLayout viral;
+    private LinearLayout business;
+    private LinearLayout simplified;
+    private LinearLayout entertainment;
+    private LinearLayout sports;
+    private LinearLayout world;
+    private LinearLayout all;
+    private LinearLayout india;
+    private LinearLayout science;
+    private TextView youareoffline;
+    private int currenPosition=0;
 
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_category);
-
+        Intent i = getIntent();
+        moveto = i.getStringExtra("moveto");
+        isnews = i.getBooleanExtra("isnews",true);
         //Directory
         MyDirectory myDirectory = new MyDirectory();
         directory = myDirectory.getDirectory();
         isviral = false;
         currentCategory = "ALL";
         Controller.getInstance().trackScreenView("All");
-        //Intialize
+
+        //Intialize ArrayLists
         temp = new ArrayList<String>();
         othertags = new ArrayList<String>();
         public_idlist = new ArrayList<String>();
@@ -104,25 +127,47 @@ public class AllCategory extends Activity implements View.OnClickListener {
         headlines = new ArrayList<String>();
         timelinedate = new ArrayList<String>();
         timelinepublicid = new ArrayList<String>();
-        share = (Button) findViewById(R.id.allviewshare);
-        refresh = (Button) findViewById(R.id.allviewrefresh);
+        close2 = (RelativeLayout) findViewById(R.id.backlay2);
+        //Intialize Views
+        newstv = (TextView) findViewById(R.id.newstv);
+        viraltv = (TextView) findViewById(R.id.viral);
+        share = (RelativeLayout) findViewById(R.id.sharelayout);
+        refresh = (RelativeLayout) findViewById(R.id.refreshlayout);
         watch = (LinearLayout) findViewById(R.id.allviewwatchvideolayout);
         buttonlayout = (RelativeLayout) findViewById(R.id.allviewbuttonlayout);
         viewPager = (ViewPager) findViewById(R.id.allpager);
-        listview = (PullToRefreshListView) findViewById(R.id.alllistview);
-        scrollview = (PullToRefreshScrollView) findViewById(R.id.allscrollView);
+        listview = (ListView) findViewById(R.id.alllistview);
+        //scrollview = (ScrollView) findViewById(R.id.allscrollView);
         onborading = (FrameLayout)findViewById(R.id.onboarding);
         allgo = (Button) findViewById(R.id.allgo);
         timelineheader = (TextView) findViewById(R.id.timelineheader);
+        viralimageview = (ImageView) findViewById(R.id.viralimageview);
+        newsimageview = (ImageView) findViewById(R.id.newsimageview);
+        loadingnewpost = (RelativeLayout) findViewById(R.id.loadingnewpost);
+        switchCompat = (Switch) findViewById(R.id.mySwitch);
+        all = (LinearLayout) findViewById(R.id.allmenu);
+        science = (LinearLayout) findViewById(R.id.sciencemenu);
+        entertainment = (LinearLayout) findViewById(R.id.entertainmentmenu);
+        simplified = (LinearLayout) findViewById(R.id.simplifiedmenu);
+        viral = (LinearLayout) findViewById(R.id.viralmenu);
+        india = (LinearLayout) findViewById(R.id.indiamenu);
+        sports = (LinearLayout) findViewById(R.id.sportsmenu);
+        business = (LinearLayout) findViewById(R.id.businessmenu);
+        world = (LinearLayout) findViewById(R.id.worldmenu);
+        youareoffline = (TextView) findViewById(R.id.youareoffline);
+
+       pager = (VerticalPager) findViewById(R.id.verticalpager);
+
+        //SharedPreferences
         final SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, 0).edit();
         allgo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 buttonlayout.setVisibility(View.VISIBLE);
                 onborading.setVisibility(View.GONE);
-
                 editor.putBoolean("isfirst", true);
                 editor.commit();
+                editor.apply();
             }
         });
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, 0);
@@ -137,46 +182,55 @@ public class AllCategory extends Activity implements View.OnClickListener {
             onborading.setVisibility(View.GONE);
         }
 
-        //BUtton Clicks
-
+        //Button Clicks
         share.setOnClickListener(this);
         refresh.setOnClickListener(this);
         watch.setOnClickListener(this);
 
         //ListView Setting
         listview.setVisibility(View.GONE);
-        listview.setPullLabel("Pull down for News");
-        listview.setReleaseLabel("Release for News");
+        //listview.setPullLabel("Pull down for News");
+        //listview.setReleaseLabel("Release for News");
         if (!(CheckNetworkConnection.isConnectionAvailable(getBaseContext()))){
             showCustomAlert();
         }
 
-        //Fetching assesstoken
-
+        //Fetching Accesstoken
         gettoken = prefs.getString("token", "");
+
+        //Setting font
         Typeface head = Typeface.createFromAsset(getAssets(), "headline.otf");
         timelineheader.setTypeface(head);
+        face = Typeface.createFromAsset(getAssets(), "lodingfont.ttf");
+        newstv.setTypeface(face);
+        viraltv.setTypeface(face);
+        youareoffline.setTypeface(head);
+
 
         new CheckUpdate(gettoken,AllCategory.this).execute();
 
-        try{
+        /*try{
             SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
             savingPublicId.open();
             temp = savingPublicId.getAll();
             savingPublicId.close();
         }catch (Exception e){
 
-        }
-        fromdatabase(temp);
+        }*/
+       // fromdatabase(temp);
 
         Display display = getWindowManager().getDefaultDisplay();
         width = display.getWidth();  // deprecated
         height = display.getHeight();  // deprecated
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
         viewPager.setLayoutParams(layoutParams);
-        //Setting ViewPager
-        settingViewPager();
+
+
+        //settingViewPager();
+
         //savingImage();
+        switchCompat.setChecked(isnews);
+        setSwitchContent(isnews);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -185,28 +239,35 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
             @Override
             public void onPageSelected(int position) {
-                if (count[0] >30 && !israted){
-                    new MakeRatingDialog(AllCategory.this,editor,didyes);
-                    count[0]=0;
-                    editor.putInt("count",count[0]);
+                currenPosition = position;
+                RelativeLayout.LayoutParams layoutParamss = new RelativeLayout.LayoutParams(width, 0);
+                listview.setLayoutParams(layoutParamss);
+                if (count[0] > 100 && !israted) {
+                    new MakeRatingDialog(AllCategory.this, editor, didyes);
+                    count[0] = 0;
+                    editor.putInt("count", count[0]);
                     editor.commit();
-                }else if (!israted){
+                } else if (!israted) {
                     count[0] = count[0] + 1;
-                    editor.putInt("count",count[0]);
+                    editor.putInt("count", count[0]);
                 }
-                Controller.getInstance().trackScreenView("http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/"+name+".jpg");
+                Controller.getInstance().trackScreenView("http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + name + ".jpg");
                 name = public_idlist.get(position);
-                timelineheader.setText("More on "+othertags.get(position)+".");
+                if (othertags.get(position).equals("")){
+                    timelineheader.setText("No Timeline for this News.");
+                }else {
+                    timelineheader.setText("More on " + othertags.get(position) + ".");
+                }
                 if (!(CheckNetworkConnection.isConnectionAvailable(getBaseContext()))) {
                     showCustomAlert();
                 }
-               removeOptions();
+                removeOptions();
                 listview.setVisibility(View.GONE);
                 getLink();
                 setVisiblityofwatchbutton();
                 countit.cancel();
                 countit.start();
-                if (position>public_idlist.size()-7){
+                if (position > public_idlist.size() - 7) {
                     new ExtendCategory().execute();
                 }
 
@@ -222,37 +283,92 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
         //viewPager.setPageTransformer(false, new FlipPageViewTransformer());
 
-        scrollview.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ScrollView>() {
+        switchCompat.setSwitchPadding(40);
+        switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onPullDownToRefresh(PullToRefreshBase<ScrollView> refreshView) {
-                Controller.getInstance().trackEvent("Open Menu", "Menu", "user");
-                callMenu();
-                scrollview.onRefreshComplete();
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                setSwitchContent(isChecked);
             }
+        });
 
-            @Override
-            public void onPullUpToRefresh(PullToRefreshBase<ScrollView> refreshView) {
-                Controller.getInstance().trackEvent("Visited Timeline", "Timeline", "user");
-                    scrollview.setVisibility(View.GONE);
+        final boolean[] iup = {true};
+        final boolean[] idown = {true};
+        pager.addOnScrollListener(new VerticalPager.OnScrollListener() {
+
+            public void onScroll(int scrollX) {
+                //Log.d("TestActivity", "scrollX=" + scrollX);
+                if (scrollX < -100) {
+                    iup[0] = false;
                     removeOptions();
-                    scrollview.onRefreshComplete();
+                    callMenu();
+
+                } else if (scrollX < 0 && scrollX > -100) {
+                    //idown[0] = false;
                 }
-        });
-
-
-        listview.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
-            @Override
-            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-                refreshView.onRefreshComplete();
-                scrollview.setVisibility(View.VISIBLE);
 
             }
 
-            @Override
-            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
+            public void onViewScrollFinished(int currentPage) {
+                moveto="";
+                if (currentPage == 1) {
+                    timelineheader.setVisibility(View.VISIBLE);
+                    removeOptions();
+                } else {
+                    timelineheader.setVisibility(View.GONE);
+
+                }
             }
         });
+    }
 
+    private void setSwitchContent(boolean isChecked) {
+        all.setBackground(getResources().getDrawable(R.drawable.remove_border));
+        science.setBackground(getResources().getDrawable(R.drawable.remove_border));
+        entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
+        sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
+        viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
+        business.setBackground(getResources().getDrawable(R.drawable.remove_border));
+        india.setBackground(getResources().getDrawable(R.drawable.remove_border));
+        world.setBackground(getResources().getDrawable(R.drawable.remove_border));
+        simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
+
+        if (isChecked) {
+            newsimageview.setImageDrawable(getResources().getDrawable(R.drawable.newsled));
+            viralimageview.setImageDrawable(getResources().getDrawable(R.drawable.offled));
+            Controller.getInstance().trackEvent("All", "Menu", "user");
+            Controller.getInstance().trackScreenView("All");
+            isviral = false;
+            currentCategory = "ALL";
+            try{
+                SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
+                savingPublicId.open();
+                temp.removeAll(temp);
+                temp = savingPublicId.getAll();
+                savingPublicId.close();
+            }catch (Exception e){
+
+            }
+            resetViewPager();
+            close2.setVisibility(View.GONE);
+        } else {
+            newsimageview.setImageDrawable(getResources().getDrawable(R.drawable.offled));
+            viralimageview.setImageDrawable(getResources().getDrawable(R.drawable.otherled));
+            Controller.getInstance().trackEvent("TRENDS", "Menu", "user");
+            Controller.getInstance().trackScreenView("All");
+            isviral = false;
+            currentCategory = "TRENDS";
+            try{
+                SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
+                savingPublicId.open();
+                temp.removeAll(temp);
+                temp = savingPublicId.getTrends();
+                savingPublicId.close();
+            }catch (Exception e){
+
+            }
+            resetViewPager();
+            close2.setVisibility(View.GONE);
+        }
     }
 
     private void removeOptions() {
@@ -268,10 +384,12 @@ public class AllCategory extends Activity implements View.OnClickListener {
     }
 
     private void fromdatabase(ArrayList<String> temp) {
-        public_idlist.removeAll(public_idlist);
-        othertags.removeAll(othertags);
-        linktonews.removeAll(linktonews);
-        _id.removeAll(_id);
+        if (currenPosition==0) {
+            public_idlist.removeAll(public_idlist);
+            othertags.removeAll(othertags);
+            linktonews.removeAll(linktonews);
+            _id.removeAll(_id);
+        }
         int index=0;
         ArrayList<String> tempPid = new ArrayList<String>();
         ArrayList<String> tempothertags = new ArrayList<String>();
@@ -284,6 +402,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
             temp_id.add(index,temp.get(t++));
             templinktonews.add(index++,temp.get(t));
         }
+        this.temp.removeAll(this.temp);
 
         int t=0;
             while (tempPid.size()>0){
@@ -295,6 +414,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
             }
                 //t++;
         }
+
+
     }
 
     private void setArraylists(int t, ArrayList<String> tempPid, ArrayList<String> tempothertags, ArrayList<String> temp_id, ArrayList<String> templinktonews) {
@@ -333,12 +454,30 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
         );
 
-        viewPager.setAdapter(adapter);
-        viewPager.setCurrentItem(0);
-        name = public_idlist.get(0);
-        Log.e("Name " ,name);
-        Controller.getInstance().trackScreenView("http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/"+name+".jpg");
-        timelineheader.setText("More on " + othertags.get(0)+".");
+        if (public_idlist.size()>0) {
+            viewPager.setAdapter(adapter);
+            if (moveto.equals("")) {
+                viewPager.setCurrentItem(currenPosition);
+                name = public_idlist.get(currenPosition);
+                setOthertags(currenPosition);
+            } else {
+                for (int move = 0; move < public_idlist.size(); move++) {
+                    if (public_idlist.get(move).equals(moveto)) {
+                        viewPager.setCurrentItem(move);
+                        name = public_idlist.get(move);
+                        setOthertags(currenPosition);
+                        moveto="";
+                        break;
+                    }
+                }
+            }
+
+        }else {
+            new ExtendCategory().execute();
+        }
+        //Log.e("Name ", name);
+        Controller.getInstance().trackScreenView("http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + name + ".jpg");
+
         try {
             SavingPublicId savingPublicId = new SavingPublicId(this);
             savingPublicId.open();
@@ -355,6 +494,14 @@ public class AllCategory extends Activity implements View.OnClickListener {
         countit.start();
     }
 
+    private void setOthertags(int tagPosition) {
+        if (othertags.get(tagPosition).equals("")){
+            timelineheader.setText("No Timeline for this News.");
+        }else {
+            timelineheader.setText("More on " + othertags.get(tagPosition) + ".");
+        }
+    }
+
     private void setVisiblityofwatchbutton() {
         if (youtubelink.equals(null)||youtubelink.equals("")){
             watch.setVisibility(View.GONE);
@@ -366,12 +513,14 @@ public class AllCategory extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.allviewshare:
+            case R.id.sharelayout:
                 new DownloadImageTask(AllCategory.this,name);
                 break;
-            case R.id.allviewrefresh:
-                startActivity(new Intent(AllCategory.this,LoadingActivity.class));
-                finish();
+            case R.id.refreshlayout:
+                final int[] i = {0};
+                loadingnewpost.setVisibility(View.VISIBLE);
+                new GettingPosts(AllCategory.this,gettoken,null,null, null,null,null).execute();
+
                 break;
             case R.id.allviewwatchvideolayout:
                 Intent k = new Intent(AllCategory.this,VideoPlayer.class);
@@ -395,12 +544,24 @@ public class AllCategory extends Activity implements View.OnClickListener {
     }
 
 
-    private class FetchTimeline extends Thread {
+    private class FetchTimeline extends AsyncTask<String,String,String> {
+
+        private Custom_view cv;
+
 
         @Override
-        public synchronized void  run() {
-            super.run();
+        protected void onPreExecute() {
+            super.onPreExecute();
+            headlines.removeAll(headlines);
+            contents.removeAll(contents);
+            timelinedate.removeAll(timelinedate);
+            timelinepublicid.removeAll(timelinepublicid);
+            cv = new Custom_view(getBaseContext(), headlines, contents, timelinedate, timelinepublicid, getResources(), AllCategory.this);
+            listview.setAdapter(cv);
+        }
 
+        @Override
+        protected String doInBackground(String... params) {
             try {
                 SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
                 savingPublicId.open();
@@ -413,10 +574,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
             }
 
 
-            headlines.removeAll(headlines);
-            contents.removeAll(contents);
-            timelinedate.removeAll(timelinedate);
-            timelinepublicid.removeAll(timelinepublicid);
+
             String _idl = getting_id;
             InputStream is = null;
             String line;
@@ -460,10 +618,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
                         headlines.add(i, h);
                         //temp_header = temp_header + data.getString("headline");
 
-                    String com = Jsoup.parse(content.getString("html")).text().replaceAll("\\[b\\]", "");
-                    com = com.replaceAll("\\[/b\\]","");
-                    com = com.replaceAll("\\[/i\\]","");
-                    com = com.replaceAll("\\[i\\]","");
+                    String com = Jsoup.parse(content.getString("html")).text();
                     contents.add(i,com );
                         //temp_content = temp_content + Html.fromHtml(content.getString("html"));
                         timelinepublicid.add(i, url_id.getString("public_id"));
@@ -481,26 +636,41 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 Log.e("log_tag", "Error parsing data " + e.toString());
 
             }
-
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        cv = new Custom_view(getBaseContext(), headlines, contents, timelinedate, timelinepublicid, getResources(), AllCategory.this);
-                        listview.setVisibility(View.VISIBLE);
-                        listview.setAdapter(cv);
-                        savingImage();
-
-
-
-                    }
-                });
+            return null;
         }
 
-
-
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            cv.notifyDataSetChanged();
+            listview.setVisibility(View.VISIBLE);
+            //RelativeLayout.LayoutParams layoutParamss = new RelativeLayout.LayoutParams(width, headlines.size()*(height/4) + height/2);
+            //listview.setLayoutParams(layoutParamss);
+            setListViewHeightBasedOnChildren(listview,height);
+            savingImage();
+        }
     }
 
+    public static void setListViewHeightBasedOnChildren(ListView listView, int height) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            // pre-condition
+            return;
+        }
+
+        int totalHeight = 0;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(0, 0);
+            if (listItem.getMeasuredHeight()>totalHeight)
+            totalHeight = listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight * (listAdapter.getCount()+5);
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+    }
     private void savingImage() {
         if (scrollposition < public_idlist.size()) {
             File file = new File(directory, public_idlist.get(scrollposition) + ".jpg");
@@ -513,34 +683,107 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
     private void callMenu() {
         //final Dialog dialog = new Dialog(AllCategory.this, android.R.style.Theme_Translucent_NoTitleBar);
-
-
         //dialog.setContentView(R.layout.menu_dialog);
-
         final GridLayout close = (GridLayout) findViewById(R.id.backlay);
-        final RelativeLayout close2 = (RelativeLayout) findViewById(R.id.backlay2);
         close2.setVisibility(View.VISIBLE);
-        LinearLayout all = (LinearLayout) findViewById(R.id.allmenu);
-        LinearLayout simplified = (LinearLayout) findViewById(R.id.simplifiedmenu);
-        LinearLayout india = (LinearLayout) findViewById(R.id.indiamenu);
-        LinearLayout world = (LinearLayout) findViewById(R.id.worldmenu);
-        LinearLayout entertainment = (LinearLayout) findViewById(R.id.entertainmentmenu);
-        LinearLayout sports = (LinearLayout) findViewById(R.id.sportsmenu);
-        LinearLayout science = (LinearLayout) findViewById(R.id.sciencemenu);
-        LinearLayout business = (LinearLayout) findViewById(R.id.businessmenu);
-        LinearLayout viral = (LinearLayout) findViewById(R.id.viralmenu);
+        RelativeLayout switcherlayout = (RelativeLayout) findViewById(R.id.switcherlayout);
+        RelativeLayout.LayoutParams layoutPs = new RelativeLayout.LayoutParams(width,(int) (width/2.40));
+        switcherlayout.setLayoutParams(layoutPs);
 
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width/4,width/4);
+
+        ImageView topiv = (ImageView) findViewById(R.id.topiv);
+        topiv.setLayoutParams(layoutParams);
+        all.setPadding(width / 24, width / 24, width / 24, width / 24);
+
+
+        ImageView explainersiv = (ImageView) findViewById(R.id.explainersiv);
+        explainersiv.setLayoutParams(layoutParams);
+        simplified.setPadding(width / 24, width / 24, width / 24, width / 24);
+
+        india = (LinearLayout) findViewById(R.id.indiamenu);
+        ImageView indiaiv = (ImageView) findViewById(R.id.indiaiv);
+        indiaiv.setLayoutParams(layoutParams);
+        india.setPadding(width / 24, width / 24, width / 24, width / 24);
+
+         world = (LinearLayout) findViewById(R.id.worldmenu);
+        ImageView worldiv = (ImageView) findViewById(R.id.worldiv);
+        worldiv.setLayoutParams(layoutParams);
+        world.setPadding(width / 24, width / 24, width / 24, width / 24);
+
+        entertainment = (LinearLayout) findViewById(R.id.entertainmentmenu);
+        ImageView entertainmentiv = (ImageView) findViewById(R.id.entertainmentiv);
+        entertainmentiv.setLayoutParams(layoutParams);
+        entertainment.setPadding(width / 24, width / 24, width / 24, width / 24);
+
+        sports = (LinearLayout) findViewById(R.id.sportsmenu);
+        ImageView sportsiv = (ImageView) findViewById(R.id.sportsiv);
+        sportsiv.setLayoutParams(layoutParams);
+        sports.setPadding(width / 24, width / 24, width / 24, width / 24);
+
+        science = (LinearLayout) findViewById(R.id.sciencemenu);
+        ImageView scienceiv = (ImageView) findViewById(R.id.scienceiv);
+        scienceiv.setLayoutParams(layoutParams);
+        science.setPadding(width / 24, width / 24, width / 24, width / 24);
+
+        business = (LinearLayout) findViewById(R.id.businessmenu);
+        ImageView businessiv = (ImageView) findViewById(R.id.businessiv);
+        businessiv.setLayoutParams(layoutParams);
+        business.setPadding(width / 24, width / 24, width / 24, width / 24);
+
+        viral = (LinearLayout) findViewById(R.id.viralmenu);
+        ImageView viraliv = (ImageView) findViewById(R.id.viraliv);
+        viraliv.setLayoutParams(layoutParams);
+        viral.setPadding(width / 24, width / 24, width / 24, width / 24);
+
+        TextView indiatv = (TextView) findViewById(R.id.indiatv);
+        indiatv.setTypeface(face);
+        TextView worldtv = (TextView) findViewById(R.id.worldtv);
+        worldtv.setTypeface(face);
+        TextView sciencetv = (TextView) findViewById(R.id.sciencetv);
+        sciencetv.setTypeface(face);
+        TextView sportstv = (TextView) findViewById(R.id.sportstv);
+        sportstv.setTypeface(face);
+        TextView businesstv = (TextView) findViewById(R.id.businesstv);
+        businesstv.setTypeface(face);
+        TextView explainertv = (TextView) findViewById(R.id.explainertv);
+        explainertv.setTypeface(face);
+        TextView entertainmenttv = (TextView) findViewById(R.id.entertainmenttv);
+        entertainmenttv.setTypeface(face);
+        TextView viraltv = (TextView) findViewById(R.id.viraltv);
+        viraltv.setTypeface(face);
+        TextView toptv = (TextView) findViewById(R.id.toptv);
+        toptv.setTypeface(face);
+
+        Animation anim2 = AnimationUtils.loadAnimation(
+                AllCategory.this, R.anim.bounce
+        );
+        anim2.setDuration(500);
+        viral.setAnimation(anim2);
         all.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Controller.getInstance().trackEvent("All", "Menu", "user");
+
+                all.setBackground(getResources().getDrawable(R.drawable.menuborder));
+                science.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                business.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                india.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                world.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                moveto="";
+                Controller.getInstance().trackEvent("ALL", "Menu", "user");
                 Controller.getInstance().trackScreenView("All");
                 isviral = false;
+                currenPosition = 0;
+                scrollposition=0;
+
                 currentCategory = "ALL";
                 try{
                     SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
                     savingPublicId.open();
-                    temp.removeAll(temp);
                     temp = savingPublicId.getAll();
                     savingPublicId.close();
                 }catch (Exception e){
@@ -555,6 +798,18 @@ public class AllCategory extends Activity implements View.OnClickListener {
         science.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                all.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                science.setBackground(getResources().getDrawable(R.drawable.menuborder));
+                entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                business.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                india.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                world.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                moveto="";
+                currenPosition = 0;
+                scrollposition=0;
                 Controller.getInstance().trackEvent("Science", "Menu", "user");
                 Controller.getInstance().trackScreenView("Science");
                 isviral = false;
@@ -562,7 +817,6 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 try{
                     SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
                     savingPublicId.open();
-                    temp.removeAll(temp);
                     temp = savingPublicId.getByCategory("SCIENCE_TECH");
                     savingPublicId.close();
                 }catch (Exception e){
@@ -576,14 +830,25 @@ public class AllCategory extends Activity implements View.OnClickListener {
         sports.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                all.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                science.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                sports.setBackground(getResources().getDrawable(R.drawable.menuborder));
+                viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                business.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                india.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                world.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                moveto="";
                 Controller.getInstance().trackEvent("Sports", "Menu", "user");
                 Controller.getInstance().trackScreenView("Sports");
                 isviral = false;
+                currenPosition = 0;
+                scrollposition=0;
                 currentCategory = "SPORTS";
                 try{
                     SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
                     savingPublicId.open();
-                    temp.removeAll(temp);
                     temp = savingPublicId.getByCategory("SPORTS");
                     savingPublicId.close();
                 }catch (Exception e){
@@ -597,18 +862,29 @@ public class AllCategory extends Activity implements View.OnClickListener {
         entertainment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                all.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                science.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                entertainment.setBackground(getResources().getDrawable(R.drawable.menuborder));
+                sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                business.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                india.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                world.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                moveto="";
                 Controller.getInstance().trackEvent("Entertainment", "Menu", "user");
                 Controller.getInstance().trackScreenView("Entertainment");
                 try{
                     SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
                     savingPublicId.open();
-                    temp.removeAll(temp);
                     temp = savingPublicId.getByCategory("ENTERTAINMENT");
                     savingPublicId.close();
                 }catch (Exception e){
                     Log.e("Science", e.toString());
                 }
                 isviral = false;
+                currenPosition = 0;
+                scrollposition=0;
                 currentCategory = "ENTERTAINMENT";
                 resetViewPager();
                 close2.setVisibility(View.GONE);
@@ -618,18 +894,29 @@ public class AllCategory extends Activity implements View.OnClickListener {
         world.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                all.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                science.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                business.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                india.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                world.setBackground(getResources().getDrawable(R.drawable.menuborder));
+                simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                moveto="";
                 Controller.getInstance().trackEvent("World", "Menu", "user");
                 Controller.getInstance().trackScreenView("World");
                 try{
                     SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
                     savingPublicId.open();
-                    temp.removeAll(temp);
                     temp = savingPublicId.getByCategory("WORLD");
                     savingPublicId.close();
                 }catch (Exception e){
                     Log.e("Science", e.toString());
                 }
                 isviral = false;
+                currenPosition = 0;
+                scrollposition=0;
                 currentCategory = "WORLD";
                 resetViewPager();
                 close2.setVisibility(View.GONE);
@@ -639,18 +926,29 @@ public class AllCategory extends Activity implements View.OnClickListener {
         india.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                all.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                science.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                business.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                india.setBackground(getResources().getDrawable(R.drawable.menuborder));
+                world.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                moveto="";
                 Controller.getInstance().trackEvent("India", "Menu", "user");
                 Controller.getInstance().trackScreenView("India");
                 try{
                     SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
                     savingPublicId.open();
-                    temp.removeAll(temp);
                     temp = savingPublicId.getByCategory("INDIA");
                     savingPublicId.close();
                 }catch (Exception e){
                     Log.e("Science", e.toString());
                 }
                 isviral = false;
+                currenPosition = 0;
+                scrollposition=0;
                 currentCategory = "INDIA";
                 resetViewPager();
                 close2.setVisibility(View.GONE);
@@ -660,18 +958,29 @@ public class AllCategory extends Activity implements View.OnClickListener {
         simplified.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                all.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                science.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                business.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                india.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                world.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                simplified.setBackground(getResources().getDrawable(R.drawable.menuborder));
+                moveto="";
                 Controller.getInstance().trackEvent("Simplified", "Menu", "user");
                 Controller.getInstance().trackScreenView("Simplified");
                 try{
                     SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
                     savingPublicId.open();
-                    temp.removeAll(temp);
                     temp = savingPublicId.getSimplified("true");
                     savingPublicId.close();
                 }catch (Exception e){
                     Log.e("Businness", e.toString());
                 }
                 isviral = false;
+                currenPosition = 0;
+                scrollposition=0;
                 currentCategory = "SIMPLIFIED";
                 resetViewPager();
                 close2.setVisibility(View.GONE);
@@ -681,18 +990,30 @@ public class AllCategory extends Activity implements View.OnClickListener {
         business.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                all.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                science.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                business.setBackground(getResources().getDrawable(R.drawable.menuborder));
+                india.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                world.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                moveto="";
+
                 Controller.getInstance().trackEvent("Business", "Menu", "user");
                 Controller.getInstance().trackScreenView("Business");
                 try{
                     SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
                     savingPublicId.open();
-                    temp.removeAll(temp);
                     temp = savingPublicId.getByCategory("BUSINESS");
                     savingPublicId.close();
                 }catch (Exception e){
                     Log.e("Science", e.toString());
                 }
                 isviral = false;
+                currenPosition = 0;
+                scrollposition=0;
                 currentCategory = "BUSINESS";
                 resetViewPager();
                 close2.setVisibility(View.GONE);
@@ -702,18 +1023,29 @@ public class AllCategory extends Activity implements View.OnClickListener {
         viral.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                all.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                science.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                viral.setBackground(getResources().getDrawable(R.drawable.menuborder));
+                business.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                india.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                world.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                moveto="";
                 Controller.getInstance().trackEvent("Viral", "Menu", "user");
                 Controller.getInstance().trackScreenView("Viral");
                 try{
                     SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
                     savingPublicId.open();
-                    temp.removeAll(temp);
                     temp = savingPublicId.getviral();
                     savingPublicId.close();
                 }catch (Exception e){
                     Log.e("Businness", e.toString());
                 }
                 isviral = true;
+                currenPosition = 0;
+                scrollposition=0;
                 currentCategory = "VIRAL";
                 resetViewPager();
                 close2.setVisibility(View.GONE);
@@ -736,8 +1068,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
     private void resetViewPager() {
         fromdatabase(temp);
-        adapter.notifyDataSetChanged();
-        scrollposition=0;
+        //adapter.notifyDataSetChanged();
         savingImage();
         countit.cancel();
         settingViewPager();
@@ -745,9 +1076,12 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
     @Override
     public void onBackPressed() {
-        if (scrollview.getVisibility()==View.GONE) {
-            scrollview.setVisibility(View.VISIBLE);
-        }else  if (!(viewPager.getCurrentItem() > 0)) {
+        if (timelineheader.getVisibility()==View.VISIBLE) {
+            pager.setCurrentPage(0);
+        }else if (close2.getVisibility()==View.VISIBLE){
+            close2.setVisibility(View.GONE);
+        }else
+        if (!(viewPager.getCurrentItem() > 0)) {
                 if (doubleBackToExitPressedOnce) {
                     super.onBackPressed();
                     return;
@@ -787,8 +1121,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
         public void onFinish() {
             //Logout
-            FetchTimeline fetchTimeline = new FetchTimeline();
-            fetchTimeline.start();
+            new FetchTimeline().execute();
         }
 
     };
@@ -804,23 +1137,32 @@ public class AllCategory extends Activity implements View.OnClickListener {
         }
     };
     private class ExtendCategory extends AsyncTask<String,String,String> {
+        private ArrayList<String> ex_public_idlist;
+        private ArrayList<String> ex_othertags;
         @Override
         protected String doInBackground(String... params) {
             try{
+                ex_public_idlist = new ArrayList<String>();
+                ex_othertags = new ArrayList<String>();
                 SavingPublicId extendC = new SavingPublicId(AllCategory.this);
                 extendC.open();
-                String tstamp = extendC.gettimestampcreated(public_idlist.get(public_idlist.size()-1));
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-                String dateget = tstamp;
-                Date date = null;
-                try {
-                    date = sdf.parse(dateget);
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                String gettime;
+                if (public_idlist.size()>0) {
+                    String tstamp = extendC.gettimestampcreated(public_idlist.get(public_idlist.size() - 1));
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    String dateget = tstamp;
+                    Date date = null;
+                    try {
+                        date = sdf.parse(dateget);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    long st = date.getTime();
+                     gettime = String.valueOf(st);
+                }else {
+                    gettime="-1";
                 }
-                long st = date.getTime();
-                String gettime = String.valueOf(st);
                 Log.e(gettime, String.valueOf(public_idlist.size()-1));
                 String strUrl = "http://52.25.155.157:8080/api/v1/news/category/"+currentCategory+"/feed/"+gettime+"?apiKey="+gettoken;
                 strUrl = strUrl.replaceAll(" ", "%20");
@@ -888,7 +1230,13 @@ public class AllCategory extends Activity implements View.OnClickListener {
                         String enabled = String.valueOf(attributes.getBoolean("enabled"));
                         String linkedToNews="n";
                         String issimplified = "false";
+                        String isFact = "false";
                         String isviral = "false";
+                        try{
+                            isFact = String.valueOf(tags.getBoolean("isFact"));
+                        }catch (Exception e){
+
+                        }
                         try {
                             issimplified = String.valueOf(tags.getBoolean("isSimplified"));
                             isviral = String.valueOf(tags.getBoolean("isViral"));
@@ -909,13 +1257,16 @@ public class AllCategory extends Activity implements View.OnClickListener {
                         }catch (Exception e){
 
                         }
-
+                        temp.add(p_id);
+                        temp.add(othert);
+                        temp.add(_id);
+                        temp.add(linkedToNews);
                         //public_idlist.add(p_id);
                         //othertags.add(othert);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                               // adapter.notifyDataSetChanged();
+                                // adapter.notifyDataSetChanged();
 
                             }
                         });
@@ -933,7 +1284,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
                                 breakingNews,
                                 enabled,
                                 othert,
-                                linkedToNews
+                                linkedToNews,
+                                isFact
                         );
 
 
@@ -952,15 +1304,19 @@ public class AllCategory extends Activity implements View.OnClickListener {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-
-            adapter.notifyDataSetChanged();
+            if (temp.size()>0) {
+               resetViewPager();
+            }
         }
     }
 
     public void showCustomAlert()
     {
 
-        Context context = getApplicationContext();
+        youareoffline.setVisibility(View.VISIBLE);
+        youareofflineC.cancel();
+        youareofflineC.start();
+        /*Context context = getApplicationContext();
         // Create layout inflator object to inflate toast.xml file
         LayoutInflater inflater = getLayoutInflater();
 
@@ -974,9 +1330,21 @@ public class AllCategory extends Activity implements View.OnClickListener {
         toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL,
                 0, 0);
         toast.setDuration(Toast.LENGTH_LONG);
-        toast.show();
+        toast.show();*/
 
     }
+    CountDownTimer youareofflineC = new CountDownTimer(5*1000, 1000) {
+
+        public void onTick(long millisUntilFinished) {
+            //Some code
+        }
+
+        public void onFinish() {
+            //Logout
+            youareoffline.setVisibility(View.GONE);
+        }
+    };
+
 
 
 }

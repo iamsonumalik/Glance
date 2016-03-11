@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="#EFEFEF"
     android:id="@+id/timelinebackground"
     android:layout_height="match_parent" >
-
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/imgDisplay"
+        android:background="@drawable/waiting"
         />
 
     <Button
@@ -19,5 +18,7 @@
         android:id="@+id/playit"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
+
+
 
 </RelativeLayout>

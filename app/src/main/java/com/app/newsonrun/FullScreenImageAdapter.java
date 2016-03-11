@@ -25,7 +25,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
+
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -52,6 +52,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
     String[] sizi = new String[100];
     RelativeLayout getmenu;
     private String result;
+    private BitmapFactory.Options bmOptions;
+    private Bitmap bp;
 
     // constructor
     public FullScreenImageAdapter(Activity activity,
@@ -71,6 +73,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
         getmenu = menu;
         getmenu.setVisibility(View.VISIBLE);
         this.isviral = isviral;
+        bmOptions = new BitmapFactory.Options();
+
 
     }
 
@@ -93,7 +97,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
 
         final ImageView imgDisplay;
-        final PullToRefreshListView timeline;
         inflater = (LayoutInflater) _activity
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View viewLayout = inflater.inflate(R.layout.layout_fullscreen_image, container,
@@ -114,7 +117,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
         int width = display.getWidth();  // deprecated
         int height = display.getHeight();  // deprecated
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
-        imgDisplay.setLayoutParams(layoutParams);
+
         imgDisplay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,16 +165,16 @@ public class FullScreenImageAdapter extends PagerAdapter {
         directory = myDirectory.getDirectory();
         file = new File(directory, imagename+".jpg");
         if (file.exists()) {
-
             String imgPath = file.getAbsolutePath();
-            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-            Bitmap bp = BitmapFactory.decodeFile(imgPath, bmOptions);
+             bp = BitmapFactory.decodeFile(imgPath, bmOptions);
             imgDisplay.setImageBitmap(bp);
+            imgDisplay.setLayoutParams(layoutParams);
         }else {
             final String imgageUrl = "http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + imagename + ".jpg";
             Picasso.with(getcontext)
                     .load(imgageUrl)
                     .into(imgDisplay);
+            imgDisplay.setLayoutParams(layoutParams);
            //new SetImageView(imgDisplay,imagename,getcontext,file);
         }
 

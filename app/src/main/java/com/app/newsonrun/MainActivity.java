@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
                     out.flush();
                     out.close();
                 }catch (Exception e){
-
+                    Log.e("Make Dir main",e.toString());
                 }
                 Log.e("Path",file.getAbsolutePath());
             }
@@ -80,7 +80,7 @@ public class MainActivity extends Activity {
                     out.flush();
                     out.close();
                 }catch (Exception e){
-
+                    Log.e("Make Dir Main",e.toString());
                 }
                 Log.e("Path", file.getAbsolutePath());
             }

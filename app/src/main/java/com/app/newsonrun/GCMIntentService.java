@@ -1,11 +1,32 @@
 package com.app.newsonrun;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Vibrator;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 import com.app.newsonrun.gcm.GCMBaseIntentService;
+
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Random;
 
 public class GCMIntentService extends GCMBaseIntentService {
 
@@ -54,7 +75,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
         accesstoken  = prefs.getString("token", "");
 
-        aController.unregister(context, accesstoken,registrationId);
+        aController.unregister(context, accesstoken, registrationId);
     }
 
     /**
@@ -67,15 +88,83 @@ public class GCMIntentService extends GCMBaseIntentService {
             aController = (Controller) getApplicationContext();
 
         Log.i(TAG, "Received message");
-        String message = intent.getExtras().getString("message");
-        String namey = intent.getExtras().getString("sname");
-        String notiid = intent.getExtras().getString("notiid");
+        String title = intent.getExtras().getString("title");
+        String body = intent.getExtras().getString("body");
+        String sound = intent.getExtras().getString("sound");
+        String clickAction = intent.getExtras().getString("clickAction");
+        String icon = intent.getExtras().getString("icon");
+        String tag = intent.getExtras().getString("tag");
+        String color = intent.getExtras().getString("color");
 
-        aController.displayMessageOnScreen(context, message);
+
+
+        aController.displayMessageOnScreen(context, title);
         // notifies user
 
-        generateNotification(context, message, namey, notiid);
+        try {
+            JSONObject json_data = new JSONObject(icon);
+            icon = json_data.getString("secure_url");
+        }catch (Exception e){
 
+        }
+
+        try {
+            Log.e("body", body);
+            try {
+                Uri no = Uri.parse("android.resource://" +getPackageName() + "/" + R.raw.notification_tone);
+                Ringtone rp = RingtoneManager.getRingtone(getApplicationContext(), no);
+                rp.play();
+                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                // Vibrate for 500 milliseconds
+                v.vibrate(500);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            generateNotificationNews(context, title, body, sound, icon, clickAction, tag, color);
+        }catch (Exception e){
+            try {
+                String type = intent.getExtras().getString("type");
+                String newsPost = intent.getExtras().getString("newsPost");
+                generateNotificationUpdate(context, title, type, newsPost);
+            }catch (Exception e2){
+                Log.e("Notification",e2.toString());
+            }
+        }
+
+    }
+
+    private void generateNotificationUpdate(Context context, String title, String type, String newsPost) {
+        deletePost(newsPost);
+        if (type.equals("UPDATE")){
+            new InsertUpdate(newsPost,getBaseContext(), "", title, "","").execute();
+        }
+    }
+
+    private void deletePost(String newsPost) {
+        SavingPublicId savingPublicId = new SavingPublicId(getBaseContext());
+        SavingYoutubeLink savingYoutubeLink = new SavingYoutubeLink(getBaseContext());
+        try {
+            //Delete From Database
+            savingYoutubeLink.open();
+            savingPublicId.open();
+            String p_id = savingPublicId.getp_id(newsPost);
+            savingPublicId.deletePost(newsPost);
+            savingYoutubeLink.deleteLink(p_id);
+            savingPublicId.close();
+            savingYoutubeLink.close();
+
+            //Delete Cache image if exists
+            MyDirectory myDirectory = new MyDirectory();
+            File directory = myDirectory.getDirectory();
+            try {
+                new File(directory, p_id+".jpg").delete();
+                Log.e("Deleted", p_id);
+            }catch (Exception e){
+
+            }
+        }catch (Exception e){
+
+        }
     }
 
     /**
@@ -123,7 +212,64 @@ public class GCMIntentService extends GCMBaseIntentService {
     /**
      * Create a notification to inform the user that server has sent a message.
      */
-    private void generateNotification(Context context, String message, String name,String notiid) {
+    private void generateNotificationNews(Context context, String title, String body, String sound, String icon, String clickAction, String tag, String color) {
+
+
+        // Open NotificationView Class on Notification Click
+
+        if (sound.contains("breaking.wav")) {
+
+            new InsertUpdate(clickAction,getBaseContext(),"breaking.wav",title,body,icon).execute();
+
+        }else {
+            RemoteViews remoteViews = new RemoteViews(getPackageName(),
+                    R.layout.customnotification);
+            Intent intent;
+            intent = new Intent(this, MainActivity.class);
+            PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                    // Set Icon
+                    .setSmallIcon(R.drawable.splash)
+                            // Set Ticker Message
+                    .setTicker(title)
+                            // Dismiss Notification
+                    .setAutoCancel(true)
+                            // Set PendingIntent into Notification
+                    .setContentIntent(pIntent)
+                                    // Set RemoteViews into Notification
+                    .setContent(remoteViews);
+
+            builder.setPriority(Notification.PRIORITY_HIGH);
+            if (Build.VERSION.SDK_INT >= 21) builder.setVibrate(new long[0]);
+
+            remoteViews.setImageViewResource(R.id.imagenotileft, R.mipmap.ic_launcher);
+            try {
+                Bitmap remote_picture = BitmapFactory.decodeStream(
+                        (InputStream) new URL(icon).getContent());
+                remoteViews.setImageViewBitmap(R.id.imagenotiright, remote_picture);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            remoteViews.setTextViewText(R.id.title,title);
+            remoteViews.setTextViewText(R.id.text,body);
+            remoteViews.setTextColor(R.id.title, Color.BLACK);
+            remoteViews.setTextColor(R.id.text, Color.BLACK);
+            // Create Notification Manager
+            NotificationManager notificationmanager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            Random r = new Random();
+            Notification notification = builder.build();
+            int x = r.nextInt(1000000);
+            notification.bigContentView = remoteViews;
+            notificationmanager.notify(x,notification );
+
+
+        }
+        // Send data to NotificationView Class
+
+        // Open MainActivity.java Activity
 
 
     }

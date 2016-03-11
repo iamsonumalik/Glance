@@ -29,7 +29,7 @@ public class DownloadImageTask{
     public DownloadImageTask(Activity getactivit,String item_time) {
         this.phone = item_time;
         this.get  = getactivit;
-
+        Log.e("Share","ShareKr");
 
 
         try {
@@ -59,7 +59,7 @@ public class DownloadImageTask{
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("Share1", e.toString());
         }
 
     }
@@ -93,7 +93,7 @@ public class DownloadImageTask{
 
                             out.close();
                         }catch (Exception e){
-
+                            Log.e("Share2", e.toString());
                         }
                     }
 

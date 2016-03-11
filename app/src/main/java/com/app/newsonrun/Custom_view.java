@@ -284,9 +284,6 @@ public class Custom_view extends ArrayAdapter {
                 if (view_pos == 0 && headlines.size() == 1) {
 
                     belowbox.setVisibility(View.GONE);
-                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height/2);
-                    bottomlayout.setLayoutParams(layoutParams);
-                    bottomlayout.setVisibility(View.VISIBLE);
                     abovebox.setVisibility(View.VISIBLE);
 
                 } else if (view_pos == 0) {
@@ -295,10 +292,6 @@ public class Custom_view extends ArrayAdapter {
                 } else if (view_pos == headlines.size()-1){
                     belowbox.setBackgroundResource(returnColor.colorint(col));
                     belowbox.setVisibility(View.GONE);
-                    //RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height/2);
-                    //bottomlayout.setLayoutParams(layoutParams);
-                    //bottomlayout.setVisibility(View.VISIBLE);
-
                 }
 
 

@@ -36,7 +36,7 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -48,7 +48,7 @@
             android:name=".LoadingActivity"
             android:label="Loading"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" />
         <!--
              ATTENTION: This was auto-generated to add Google Play services to your project for
              App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -60,7 +60,7 @@
         <activity
             android:name=".AllCategory"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Material.Light.NoActionBar.Fullscreen" />
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" />
 
         <activity
             android:name=".VideoPlayer"

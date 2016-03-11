@@ -1,6 +1,7 @@
 package com.app.newsonrun;
 
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 
@@ -27,7 +28,7 @@ public class MyDirectory {
                 try {
                     directory.mkdirs();
                 }catch (Exception e){
-
+                    Log.e("Make Dir",e.toString());
                 }
             }
 
@@ -44,7 +45,7 @@ public class MyDirectory {
                 try {
                     directory.mkdirs();
                 }catch (Exception e){
-
+                    Log.e("Make Dir",e.toString());
                 }
 
             }

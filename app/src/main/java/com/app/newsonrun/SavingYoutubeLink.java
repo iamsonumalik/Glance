@@ -78,7 +78,7 @@ public class SavingYoutubeLink {
         ContentValues cv = new ContentValues();
         cv.put(History_sno,sno);
         cv.put(History_public_id,publicid);
-        cv.put(History_youtubeVideoId,youtubevideoid);
+        cv.put(History_youtubeVideoId, youtubevideoid);
 
         return ourdatabase.insert(DATABASE_TABLE1, null, cv);
     }
@@ -110,6 +110,9 @@ public class SavingYoutubeLink {
         return result;
     }
 
+    public void deleteLink(String p_id) {
+        ourdatabase.delete(DATABASE_TABLE1,History_public_id+"='"+p_id+"'",null);
+    }
 
     public void dropdb(){
 
