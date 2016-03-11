@@ -197,7 +197,7 @@ public class InsertUpdate extends AsyncTask<String ,String,String>{
                         // Set Icon
                         .setSmallIcon(R.drawable.splash)
                                 // Set Ticker Message
-                        .setTicker(title)
+                        .setTicker(body)
                                 // Dismiss Notification
                         .setAutoCancel(true)
                                 // Set PendingIntent into Notification
@@ -207,22 +207,22 @@ public class InsertUpdate extends AsyncTask<String ,String,String>{
 
                 builder.setPriority(Notification.PRIORITY_HIGH);
                 if (Build.VERSION.SDK_INT >= 21) builder.setVibrate(new long[0]);
-                remoteViews.setImageViewResource(R.id.imagenotileft, R.drawable.splash);
+                remoteViews.setImageViewResource(R.id.imagenotileft, R.drawable.breaking);
 
-                Bitmap remote_picture = null;
                 try {
-                    remote_picture = BitmapFactory.decodeStream(
+                    Bitmap remote_picture = BitmapFactory.decodeStream(
                             (InputStream) new URL(icon).getContent());
+                    remoteViews.setImageViewBitmap(R.id.imagenotiright, remote_picture);
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                remoteViews.setImageViewBitmap(R.id.imagenotiright, remote_picture);
 
 
-                remoteViews.setTextViewText(R.id.title, title);
+                remoteViews.setTextViewText(R.id.title, "");
                 remoteViews.setTextViewText(R.id.text, body);
                 remoteViews.setTextColor(R.id.title, Color.BLACK);
-                remoteViews.setTextColor(R.id.text, Color.BLACK);
+                remoteViews.setTextColor(R.id.text, Color.rgb(209,211,212));
                 // Create Notification Manager
                 NotificationManager notificationmanager = (NotificationManager) baseContext.getSystemService(baseContext.NOTIFICATION_SERVICE);
                 Random r = new Random();
@@ -245,7 +245,16 @@ public class InsertUpdate extends AsyncTask<String ,String,String>{
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
 
-
+        try {
+            Uri no = Uri.parse("android.resource://" + baseContext.getPackageName() + "/" + R.raw.notification_tone);
+            Ringtone rp = RingtoneManager.getRingtone(baseContext.getApplicationContext(), no);
+            rp.play();
+            Vibrator v = (Vibrator) baseContext.getSystemService(Context.VIBRATOR_SERVICE);
+            // Vibrate for 500 milliseconds
+            v.vibrate(500);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         try {
             savingPublicId.close();
         } catch (Exception e) {

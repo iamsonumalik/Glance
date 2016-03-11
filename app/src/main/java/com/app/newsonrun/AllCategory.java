@@ -200,10 +200,11 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
         //Setting font
         Typeface head = Typeface.createFromAsset(getAssets(), "headline.otf");
-        timelineheader.setTypeface(head);
         face = Typeface.createFromAsset(getAssets(), "lodingfont.ttf");
         newstv.setTypeface(face);
         viraltv.setTypeface(face);
+        timelineheader.setTypeface(face);
+
         youareoffline.setTypeface(head);
 
 
@@ -756,9 +757,9 @@ public class AllCategory extends Activity implements View.OnClickListener {
         toptv.setTypeface(face);
 
         Animation anim2 = AnimationUtils.loadAnimation(
-                AllCategory.this, R.anim.bounce
+                AllCategory.this,R.anim.bounce
         );
-        anim2.setDuration(500);
+        anim2.setDuration(1000);
         viral.setAnimation(anim2);
         all.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1072,6 +1073,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
         savingImage();
         countit.cancel();
         settingViewPager();
+        removeOptions();
     }
 
     @Override

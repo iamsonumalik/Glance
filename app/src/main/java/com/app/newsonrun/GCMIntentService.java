@@ -110,17 +110,23 @@ public class GCMIntentService extends GCMBaseIntentService {
 
         try {
             Log.e("body", body);
-            try {
-                Uri no = Uri.parse("android.resource://" +getPackageName() + "/" + R.raw.notification_tone);
-                Ringtone rp = RingtoneManager.getRingtone(getApplicationContext(), no);
-                rp.play();
-                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                // Vibrate for 500 milliseconds
-                v.vibrate(500);
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (sound.contains("breaking.wav")) {
+
+                new InsertUpdate(clickAction,getBaseContext(),"breaking.wav",title,body,icon).execute();
+
+            }else {
+                generateNotificationNews(context, title, body, sound, icon, clickAction, tag, color);
+                try {
+                    Uri no = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.notification_tone);
+                    Ringtone rp = RingtoneManager.getRingtone(getApplicationContext(), no);
+                    rp.play();
+                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    // Vibrate for 500 milliseconds
+                    v.vibrate(500);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-            generateNotificationNews(context, title, body, sound, icon, clickAction, tag, color);
         }catch (Exception e){
             try {
                 String type = intent.getExtras().getString("type");
@@ -217,11 +223,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
         // Open NotificationView Class on Notification Click
 
-        if (sound.contains("breaking.wav")) {
 
-            new InsertUpdate(clickAction,getBaseContext(),"breaking.wav",title,body,icon).execute();
-
-        }else {
             RemoteViews remoteViews = new RemoteViews(getPackageName(),
                     R.layout.customnotification);
             Intent intent;
@@ -244,7 +246,7 @@ public class GCMIntentService extends GCMBaseIntentService {
             builder.setPriority(Notification.PRIORITY_HIGH);
             if (Build.VERSION.SDK_INT >= 21) builder.setVibrate(new long[0]);
 
-            remoteViews.setImageViewResource(R.id.imagenotileft, R.mipmap.ic_launcher);
+            remoteViews.setImageViewResource(R.id.imagenotileft, R.drawable.digest);
             try {
                 Bitmap remote_picture = BitmapFactory.decodeStream(
                         (InputStream) new URL(icon).getContent());
@@ -253,10 +255,10 @@ public class GCMIntentService extends GCMBaseIntentService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            remoteViews.setTextViewText(R.id.title,title);
-            remoteViews.setTextViewText(R.id.text,body);
+            remoteViews.setTextViewText(R.id.title,"");
+            remoteViews.setTextViewText(R.id.text, body);
             remoteViews.setTextColor(R.id.title, Color.BLACK);
-            remoteViews.setTextColor(R.id.text, Color.BLACK);
+            remoteViews.setTextColor(R.id.text, Color.rgb(209,211,212));
             // Create Notification Manager
             NotificationManager notificationmanager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             Random r = new Random();
@@ -264,9 +266,6 @@ public class GCMIntentService extends GCMBaseIntentService {
             int x = r.nextInt(1000000);
             notification.bigContentView = remoteViews;
             notificationmanager.notify(x,notification );
-
-
-        }
         // Send data to NotificationView Class
 
         // Open MainActivity.java Activity

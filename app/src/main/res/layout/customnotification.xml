@@ -2,23 +2,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:padding="5dp"
+    android:background="#000"
     android:layout_height="match_parent" >
 
     <ImageView
         android:id="@+id/imagenotileft"
-        android:layout_width="wrap_content"
-        android:layout_marginRight="15dp"
-        android:layout_height="wrap_content"
+        android:layout_width="60dp"
+        android:layout_marginRight="10dp"
+        android:layout_height="60dp"
         />
-
-
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
-        android:text="This is Title"
         android:textStyle="bold"
         android:textColor="#000"
         android:ellipsize="end"
+        android:visibility="gone"
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:layout_alignParentTop="true"
@@ -28,21 +27,25 @@
     <TextView
         android:id="@+id/text"
         android:text="This is Body"
-        android:textColor="#000"
+        android:textColor="#fff"
+        android:maxLines="2"
         android:ellipsize="end"
+        android:lineSpacingExtra="3dp"
+        android:gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_below="@+id/title"
-        android:layout_alignLeft="@+id/title"
-        android:layout_alignStart="@+id/title" />
+        android:textSize="14sp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/imagenotileft"
+        android:layout_toEndOf="@+id/imagenotileft"
+        android:layout_alignBottom="@+id/imagenotileft" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:background="@drawable/notiborder"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout2"
-        android:layout_below="@+id/text"
+        android:paddingTop="5dp"
+        android:layout_below="@+id/imagenotileft"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
     <ImageView

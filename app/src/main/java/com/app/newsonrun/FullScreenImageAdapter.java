@@ -71,7 +71,6 @@ public class FullScreenImageAdapter extends PagerAdapter {
         size = new ArrayList<String>();
         size.add("1");
         getmenu = menu;
-        getmenu.setVisibility(View.VISIBLE);
         this.isviral = isviral;
         bmOptions = new BitmapFactory.Options();
 
