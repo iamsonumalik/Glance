@@ -199,7 +199,7 @@ public class Custom_view extends ArrayAdapter {
                         Controller.getInstance().trackEvent("TimelineClicked", finalItem_timeline_public_id, "user");
                         final Dialog dialog = new Dialog(_activity, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
                         String youtubelink = "";
-                        final File file = new File(directory, finalItem_timeline_public_id + ".jpg");
+                        final File file = new File(directory, finalItem_timeline_public_id + ".png");
                         try{
                             SavingYoutubeLink savingYoutubeLink = new SavingYoutubeLink(_activity);
                             savingYoutubeLink.open();
@@ -214,6 +214,7 @@ public class Custom_view extends ArrayAdapter {
                         final RelativeLayout sharevideolayout = (RelativeLayout) dialog.findViewById(R.id.dialogviewbuttonlayout);
                         FrameLayout close = (FrameLayout) dialog.findViewById(R.id.timelinedialogbackground);
                         Button shareit = (Button) dialog.findViewById(R.id.dialogshare);
+                        Button closetimelinedialog = (Button) dialog.findViewById(R.id.closetimelinedialog);
                         ImageView logohide = (ImageView) dialog.findViewById(R.id.logohide);
                         if (currenttime<customtime){
                             logohide.setVisibility(View.VISIBLE);
@@ -227,6 +228,12 @@ public class Custom_view extends ArrayAdapter {
                         }else {
                             dialogviewwatchvideolayout.setVisibility(View.VISIBLE);
                         }
+                        closetimelinedialog.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
                         close.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -269,7 +276,7 @@ public class Custom_view extends ArrayAdapter {
                             Bitmap bp = BitmapFactory.decodeFile(imgPath, bmOptions);
                             show.setImageBitmap(bp);
                         }else {
-                            final String imgageUrl = "http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + finalItem_timeline_public_id + ".jpg";
+                            final String imgageUrl = getContext().getResources().getString(R.string.url)+ finalItem_timeline_public_id + ".png";
                             Picasso.with(context)
                                     .load(imgageUrl)
                                     .into(show);

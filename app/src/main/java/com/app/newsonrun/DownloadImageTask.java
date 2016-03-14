@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -22,9 +21,6 @@ public class DownloadImageTask{
     private MyDirectory myDirectory = null;
     String phone;
     Activity get;
-    private ImageView bmImage;
-    String name;
-    private String filepath;
 
     public DownloadImageTask(Activity getactivit,String item_time) {
         this.phone = item_time;
@@ -35,7 +31,7 @@ public class DownloadImageTask{
         try {
             myDirectory = new MyDirectory();
             File SDCardRoot = myDirectory.getDirectory();
-            String filename=phone+".jpg";
+            String filename=phone+".png";
             Log.i("Local filename:",""+filename);
             file = new File(SDCardRoot,filename);
             if (!file.exists()){
@@ -47,7 +43,7 @@ public class DownloadImageTask{
                     Intent shareIntent = new Intent();
                     shareIntent.setAction(Intent.ACTION_SEND);
                     shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, "market://details?id=com.app.newsonrun");
+                    shareIntent.putExtra(Intent.EXTRA_TITLE, "market://details?id=com.app.newsonrun");
                     shareIntent.setType("image/*");
                     shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     // Launch sharing dialog for image
@@ -67,14 +63,14 @@ public class DownloadImageTask{
     private void downloadnow() {
 
         Picasso.with(get)
-                .load("http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + phone + ".jpg")
+                .load(get.getResources().getString(R.string.url) + phone + ".png")
                 .into(new Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom loadedFrom) {
                         try {
 
                             FileOutputStream out = new FileOutputStream(file);
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, out);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 2, out);
                             out.flush();
                             Uri bmpUri = Uri.fromFile(file);
                             if (bmpUri != null) {
@@ -82,7 +78,9 @@ public class DownloadImageTask{
                                 Intent shareIntent = new Intent();
                                 shareIntent.setAction(Intent.ACTION_SEND);
                                 shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
+                                shareIntent.putExtra(Intent.EXTRA_TITLE, "market://details?id=com.app.newsonrun");
                                 shareIntent.setType("image/*");
+                                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                 // Launch sharing dialog for image
                                 get.startActivity(Intent.createChooser(shareIntent, "Share Image"));
                                 Controller.getInstance().trackEvent("Share", phone, "user");

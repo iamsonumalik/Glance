@@ -92,7 +92,12 @@ public class MainActivity extends Activity {
         startService(new Intent(this, RemoveCache.class));
 
         new AuthIt().execute();
+        Intent i = getIntent();
+        boolean fromnoti = i.getBooleanExtra("fromnoti", false);
+        if (fromnoti){
+            Controller.getInstance().trackEvent("DigestNews", "Clicked", "user");
 
+        }
     }
 
     protected void sendJson(final String email, final String pwd) {

@@ -163,7 +163,7 @@ public class GCMIntentService extends GCMBaseIntentService {
             MyDirectory myDirectory = new MyDirectory();
             File directory = myDirectory.getDirectory();
             try {
-                new File(directory, p_id+".jpg").delete();
+                new File(directory, p_id+".png").delete();
                 Log.e("Deleted", p_id);
             }catch (Exception e){
 
@@ -228,6 +228,8 @@ public class GCMIntentService extends GCMBaseIntentService {
                     R.layout.customnotification);
             Intent intent;
             intent = new Intent(this, MainActivity.class);
+            intent.putExtra("fromnoti",true);
+
             PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 

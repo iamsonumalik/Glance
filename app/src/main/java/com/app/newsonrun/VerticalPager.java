@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -407,20 +408,24 @@ public class VerticalPager extends ViewGroup {
                 mLastMotionY = y;
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (mTouchState == TOUCH_STATE_REST) {
-                    checkStartScroll(y, x);
-                } else if (mTouchState == TOUCH_STATE_SCROLLING) {
-                    // Scroll to follow the motion event
-                    int deltaY = (int) (mLastMotionY - y);
-                    mLastMotionY = y;
+                Log.e("Angle", String.valueOf(Math.toDegrees(Math.atan2(mLastMotionY - y, mLastMotionX - x))));
+                double ang = Math.toDegrees(Math.atan2(mLastMotionY - y, mLastMotionX - x));
+                if (((ang<120&&ang>60) || (ang<-60&&ang>-120))) {
+                    if (mTouchState == TOUCH_STATE_REST) {
+                        checkStartScroll(y, x);
+                    } else if (mTouchState == TOUCH_STATE_SCROLLING) {
+                        // Scroll to follow the motion event
+                        int deltaY = (int) (mLastMotionY - y);
+                        mLastMotionY = y;
 
-                    // Apply friction to scrolling past boundaries.
-                    final int count = getChildCount();
-                    if (getScrollY() < 0 || getScrollY() + pageHeight > getChildAt(count - 1).getBottom()) {
-                        deltaY /= 2;
+                        // Apply friction to scrolling past boundaries.
+                        final int count = getChildCount();
+                        if (getScrollY() < 0 || getScrollY() + pageHeight > getChildAt(count - 1).getBottom()) {
+                            deltaY /= 2;
+                        }
+
+                        scrollBy(0, deltaY);
                     }
-
-                    scrollBy(0, deltaY);
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -432,6 +437,7 @@ public class VerticalPager extends ViewGroup {
                     final int count = getChildCount();
 
                     // check scrolling past first or last page?
+                    //Log.e("Angle", String.valueOf(Math.atan2(getScaleY(), getScaleX())));
                     if(getScrollY() < 0) {
                         snapToPage(0);
                     } else if(getScrollY() > measuredHeight - pageHeight) {

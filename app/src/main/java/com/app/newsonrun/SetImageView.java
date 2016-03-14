@@ -33,7 +33,7 @@ public class SetImageView {
         this.getcontext = getcontext;
         this.file = file;
 
-        final String imgageUrl = "http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + name + ".jpg";
+        final String imgageUrl =getcontext.getResources().getString(R.string.url) + name + ".png";
         Picasso.with(getcontext)
                 .load(imgageUrl)
                 .into(new Target() {
@@ -41,7 +41,7 @@ public class SetImageView {
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom loadedFrom) {
                         try {
                             FileOutputStream ourstream = new FileOutputStream(file);
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ourstream);
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 2, ourstream);
                             ourstream.flush();
                             ourstream.close();
 
@@ -81,7 +81,7 @@ public class SetImageView {
 
         @Override
         protected String doInBackground(String... params) {
-            final String imgageUrl = "http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + name + ".jpg";
+            final String imgageUrl = getcontext.getResources().getString(R.string.url) + name + ".png";
             try {
                 InputStream in = new java.net.URL(imgageUrl).openStream();
                 Bitmap mIcon11 = BitmapFactory.decodeStream(in);
@@ -92,7 +92,7 @@ public class SetImageView {
                 }
 
                 FileOutputStream ourstream = new FileOutputStream(file);
-                mIcon11.compress(Bitmap.CompressFormat.JPEG, 85, ourstream);
+                mIcon11.compress(Bitmap.CompressFormat.PNG, 2, ourstream);
                 ourstream.flush();
                 ourstream.close();
             } catch (FileNotFoundException e) {

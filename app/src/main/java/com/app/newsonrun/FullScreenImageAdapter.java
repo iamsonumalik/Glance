@@ -29,11 +29,16 @@ import android.widget.RelativeLayout;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class FullScreenImageAdapter extends PagerAdapter {
 
     private final boolean isviral;
+    private final ArrayList<String> timestamplist;
     ArrayList<String> size;
     private final Context getcontext;
    private Activity _activity;
@@ -59,11 +64,12 @@ public class FullScreenImageAdapter extends PagerAdapter {
     public FullScreenImageAdapter(Activity activity,
                                   String gettoken,
                                   ArrayList<String> imagePaths,
-
-                                  Resources resources, Context context, RelativeLayout menu, boolean isviral) {
+                                  Resources resources, Context context,
+                                  RelativeLayout menu, boolean isviral, ArrayList<String> timestamplist) {
 
         this._activity = activity;
         this._imagePaths = imagePaths;
+        this.timestamplist = timestamplist;
         getres = resources;
         getcontext = context;
             currentImage = new ImageView(_activity);
@@ -103,7 +109,38 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
         imgDisplay = (ImageView) viewLayout.findViewById(R.id.imgDisplay);
         Button playit = (Button) viewLayout.findViewById(R.id.playit);
+        ImageView mainlogohide = (ImageView) viewLayout.findViewById(R.id.mainlogohide);
+        final String imagename = _imagePaths.get(position);
 
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date date = null;
+            try {
+                SimpleDateFormat dateFormatGmt = new SimpleDateFormat("d MMM yyyy");
+                String dateget = timestamplist.get(position);
+                date = sdf.parse(dateget);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            String t = "1 Feb 2016";
+            long currenttime = date.getTime();
+
+            SimpleDateFormat format  = new SimpleDateFormat("d MMM yyyy");
+            long customtime = 0;
+            try {
+                Date tempdate = format.parse(t);
+                customtime = tempdate.getTime();
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            if (currenttime<customtime){
+                mainlogohide.setVisibility(View.VISIBLE);
+            }else {
+                mainlogohide.setVisibility(View.GONE);
+            }
         if (isviral){
             playit.setVisibility(View.VISIBLE);
         }else {
@@ -139,7 +176,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 }
             }
         });
-        final String imagename = _imagePaths.get(position);
+
         playit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,14 +199,18 @@ public class FullScreenImageAdapter extends PagerAdapter {
         final File file;
         MyDirectory myDirectory = new MyDirectory();
         directory = myDirectory.getDirectory();
-        file = new File(directory, imagename+".jpg");
+        file = new File(directory, imagename+".png");
         if (file.exists()) {
+
             String imgPath = file.getAbsolutePath();
-             bp = BitmapFactory.decodeFile(imgPath, bmOptions);
-            imgDisplay.setImageBitmap(bp);
-            imgDisplay.setLayoutParams(layoutParams);
+            Picasso.with(getcontext)
+                    .load(file)
+                    .into(imgDisplay);
+             //bp = BitmapFactory.decodeFile(imgPath, bmOptions);
+            //imgDisplay.setImageBitmap(bp);
+            //imgDisplay.setLayoutParams(layoutParams);
         }else {
-            final String imgageUrl = "http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + imagename + ".jpg";
+            final String imgageUrl = getcontext.getResources().getString(R.string.url) + imagename + ".png";
             Picasso.with(getcontext)
                     .load(imgageUrl)
                     .into(imgDisplay);

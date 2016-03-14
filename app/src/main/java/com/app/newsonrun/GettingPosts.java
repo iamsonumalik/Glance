@@ -7,9 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,9 +33,8 @@ import java.util.TimeZone;
  */
 public   class GettingPosts extends AsyncTask<String, String, Void> {
     private final Activity activity;
-    private final TextView totalviral;
     private final TextView totalnews;
-    private final Switch switchCompat;
+
     private String line;
     private static final String MY_PREFS_NAME = "MySetting";
     private InputStream is;
@@ -51,31 +47,12 @@ public   class GettingPosts extends AsyncTask<String, String, Void> {
     private ArrayList<String> public_ids;
     private boolean isnews=true;
 
-    public GettingPosts(final Activity loadingActivity, String gettoken, TextView totalviral,
-                        TextView totalnews, Switch switchCompat,
-                        final ImageView newsimageview, final ImageView viralimageview
+    public GettingPosts(final Activity loadingActivity, String gettoken,
+                        TextView totalnews
                         ) {
         this.activity = loadingActivity;
         this.gettoken = gettoken;
-        this.totalviral = totalviral;
         this.totalnews = totalnews;
-        this.switchCompat = switchCompat;
-        if (totalviral!=null) {
-            switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        newsimageview.setImageDrawable(loadingActivity.getResources().getDrawable(R.drawable.newsled));
-                        viralimageview.setImageDrawable(loadingActivity.getResources().getDrawable(R.drawable.offled));
-                        isnews = true;
-                    } else {
-                        newsimageview.setImageDrawable(loadingActivity.getResources().getDrawable(R.drawable.offled));
-                        viralimageview.setImageDrawable(loadingActivity.getResources().getDrawable(R.drawable.otherled));
-                        isnews = false;
-                    }
-                }
-            });
-        }
     }
 
     protected void onPreExecute() {
@@ -245,9 +222,15 @@ public   class GettingPosts extends AsyncTask<String, String, Void> {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (totalviral != null) {
-                            totalviral.setText(String.valueOf(trends));
-                            totalnews.setText(String.valueOf(news));
+                        if (totalnews != null) {
+                            int total = news + trends;
+                            if (total==1)
+                                totalnews.setText("There is "+String.valueOf(news+trends)+" new story.");
+                            else if (total>1)
+                                totalnews.setText("There are "+String.valueOf(news+trends)+" new stories.");
+                            else
+                                totalnews.setText("There are no new stories.");
+
                         }
                     }
                 });
@@ -276,6 +259,7 @@ public   class GettingPosts extends AsyncTask<String, String, Void> {
         Intent i = new Intent(activity, AllCategory.class);
         i.putExtra("moveto","");
         i.putExtra("isnews",isnews);
+        i.putExtra("fromnoti",false);
         activity.startActivity(i);
         activity.finish();
 
@@ -287,16 +271,16 @@ public   class GettingPosts extends AsyncTask<String, String, Void> {
         File file = null;
         MyDirectory myDirectory = new MyDirectory();
         directory = myDirectory.getDirectory();
-        file = new File(directory, name + ".jpg");
+        file = new File(directory, name + ".png");
         if (!file.exists()) {
 
-            String imgageUrl = "http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + name + ".jpg";
+            String imgageUrl = activity.getResources().getString(R.string.url) + name + ".png";
 
             try {
                 InputStream in = new java.net.URL(imgageUrl).openStream();
                 Bitmap mIcon11 = BitmapFactory.decodeStream(in);
                 FileOutputStream ourstream = new FileOutputStream(file);
-                mIcon11.compress(Bitmap.CompressFormat.JPEG, 85, ourstream);
+                mIcon11.compress(Bitmap.CompressFormat.PNG, 2, ourstream);
                 ourstream.flush();
                 ourstream.close();
                 Log.e("Saved","Loading");

@@ -24,20 +24,6 @@
         android:layout_alignParentStart="true">
 
 
-        <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:text="3 March"
-        android:layout_marginTop="10dp"
-        android:textColor="@color/white"
-        android:id="@+id/datetv"
-        android:gravity="center"
-        android:layout_below="@+id/Its"
-        android:layout_alignLeft="@+id/Its"
-        android:layout_alignStart="@+id/Its"
-            android:textSize="16sp" />
-
         <ProgressBar
             android:id="@+id/firstBar"
             style="?android:attr/progressBarStyleHorizontal"
@@ -61,166 +47,31 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="It&apos;s"
-            android:textSize="16sp"
-            android:paddingBottom="3dp"
-            android:id="@+id/Its"
-            android:textColor="#fff"
-            android:layout_alignBottom="@+id/time"
-            android:layout_marginLeft="15dp"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="4:27"
+            android:text="Hello"
             android:textSize="48sp"
-            android:gravity="bottom"
-            android:layout_marginTop="50dp"
-            android:layout_marginLeft="10dp"
+            android:gravity="center"
+            android:layout_marginTop="60dp"
             android:id="@+id/time"
-            android:layout_toRightOf="@+id/Its"
-            android:layout_toEndOf="@+id/Its"
             android:textColor="#fff"
+            android:layout_centerHorizontal="true"
              />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="PM"
-            android:textSize="16sp"
-            android:paddingBottom="3dp"
-            android:id="@+id/ampm"
-            android:layout_toRightOf="@+id/time"
-            android:layout_toEndOf="@+id/time"
-            android:layout_alignBottom="@+id/Its"
-            android:textColor="#fff" />
 
         <TextView
+            android:visibility="visible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:text="Saturday"
-            android:layout_marginTop="10dp"
-            android:id="@+id/day"
-            android:layout_below="@+id/datetv"
-            android:layout_alignLeft="@+id/datetv"
-            android:layout_alignStart="@+id/datetv"
-            android:textColor="#fff"
-            android:textSize="16sp" />
-
-
-        <TextView
-                android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:text="@string/trends"
-                android:maxLines="1"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:id="@+id/viral"
-                android:textColor="#ff0000"
-                android:textSize="24dp"
-                android:layout_below="@+id/viralimageview"
-                android:layout_alignRight="@+id/viralimageview"
-                android:layout_alignEnd="@+id/viralimageview" />
-
-            <ImageView
-                android:visibility="gone"
-
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:src="@drawable/offled"
-                android:id="@+id/viralimageview"
-                android:layout_alignTop="@+id/newsimageview"
-                android:layout_toLeftOf="@+id/mySwitch"
-                android:layout_toStartOf="@+id/mySwitch" />
-
-            <Switch
-                android:visibility="gone"
-
-                android:id="@+id/mySwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textOn=""
-                android:thumb="@drawable/knob"
-                android:track="@drawable/custom_track"
-                android:background="@drawable/inlay"
-                android:textOff=""
-                android:checked="true"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="58dp" />
-
-
-            <ImageView
-                android:visibility="gone"
-
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginBottom="25dp"
-                android:src="@drawable/newsled"
-                android:id="@+id/newsimageview"
-                android:layout_alignBottom="@+id/mySwitch"
-                android:layout_toRightOf="@+id/mySwitch"
-                android:layout_toEndOf="@+id/mySwitch" />
-
-
-        <TextView
-            android:visibility="gone"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:text="0"
             android:id="@+id/getnews"
             android:textColor="#fff"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:gravity="center_vertical"
-            android:paddingRight="0dp"
-            android:layout_alignTop="@+id/newsimageview"
-            android:layout_toRightOf="@+id/newsimageview"
-            android:layout_toEndOf="@+id/newsimageview"
-            android:layout_above="@+id/newstv"
-            android:paddingLeft="12dp" />
-            <TextView
-                android:visibility="gone"
+            android:layout_marginBottom="90dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            />
 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:text="@string/news"
-                android:maxLines="1"
-                android:id="@+id/newstv"
-                android:textColor="#00b1ff"
-                android:textSize="24dp"
-                android:gravity="right"
-                android:layout_alignBaseline="@+id/viral"
-                android:layout_alignBottom="@+id/viral"
-                android:layout_alignLeft="@+id/newsimageview"
-                android:layout_alignStart="@+id/newsimageview" />
-
-
-
-        <TextView
-            android:visibility="gone"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:text="0"
-            android:id="@+id/getviral"
-            android:textColor="#fff"
-            android:textSize="16sp"
-            android:layout_alignTop="@+id/viralimageview"
-            android:layout_toLeftOf="@+id/viralimageview"
-            android:layout_toStartOf="@+id/viralimageview"
-            android:layout_alignBottom="@+id/viralimageview"
-            android:gravity="center_vertical"
-            android:paddingLeft="0dp"
-            android:paddingRight="12dp" />
 
     </RelativeLayout>
 

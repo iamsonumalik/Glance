@@ -60,7 +60,7 @@ public class RemoveCache extends Service {
                                 int i =0;
                                 Log.e("Array Size", String.valueOf(saveditems.size()));
                                 while (saveditems.size()>100){
-                                    new File(directory, saveditems.get(i)+".jpg").delete();
+                                    new File(directory, saveditems.get(i)+".png").delete();
                                     saveditems.remove(i);
                                     Log.e("Deleted", formattedDate);
                                 }

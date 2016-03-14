@@ -31,7 +31,6 @@ import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -103,13 +102,26 @@ public class AllCategory extends Activity implements View.OnClickListener {
     private LinearLayout science;
     private TextView youareoffline;
     private int currenPosition=0;
+    private Button goupbutton;
+    private boolean videopost;
+    private SharedPreferences prefs;
+    private SharedPreferences.Editor editor;
+    private int videopostCounter;
+    private TextView loadingtimelinetv;
+    private LinearLayout infolayout;
+    private ArrayList<String> timestamplist;
 
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_category);
         Intent i = getIntent();
         moveto = i.getStringExtra("moveto");
-        isnews = i.getBooleanExtra("isnews",true);
+        isnews = i.getBooleanExtra("isnews", true);
+        boolean fromnoti = i.getBooleanExtra("fromnoti", false);
+        if (fromnoti){
+            Controller.getInstance().trackEvent("BreakingNews", "Clicked", "user");
+
+        }
         //Directory
         MyDirectory myDirectory = new MyDirectory();
         directory = myDirectory.getDirectory();
@@ -127,11 +139,13 @@ public class AllCategory extends Activity implements View.OnClickListener {
         headlines = new ArrayList<String>();
         timelinedate = new ArrayList<String>();
         timelinepublicid = new ArrayList<String>();
+        timestamplist = new ArrayList<String>();
         close2 = (RelativeLayout) findViewById(R.id.backlay2);
         //Intialize Views
         newstv = (TextView) findViewById(R.id.newstv);
         viraltv = (TextView) findViewById(R.id.viral);
         share = (RelativeLayout) findViewById(R.id.sharelayout);
+        loadingtimelinetv = (TextView) findViewById(R.id.loadingtimelinetv);
         refresh = (RelativeLayout) findViewById(R.id.refreshlayout);
         watch = (LinearLayout) findViewById(R.id.allviewwatchvideolayout);
         buttonlayout = (RelativeLayout) findViewById(R.id.allviewbuttonlayout);
@@ -140,6 +154,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
         //scrollview = (ScrollView) findViewById(R.id.allscrollView);
         onborading = (FrameLayout)findViewById(R.id.onboarding);
         allgo = (Button) findViewById(R.id.allgo);
+        goupbutton = (Button) findViewById(R.id.goupbutton);
         timelineheader = (TextView) findViewById(R.id.timelineheader);
         viralimageview = (ImageView) findViewById(R.id.viralimageview);
         newsimageview = (ImageView) findViewById(R.id.newsimageview);
@@ -154,12 +169,13 @@ public class AllCategory extends Activity implements View.OnClickListener {
         sports = (LinearLayout) findViewById(R.id.sportsmenu);
         business = (LinearLayout) findViewById(R.id.businessmenu);
         world = (LinearLayout) findViewById(R.id.worldmenu);
+        infolayout = (LinearLayout) findViewById(R.id.infolayout);
         youareoffline = (TextView) findViewById(R.id.youareoffline);
 
        pager = (VerticalPager) findViewById(R.id.verticalpager);
 
         //SharedPreferences
-        final SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, 0).edit();
+         editor = getSharedPreferences(MY_PREFS_NAME, 0).edit();
         allgo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -170,11 +186,13 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 editor.apply();
             }
         });
-        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, 0);
+         prefs = getSharedPreferences(MY_PREFS_NAME, 0);
         final boolean isfirst = prefs.getBoolean("isfirst", false);
         final boolean israted = prefs.getBoolean("israted",false);
         final boolean didyes = prefs.getBoolean("didyes",false);
         final int[] count = {prefs.getInt("count", 0)};
+        videopost = prefs.getBoolean("videopost",false);
+        videopostCounter = prefs.getInt("videopostCounter",0);
         if (!isfirst){
             onborading.setVisibility(View.VISIBLE);
 
@@ -186,6 +204,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
         share.setOnClickListener(this);
         refresh.setOnClickListener(this);
         watch.setOnClickListener(this);
+        goupbutton.setOnClickListener(this);
+        infolayout.setOnClickListener(this);
 
         //ListView Setting
         listview.setVisibility(View.GONE);
@@ -204,8 +224,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
         newstv.setTypeface(face);
         viraltv.setTypeface(face);
         timelineheader.setTypeface(face);
-
-        youareoffline.setTypeface(head);
+        loadingtimelinetv.setTypeface(face);
+        youareoffline.setTypeface(face);
 
 
         new CheckUpdate(gettoken,AllCategory.this).execute();
@@ -241,6 +261,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
             @Override
             public void onPageSelected(int position) {
                 currenPosition = position;
+                videopost = prefs.getBoolean("videopost",false);
+                videopostCounter = prefs.getInt("videopostCounter",0);
                 RelativeLayout.LayoutParams layoutParamss = new RelativeLayout.LayoutParams(width, 0);
                 listview.setLayoutParams(layoutParamss);
                 if (count[0] > 100 && !israted) {
@@ -248,29 +270,27 @@ public class AllCategory extends Activity implements View.OnClickListener {
                     count[0] = 0;
                     editor.putInt("count", count[0]);
                     editor.commit();
+                    editor.apply();
                 } else if (!israted) {
                     count[0] = count[0] + 1;
                     editor.putInt("count", count[0]);
                 }
-                Controller.getInstance().trackScreenView("http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + name + ".jpg");
+                Controller.getInstance().trackScreenView(getBaseContext().getResources().getString(R.string.url) + name + ".png");
                 name = public_idlist.get(position);
-                if (othertags.get(position).equals("")){
-                    timelineheader.setText("No Timeline for this News.");
-                }else {
-                    timelineheader.setText("More on " + othertags.get(position) + ".");
-                }
-                if (!(CheckNetworkConnection.isConnectionAvailable(getBaseContext()))) {
+                setOthertags(position);
+                if ((!(CheckNetworkConnection.isConnectionAvailable(getBaseContext())) && position%3==0)) {
                     showCustomAlert();
                 }
                 removeOptions();
                 listview.setVisibility(View.GONE);
                 getLink();
                 setVisiblityofwatchbutton();
-                countit.cancel();
-                countit.start();
+                //countit.cancel();
+                //countit.start();
                 if (position > public_idlist.size() - 7) {
                     new ExtendCategory().execute();
                 }
+               // savingImage();
 
 
             }
@@ -312,16 +332,26 @@ public class AllCategory extends Activity implements View.OnClickListener {
             public void onViewScrollFinished(int currentPage) {
                 moveto="";
                 if (currentPage == 1) {
+                    if (!(CheckNetworkConnection.isConnectionAvailable(getBaseContext()))) {
+                        showCustomAlert();
+                    }
+                    if (listview.getVisibility()==View.GONE){
+                        loadingtimelinetv.setVisibility(View.VISIBLE);
+                        new FetchTimeline().execute();
+
+                    }
                     timelineheader.setVisibility(View.VISIBLE);
+                    goupbutton.setVisibility(View.VISIBLE);
                     removeOptions();
                 } else {
                     timelineheader.setVisibility(View.GONE);
+                    goupbutton.setVisibility(View.GONE);
 
                 }
             }
         });
-    }
 
+    }
     private void setSwitchContent(boolean isChecked) {
         all.setBackground(getResources().getDrawable(R.drawable.remove_border));
         science.setBackground(getResources().getDrawable(R.drawable.remove_border));
@@ -390,28 +420,32 @@ public class AllCategory extends Activity implements View.OnClickListener {
             othertags.removeAll(othertags);
             linktonews.removeAll(linktonews);
             _id.removeAll(_id);
+            timestamplist.removeAll(timestamplist);
         }
         int index=0;
         ArrayList<String> tempPid = new ArrayList<String>();
         ArrayList<String> tempothertags = new ArrayList<String>();
         ArrayList<String> temp_id = new ArrayList<String>();
         ArrayList<String> templinktonews = new ArrayList<String>();
+        ArrayList<String> temptimestamplist = new ArrayList<String>();
 
         for (int t = 0;t<temp.size();t++){
             tempPid.add(index,temp.get(t++));
             tempothertags.add(index,temp.get(t++));
             temp_id.add(index,temp.get(t++));
-            templinktonews.add(index++,temp.get(t));
+            templinktonews.add(index,temp.get(t++));
+            temptimestamplist.add(index++,temp.get(t));
+
         }
         this.temp.removeAll(this.temp);
 
         int t=0;
             while (tempPid.size()>0){
             if(templinktonews.get(t).equals("n")){
-                setArraylists(t,tempPid,tempothertags,temp_id,templinktonews);
+                setArraylists(t,tempPid,tempothertags,temp_id,templinktonews,temptimestamplist);
             }else {
-                searchLink(tempPid, tempothertags, temp_id, templinktonews.get(t), templinktonews);
-                setArraylists(t, tempPid, tempothertags, temp_id, templinktonews);
+                searchLink(tempPid, tempothertags, temp_id, templinktonews.get(t), templinktonews,temptimestamplist);
+                setArraylists(t, tempPid, tempothertags, temp_id, templinktonews,temptimestamplist);
             }
                 //t++;
         }
@@ -419,26 +453,28 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
     }
 
-    private void setArraylists(int t, ArrayList<String> tempPid, ArrayList<String> tempothertags, ArrayList<String> temp_id, ArrayList<String> templinktonews) {
+    private void setArraylists(int t, ArrayList<String> tempPid, ArrayList<String> tempothertags, ArrayList<String> temp_id, ArrayList<String> templinktonews, ArrayList<String> temptimestamplist) {
         public_idlist.add(tempPid.get(t));
         othertags.add(tempothertags.get(t));
         _id.add(temp_id.get(t));
         linktonews.add(templinktonews.get(t));
+        timestamplist.add(temptimestamplist.get(t));
         tempPid.remove(t);
         tempothertags.remove(t);
         temp_id.remove(t);
         templinktonews.remove(t);
+        temptimestamplist.remove(t);
     }
 
-    private void searchLink(ArrayList<String> tempPid, ArrayList<String> tempothertags, ArrayList<String> temp_id, String s, ArrayList<String> templinktonews) {
+    private void searchLink(ArrayList<String> tempPid, ArrayList<String> tempothertags, ArrayList<String> temp_id, String s, ArrayList<String> templinktonews, ArrayList<String> temptimestamplist) {
 
         for (int t= 0 ; t<temp_id.size();t++){
             if (temp_id.get(t).equals(s)) {
                 if (templinktonews.get(t).equals("")) {
-                    setArraylists(t, tempPid, tempothertags, temp_id, templinktonews);
+                    setArraylists(t, tempPid, tempothertags, temp_id, templinktonews, temptimestamplist);
                 } else {
-                    searchLink(tempPid, tempothertags, temp_id, templinktonews.get(t), templinktonews);
-                    setArraylists(t, tempPid, tempothertags, temp_id, templinktonews);
+                    searchLink(tempPid, tempothertags, temp_id, templinktonews.get(t), templinktonews, temptimestamplist);
+                    setArraylists(t, tempPid, tempothertags, temp_id, templinktonews, temptimestamplist);
                 }break;
             }
         }
@@ -451,7 +487,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 public_idlist,
                 getResources(),this,
                 buttonlayout,
-                isviral
+                isviral,
+                timestamplist
 
         );
 
@@ -477,7 +514,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
             new ExtendCategory().execute();
         }
         //Log.e("Name ", name);
-        Controller.getInstance().trackScreenView("http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + name + ".jpg");
+        Controller.getInstance().trackScreenView(getBaseContext().getResources().getString(R.string.url) + name + ".png");
 
         try {
             SavingPublicId savingPublicId = new SavingPublicId(this);
@@ -506,8 +543,26 @@ public class AllCategory extends Activity implements View.OnClickListener {
     private void setVisiblityofwatchbutton() {
         if (youtubelink.equals(null)||youtubelink.equals("")){
             watch.setVisibility(View.GONE);
-        }else {
+        } else {
             watch.setVisibility(View.VISIBLE);
+            Log.e("out", String.valueOf(videopost));
+
+            if (!videopost){
+                if(videopostCounter<5) {
+                    Log.e("in", String.valueOf(videopost));
+                    youareoffline.setText("Tap screen to watch Video.");
+                    youareoffline.setVisibility(View.VISIBLE);
+                    youareofflineC.start();
+                    editor.putInt("videopostCounter", videopostCounter+1);
+                    editor.commit();
+                    editor.apply();
+                }else {
+                    //Toast.makeText(getBaseContext(),"Tap to watch Video.",Toast.LENGTH_SHORT).show();
+                    editor.putBoolean("videopost", true);
+                    editor.commit();
+                    editor.apply();
+                }
+            }
         }
     }
 
@@ -520,7 +575,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
             case R.id.refreshlayout:
                 final int[] i = {0};
                 loadingnewpost.setVisibility(View.VISIBLE);
-                new GettingPosts(AllCategory.this,gettoken,null,null, null,null,null).execute();
+                new GettingPosts(AllCategory.this,gettoken,null).execute();
 
                 break;
             case R.id.allviewwatchvideolayout:
@@ -528,6 +583,12 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 k.putExtra("watch", youtubelink);
                 startActivity(k);
                 //Toast.makeText(getBaseContext(),"Watch:" + name,Toast.LENGTH_SHORT).show();
+                break;
+            case  R.id.goupbutton:
+                pager.setCurrentPage(0);
+                break;
+            case R.id.infolayout:
+                onborading.setVisibility(View.VISIBLE);
                 break;
         }
     }
@@ -619,7 +680,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
                         headlines.add(i, h);
                         //temp_header = temp_header + data.getString("headline");
 
-                    String com = Jsoup.parse(content.getString("html")).text();
+                    String com = content.getString("html");
                     contents.add(i,com );
                         //temp_content = temp_content + Html.fromHtml(content.getString("html"));
                         timelinepublicid.add(i, url_id.getString("public_id"));
@@ -644,11 +705,13 @@ public class AllCategory extends Activity implements View.OnClickListener {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             cv.notifyDataSetChanged();
-            listview.setVisibility(View.VISIBLE);
             //RelativeLayout.LayoutParams layoutParamss = new RelativeLayout.LayoutParams(width, headlines.size()*(height/4) + height/2);
             //listview.setLayoutParams(layoutParamss);
             setListViewHeightBasedOnChildren(listview,height);
-            savingImage();
+            listview.setVisibility(View.VISIBLE);
+            loadingtimelinetv.setVisibility(View.GONE);
+
+
         }
     }
 
@@ -663,8 +726,10 @@ public class AllCategory extends Activity implements View.OnClickListener {
         for (int i = 0; i < listAdapter.getCount(); i++) {
             View listItem = listAdapter.getView(i, null, listView);
             listItem.measure(0, 0);
-            if (listItem.getMeasuredHeight()>totalHeight)
+            //if (listItem.getMeasuredHeight()>totalHeight)
+
             totalHeight = listItem.getMeasuredHeight();
+            break;
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();
@@ -674,7 +739,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
     }
     private void savingImage() {
         if (scrollposition < public_idlist.size()) {
-            File file = new File(directory, public_idlist.get(scrollposition) + ".jpg");
+            File file = new File(directory, public_idlist.get(scrollposition) + ".png");
             if (!file.exists())
                 new SetImageView(null, public_idlist.get(scrollposition++), getBaseContext(), file);
             else
@@ -1070,7 +1135,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
     private void resetViewPager() {
         fromdatabase(temp);
         //adapter.notifyDataSetChanged();
-        savingImage();
+       // savingImage();
         countit.cancel();
         settingViewPager();
         removeOptions();
@@ -1090,7 +1155,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 }
 
                 this.doubleBackToExitPressedOnce = true;
-                Toast.makeText(this, "Press again to exit", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Press again to exit.", Toast.LENGTH_SHORT).show();
 
                 new Handler().postDelayed(new Runnable() {
 
@@ -1123,7 +1188,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
         public void onFinish() {
             //Logout
-            new FetchTimeline().execute();
+            //new FetchTimeline().execute();
         }
 
     };
@@ -1139,33 +1204,44 @@ public class AllCategory extends Activity implements View.OnClickListener {
         }
     };
     private class ExtendCategory extends AsyncTask<String,String,String> {
-        private ArrayList<String> ex_public_idlist;
-        private ArrayList<String> ex_othertags;
+
+        SavingPublicId savingPublicId;
+        String gettime;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            savingPublicId = new SavingPublicId(AllCategory.this);
+            try {
+                savingPublicId.open();
+            }catch (Exception e){
+
+            }
+            if (public_idlist.size()>0) {
+                String tstamp = savingPublicId.gettimestampcreated(public_idlist.get(public_idlist.size()-1));
+                Log.e("timeStamp ", tstamp);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+                String dateget = tstamp;
+
+                try {
+                    Date date = sdf.parse(dateget);
+                    long st = date.getTime();
+                    gettime = String.valueOf(st);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    //gettime="-1";
+                }
+
+            }else {
+                gettime="-1";
+            }
+            Log.e(gettime, String.valueOf(public_idlist.size() - 1));
+        }
+
         @Override
         protected String doInBackground(String... params) {
             try{
-                ex_public_idlist = new ArrayList<String>();
-                ex_othertags = new ArrayList<String>();
-                SavingPublicId extendC = new SavingPublicId(AllCategory.this);
-                extendC.open();
-                String gettime;
-                if (public_idlist.size()>0) {
-                    String tstamp = extendC.gettimestampcreated(public_idlist.get(public_idlist.size() - 1));
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-                    String dateget = tstamp;
-                    Date date = null;
-                    try {
-                        date = sdf.parse(dateget);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    long st = date.getTime();
-                     gettime = String.valueOf(st);
-                }else {
-                    gettime="-1";
-                }
-                Log.e(gettime, String.valueOf(public_idlist.size()-1));
                 String strUrl = "http://52.25.155.157:8080/api/v1/news/category/"+currentCategory+"/feed/"+gettime+"?apiKey="+gettoken;
                 strUrl = strUrl.replaceAll(" ", "%20");
                 URL url = new URL(strUrl);
@@ -1199,6 +1275,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 savingYoutubeLink.open();
                 if (array.length()>0) {
                     for (int i = 0; i < array.length(); i++) {
+
                         JSONObject data = array.getJSONObject(i);
                         JSONObject publish = data.getJSONObject("publish");
                         JSONObject portrait = publish.getJSONObject("portrait");
@@ -1206,37 +1283,37 @@ public class AllCategory extends Activity implements View.OnClickListener {
                         JSONObject attributes = data.getJSONObject("attributes");
                         JSONObject tags = data.getJSONObject("tags");
                         JSONArray others = tags.getJSONArray("other");
-                        String othert="";
-                        for (int j=0;j<others.length();j++){
+                        String othert = "";
+                        for (int j = 0; j < others.length(); j++) {
                             String temptag = others.getString(j);
-                            if(others.length()==1){
+                            if (others.length() == 1) {
                                 othert += temptag;
-                            }else if (j==0){
+                            } else if (j == 0) {
                                 othert += temptag;
-                            }else if (j==(others.length()-1)){
-                                othert +=" and "+ temptag;
-                            }else {
-                                othert +=","+ temptag;
+                            } else if (j == (others.length() - 1)) {
+                                othert += " and " + temptag;
+                            } else {
+                                othert += "," + temptag;
 
                             }
                         }
-                        Log.e("Tags",othert);
+                        Log.e("Tagi", othert);
                         //Temp Variables
                         String _id = data.getString("_id");
                         String p_id = url_id.getString("public_id");
                         String timestamp = data.getString("timestampCreated");
                         String category = tags.getString("category");
-                        int editorRating= attributes.getInt("editorRating");
+                        int editorRating = attributes.getInt("editorRating");
                         String state = attributes.getString("state");
-                        String breakingNews =String.valueOf(attributes.getBoolean("breakingNews"));
+                        String breakingNews = String.valueOf(attributes.getBoolean("breakingNews"));
                         String enabled = String.valueOf(attributes.getBoolean("enabled"));
-                        String linkedToNews="n";
+                        String linkedToNews = "n";
                         String issimplified = "false";
                         String isFact = "false";
                         String isviral = "false";
-                        try{
+                        try {
                             isFact = String.valueOf(tags.getBoolean("isFact"));
-                        }catch (Exception e){
+                        } catch (Exception e) {
 
                         }
                         try {
@@ -1245,36 +1322,30 @@ public class AllCategory extends Activity implements View.OnClickListener {
                         } catch (Exception e) {
 
                         }
-                        try{
+                        try {
                             linkedToNews = data.getString("linkedToNews");
-                        }catch (Exception e){
+                        } catch (Exception e) {
 
                         }
                         //Saving YouTubeLink
-                        try{
+                        try {
                             if (!(data.getString("youtubeVideoId").equals("") || data.getString("youtubeVideoId").equals(null))) {
                                 String youtubeVideoId = data.getString("youtubeVideoId");
                                 savingYoutubeLink.createEntry(1, p_id, youtubeVideoId);
                             }
-                        }catch (Exception e){
+                        } catch (Exception e) {
 
                         }
                         temp.add(p_id);
                         temp.add(othert);
                         temp.add(_id);
                         temp.add(linkedToNews);
+                        temp.add(timestamp);
                         //public_idlist.add(p_id);
                         //othertags.add(othert);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // adapter.notifyDataSetChanged();
-
-                            }
-                        });
 
                         //Saving Recent Posts
-                        extendC.createEntry(i,
+                        savingPublicId.createEntry(i,
                                 _id,
                                 p_id,
                                 timestamp,
@@ -1289,16 +1360,13 @@ public class AllCategory extends Activity implements View.OnClickListener {
                                 linkedToNews,
                                 isFact
                         );
-
-
-
                     }
 
                 }else {
                 }
                 savingYoutubeLink.close();
             }catch (Exception e){
-
+                Log.e("Ex ",e.toString());
             }
             return null;
         }
@@ -1307,8 +1375,15 @@ public class AllCategory extends Activity implements View.OnClickListener {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             if (temp.size()>0) {
+                Log.e("Size", String.valueOf(temp.size()));
                resetViewPager();
             }
+            try {
+                savingPublicId.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
@@ -1335,7 +1410,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
         toast.show();*/
 
     }
-    CountDownTimer youareofflineC = new CountDownTimer(5*1000, 1000) {
+    CountDownTimer youareofflineC = new CountDownTimer(3*1000, 1000) {
 
         public void onTick(long millisUntilFinished) {
             //Some code
@@ -1344,6 +1419,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
         public void onFinish() {
             //Logout
             youareoffline.setVisibility(View.GONE);
+            youareoffline.setText("Please connect to Internet.");
         }
     };
 

@@ -48,5 +48,6 @@
     <string name="trends"><b>TRENDS</b></string>
     <string name="news"><b>NEWS</b></string>
     <string name="appid" type="id">2c7e3f4eea2daa56771138fb60a369cb</string>
+    <string name="url">http://res.cloudinary.com/innox-technologies/image/upload/</string>
 
 </resources>

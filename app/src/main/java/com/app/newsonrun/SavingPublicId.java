@@ -8,6 +8,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -178,13 +179,18 @@ public class SavingPublicId {
         int i_pid = c.getColumnIndex(History_public_id);
         int i_othertags = c.getColumnIndex(History_othertags);
         int i_linkedToNews = c.getColumnIndex(History_linkedToNews);
+        int i_timestap = c.getColumnIndex(History_timestampcreated);
+
+
         int i = 0;
+
         for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
             //result.add(c.getString(i_id));
             result.add(c.getString(i_pid));
             result.add(c.getString(i_othertags));
             result.add(c.getString(i_id));
             result.add(c.getString(i_linkedToNews));
+            result.add(c.getString(i_timestap));
 
         }
         return result;
@@ -201,6 +207,8 @@ public class SavingPublicId {
         int i_othertags = c.getColumnIndex(History_othertags);
         int i_linkedToNews = c.getColumnIndex(History_linkedToNews);
 
+        int i_timestap = c.getColumnIndex(History_timestampcreated);
+
 
         int i = 0;
 
@@ -210,6 +218,7 @@ public class SavingPublicId {
             result.add(c.getString(i_othertags));
             result.add(c.getString(i_id));
             result.add(c.getString(i_linkedToNews));
+            result.add(c.getString(i_timestap));
 
         }
         return result;
@@ -223,6 +232,7 @@ public class SavingPublicId {
         int i_pid = c.getColumnIndex(History_public_id);
         int i_othertags = c.getColumnIndex(History_othertags);
         int i_linkedToNews = c.getColumnIndex(History_linkedToNews);
+        int i_timestap = c.getColumnIndex(History_timestampcreated);
 
 
         int i = 0;
@@ -233,13 +243,14 @@ public class SavingPublicId {
             result.add(c.getString(i_othertags));
             result.add(c.getString(i_id));
             result.add(c.getString(i_linkedToNews));
+            result.add(c.getString(i_timestap));
 
         }
         return result;
     }
 
     public ArrayList<String> getFact() {
-        String colums[] = new String[]{History__id,History_public_id,History_issimplified,History_timestampcreated,History_isviral,History_othertags,History_linkedToNews};
+        String colums[] = new String[]{History__id,History_public_id,History_issimplified,History_timestampcreated,History_isviral,History_othertags,History_linkedToNews,History_timestampcreated};
         Cursor c= ourdatabase.query(DATABASE_TABLE1, colums, History_isFact+"='true'",null, null,  null,History_timestampcreated+" ASC");
         ArrayList<String> result = new ArrayList<String>();
         //int i_id = c.getColumnIndex(History__id);
@@ -247,6 +258,7 @@ public class SavingPublicId {
         int i_pid = c.getColumnIndex(History_public_id);
         int i_othertags = c.getColumnIndex(History_othertags);
         int i_linkedToNews = c.getColumnIndex(History_linkedToNews);
+        int i_timestap = c.getColumnIndex(History_timestampcreated);
 
 
         int i = 0;
@@ -257,42 +269,21 @@ public class SavingPublicId {
             result.add(c.getString(i_othertags));
             result.add(c.getString(i_id));
             result.add(c.getString(i_linkedToNews));
+            result.add(c.getString(i_timestap));
 
         }
         return result;
     }
     public ArrayList<String> getAll() {
         // TODO Auto-generated method stub
-        String colums[] = new String[]{History__id,History_public_id,History_isviral,History_othertags,History_linkedToNews};
+        String colums[] = new String[]{History__id,History_public_id,History_isviral,History_othertags,History_linkedToNews,History_timestampcreated};
         Cursor c= ourdatabase.query(DATABASE_TABLE1,colums, History_isviral+"='false' AND "+History_isFact+"='false'",null, null,  null,History_timestampcreated+" ASC");
         ArrayList<String> result = new ArrayList<String>();
         int i_id = c.getColumnIndex(History__id);
         int i_pid = c.getColumnIndex(History_public_id);
         int i_othertags = c.getColumnIndex(History_othertags);
         int i_linkedToNews = c.getColumnIndex(History_linkedToNews);
-
-
-        int i = 0;
-
-        for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
-            //result.add(c.getString(i_id));
-                result.add(c.getString(i_pid));
-                result.add(c.getString(i_othertags));
-                result.add(c.getString(i_id));
-                result.add(c.getString(i_linkedToNews));
-
-        }
-
-        return result;
-    }
-    public ArrayList<String> getTrends() {
-        String colums[] = new String[]{History__id,History_public_id,History_isviral,History_othertags,History_linkedToNews};
-        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums, History_isviral+"='true' or "+History_isFact+"='true'",null, null,  null,History_timestampcreated+" ASC");
-        ArrayList<String> result = new ArrayList<String>();
-        int i_id = c.getColumnIndex(History__id);
-        int i_pid = c.getColumnIndex(History_public_id);
-        int i_othertags = c.getColumnIndex(History_othertags);
-        int i_linkedToNews = c.getColumnIndex(History_linkedToNews);
+        int i_timestap = c.getColumnIndex(History_timestampcreated);
 
 
         int i = 0;
@@ -303,6 +294,32 @@ public class SavingPublicId {
             result.add(c.getString(i_othertags));
             result.add(c.getString(i_id));
             result.add(c.getString(i_linkedToNews));
+            result.add(c.getString(i_timestap));
+
+        }
+
+        return result;
+    }
+    public ArrayList<String> getTrends() {
+        String colums[] = new String[]{History__id,History_public_id,History_isviral,History_othertags,History_linkedToNews,History_timestampcreated};
+        Cursor c= ourdatabase.query(DATABASE_TABLE1,colums, History_isviral+"='true' or "+History_isFact+"='true'",null, null,  null,History_timestampcreated+" ASC");
+        ArrayList<String> result = new ArrayList<String>();
+        int i_id = c.getColumnIndex(History__id);
+        int i_pid = c.getColumnIndex(History_public_id);
+        int i_othertags = c.getColumnIndex(History_othertags);
+        int i_linkedToNews = c.getColumnIndex(History_linkedToNews);
+        int i_timestap = c.getColumnIndex(History_timestampcreated);
+
+
+        int i = 0;
+
+        for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
+            //result.add(c.getString(i_id));
+            result.add(c.getString(i_pid));
+            result.add(c.getString(i_othertags));
+            result.add(c.getString(i_id));
+            result.add(c.getString(i_linkedToNews));
+            result.add(c.getString(i_timestap));
 
         }
 
@@ -386,6 +403,7 @@ public class SavingPublicId {
         for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
             //result.add(c.getString(i_id));
             result=c.getString(i_tstmp);
+            Log.e("Result ", result);
             break;
 
         }

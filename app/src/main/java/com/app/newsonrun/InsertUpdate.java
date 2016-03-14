@@ -190,9 +190,9 @@ public class InsertUpdate extends AsyncTask<String ,String,String>{
 
                 intent.putExtra("moveto",pid);
                 intent.putExtra("isnews",true);
+                intent.putExtra("fromnoti",true);
                 PendingIntent pIntent = PendingIntent.getActivity(baseContext, 0, intent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
-
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(baseContext)
                         // Set Icon
                         .setSmallIcon(R.drawable.splash)
