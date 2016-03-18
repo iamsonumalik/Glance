@@ -15,14 +15,6 @@
     android:layout_centerHorizontal="true"
     android:gravity="center"
     >
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/splash"
-        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -30,10 +22,17 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Everything you need to know today."
         android:id="@+id/textView"
-        android:layout_marginTop="35dp"
-        android:layout_below="@+id/imageView"
         android:layout_centerHorizontal="true"
         android:textSize="16sp" />
 </RelativeLayout>
+
+    <ImageView
+        android:layout_width="85dp"
+        android:layout_height="100dp"
+        android:id="@+id/imageView"
+        android:background="@drawable/splash"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

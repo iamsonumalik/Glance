@@ -98,7 +98,7 @@ public   class GettingPosts extends AsyncTask<String, String, Void> {
 
         try {
 
-            String strUrl = "http://52.25.155.157:8080/api/v1/news/feed/" + fetchnew + "?apiKey=" + gettoken;
+            String strUrl = activity.getResources().getString(R.string.apiurl)+"/api/v1/news/feed/" + fetchnew + "?apiKey=" + gettoken;
             strUrl = strUrl.replaceAll(" ", "%20");
             URL url = new URL(strUrl);
             HttpURLConnection urlConnection = null;
@@ -112,7 +112,7 @@ public   class GettingPosts extends AsyncTask<String, String, Void> {
             Log.e("pass 1", "connection success ");
 
             BufferedReader reader = new BufferedReader
-                    (new InputStreamReader(is, "iso-8859-1"), 8);
+                    (new InputStreamReader(is, "UTF-8"), 8);
             StringBuilder sb = new StringBuilder();
             while ((line = reader.readLine()) != null) {
                 sb.append(line + "\n");
@@ -138,6 +138,8 @@ public   class GettingPosts extends AsyncTask<String, String, Void> {
                 JSONObject portrait = publish.getJSONObject("portrait");
                 JSONObject url_id = portrait.getJSONObject("url");
                 JSONObject attributes = data.getJSONObject("attributes");
+                JSONObject source = data.getJSONObject("source");
+                JSONObject image = source.getJSONObject("image");
                 JSONObject tags = data.getJSONObject("tags");
                 JSONArray others = tags.getJSONArray("other");
                 String othertags = "";
@@ -157,7 +159,17 @@ public   class GettingPosts extends AsyncTask<String, String, Void> {
                 //Log.e("Tags",othertags);
                 //Temp Variables
                 String _id = data.getString("_id");
-                String p_id = url_id.getString("public_id");
+                String p_id ="";
+                String isS3;
+                try{
+                    p_id= url_id.getString("public_id");
+                    isS3 = "false";
+                }catch (Exception e){
+                    p_id= url_id.getString("filename");
+                    isS3 = "true";
+                }
+                String headline = data.getString("headline");
+                String creditname = image.getString("name");
                 String timestamp = data.getString("timestampCreated");
                 String category = tags.getString("category");
                 int editorRating = attributes.getInt("editorRating");
@@ -211,9 +223,12 @@ public   class GettingPosts extends AsyncTask<String, String, Void> {
                         enabled,
                         othertags,
                         linkedToNews,
-                        isFact
+                        isFact,
+                        headline,
+                        isS3,
+                        creditname
                 );
-                Log.e("Save","Post");
+                Log.e("Save",headline);
                 if (issimplified.equals("true")||isviral.equals("true")){
                     trends++;
                 }else {

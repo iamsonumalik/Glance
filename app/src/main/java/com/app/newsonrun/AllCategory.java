@@ -9,14 +9,15 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
+import android.text.Html;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -25,7 +26,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,7 +66,11 @@ public class AllCategory extends Activity implements View.OnClickListener {
     private ArrayList<String> headlines;
     private ArrayList<String> contents;
     private ArrayList<String> timelinepublicid;
+    private ArrayList<Boolean> timelines3;
+    private ArrayList<String> timelinecredits;
     private ArrayList<String> timelinedate;
+    private ArrayList<String> headlineslist;
+    private ArrayList<String> isS3lis;
     private int width;
     private int height;
     private String getting_id;
@@ -74,23 +78,17 @@ public class AllCategory extends Activity implements View.OnClickListener {
     boolean doubleBackToExitPressedOnce = false;
     private int scrollposition=0;
     private File directory;
-    private FrameLayout onborading;
-    private Button allgo;
+    private FrameLayout newborading;
     private ArrayList<String> temp;
     private boolean isviral;
     private  String currentCategory;
-    private TextView newstv;
-    private TextView viraltv;
     private Typeface face;
-    private ImageView viralimageview;
-    private ImageView newsimageview;
     private RelativeLayout loadingnewpost;
     private ProgressBar firstBar;
     private VerticalPager pager;
     private RelativeLayout close2;
     private String moveto="";
     private boolean isnews;
-    private Switch switchCompat;
     private LinearLayout viral;
     private LinearLayout business;
     private LinearLayout simplified;
@@ -110,6 +108,17 @@ public class AllCategory extends Activity implements View.OnClickListener {
     private TextView loadingtimelinetv;
     private LinearLayout infolayout;
     private ArrayList<String> timestamplist;
+    private boolean onceTime=true;
+    private LinearLayout imagecreditlayout;
+    private TextView imagecredit;
+    private boolean handleft;
+    private boolean handdown;
+    private ImageView handdownimgv;
+    private ImageView handupimgv;
+    private ImageView handleftimgv;
+    private RelativeLayout swipedown;
+    private RelativeLayout swipeleft;
+    private ArrayList<String> categorylist;
 
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,75 +139,31 @@ public class AllCategory extends Activity implements View.OnClickListener {
         Controller.getInstance().trackScreenView("All");
 
         //Intialize ArrayLists
-        temp = new ArrayList<String>();
-        othertags = new ArrayList<String>();
-        public_idlist = new ArrayList<String>();
-        _id = new ArrayList<String>();
-        linktonews = new ArrayList<String>();
-        contents = new ArrayList<String>();
-        headlines = new ArrayList<String>();
-        timelinedate = new ArrayList<String>();
-        timelinepublicid = new ArrayList<String>();
-        timestamplist = new ArrayList<String>();
-        close2 = (RelativeLayout) findViewById(R.id.backlay2);
+        initializeArrayLists();
+
+
         //Intialize Views
-        newstv = (TextView) findViewById(R.id.newstv);
-        viraltv = (TextView) findViewById(R.id.viral);
-        share = (RelativeLayout) findViewById(R.id.sharelayout);
-        loadingtimelinetv = (TextView) findViewById(R.id.loadingtimelinetv);
-        refresh = (RelativeLayout) findViewById(R.id.refreshlayout);
-        watch = (LinearLayout) findViewById(R.id.allviewwatchvideolayout);
-        buttonlayout = (RelativeLayout) findViewById(R.id.allviewbuttonlayout);
-        viewPager = (ViewPager) findViewById(R.id.allpager);
-        listview = (ListView) findViewById(R.id.alllistview);
-        //scrollview = (ScrollView) findViewById(R.id.allscrollView);
-        onborading = (FrameLayout)findViewById(R.id.onboarding);
-        allgo = (Button) findViewById(R.id.allgo);
-        goupbutton = (Button) findViewById(R.id.goupbutton);
-        timelineheader = (TextView) findViewById(R.id.timelineheader);
-        viralimageview = (ImageView) findViewById(R.id.viralimageview);
-        newsimageview = (ImageView) findViewById(R.id.newsimageview);
-        loadingnewpost = (RelativeLayout) findViewById(R.id.loadingnewpost);
-        switchCompat = (Switch) findViewById(R.id.mySwitch);
-        all = (LinearLayout) findViewById(R.id.allmenu);
-        science = (LinearLayout) findViewById(R.id.sciencemenu);
-        entertainment = (LinearLayout) findViewById(R.id.entertainmentmenu);
-        simplified = (LinearLayout) findViewById(R.id.simplifiedmenu);
-        viral = (LinearLayout) findViewById(R.id.viralmenu);
-        india = (LinearLayout) findViewById(R.id.indiamenu);
-        sports = (LinearLayout) findViewById(R.id.sportsmenu);
-        business = (LinearLayout) findViewById(R.id.businessmenu);
-        world = (LinearLayout) findViewById(R.id.worldmenu);
-        infolayout = (LinearLayout) findViewById(R.id.infolayout);
-        youareoffline = (TextView) findViewById(R.id.youareoffline);
+        initializeviews();
+
 
        pager = (VerticalPager) findViewById(R.id.verticalpager);
 
         //SharedPreferences
-         editor = getSharedPreferences(MY_PREFS_NAME, 0).edit();
-        allgo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buttonlayout.setVisibility(View.VISIBLE);
-                onborading.setVisibility(View.GONE);
-                editor.putBoolean("isfirst", true);
-                editor.commit();
-                editor.apply();
-            }
-        });
+        editor = getSharedPreferences(MY_PREFS_NAME, 0).edit();
+        buttonlayout.setVisibility(View.VISIBLE);
+        editor.putBoolean("isfirst", true);
+        editor.commit();
+        editor.apply();
+
          prefs = getSharedPreferences(MY_PREFS_NAME, 0);
         final boolean isfirst = prefs.getBoolean("isfirst", false);
         final boolean israted = prefs.getBoolean("israted",false);
         final boolean didyes = prefs.getBoolean("didyes",false);
+        handleft = prefs.getBoolean("handleft",false);
+        handdown = prefs.getBoolean("handdown",false);
         final int[] count = {prefs.getInt("count", 0)};
         videopost = prefs.getBoolean("videopost",false);
         videopostCounter = prefs.getInt("videopostCounter",0);
-        if (!isfirst){
-            onborading.setVisibility(View.VISIBLE);
-
-        }else {
-            onborading.setVisibility(View.GONE);
-        }
 
         //Button Clicks
         share.setOnClickListener(this);
@@ -209,8 +174,6 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
         //ListView Setting
         listview.setVisibility(View.GONE);
-        //listview.setPullLabel("Pull down for News");
-        //listview.setReleaseLabel("Release for News");
         if (!(CheckNetworkConnection.isConnectionAvailable(getBaseContext()))){
             showCustomAlert();
         }
@@ -219,38 +182,22 @@ public class AllCategory extends Activity implements View.OnClickListener {
         gettoken = prefs.getString("token", "");
 
         //Setting font
-        Typeface head = Typeface.createFromAsset(getAssets(), "headline.otf");
+        final Typeface head = Typeface.createFromAsset(getAssets(), "content.otf");
+        Typeface cont = Typeface.createFromAsset(getAssets(), "headline.otf");
         face = Typeface.createFromAsset(getAssets(), "lodingfont.ttf");
-        newstv.setTypeface(face);
-        viraltv.setTypeface(face);
         timelineheader.setTypeface(face);
         loadingtimelinetv.setTypeface(face);
         youareoffline.setTypeface(face);
+        imagecredit.setTypeface(cont);
 
 
         new CheckUpdate(gettoken,AllCategory.this).execute();
-
-        /*try{
-            SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
-            savingPublicId.open();
-            temp = savingPublicId.getAll();
-            savingPublicId.close();
-        }catch (Exception e){
-
-        }*/
-       // fromdatabase(temp);
 
         Display display = getWindowManager().getDefaultDisplay();
         width = display.getWidth();  // deprecated
         height = display.getHeight();  // deprecated
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
         viewPager.setLayoutParams(layoutParams);
-
-
-        //settingViewPager();
-
-        //savingImage();
-        switchCompat.setChecked(isnews);
         setSwitchContent(isnews);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -261,6 +208,13 @@ public class AllCategory extends Activity implements View.OnClickListener {
             @Override
             public void onPageSelected(int position) {
                 currenPosition = position;
+                onceTime=true;
+                handleft=true;
+                removeswip();
+
+                if (!handdown) {
+                    countit.start();
+                }
                 videopost = prefs.getBoolean("videopost",false);
                 videopostCounter = prefs.getInt("videopostCounter",0);
                 RelativeLayout.LayoutParams layoutParamss = new RelativeLayout.LayoutParams(width, 0);
@@ -285,12 +239,9 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 listview.setVisibility(View.GONE);
                 getLink();
                 setVisiblityofwatchbutton();
-                //countit.cancel();
-                //countit.start();
                 if (position > public_idlist.size() - 7) {
                     new ExtendCategory().execute();
                 }
-               // savingImage();
 
 
             }
@@ -299,16 +250,6 @@ public class AllCategory extends Activity implements View.OnClickListener {
             public void onPageScrollStateChanged(int state) {
 
 
-            }
-        });
-
-        //viewPager.setPageTransformer(false, new FlipPageViewTransformer());
-
-        switchCompat.setSwitchPadding(40);
-        switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                setSwitchContent(isChecked);
             }
         });
 
@@ -322,7 +263,9 @@ public class AllCategory extends Activity implements View.OnClickListener {
                     iup[0] = false;
                     removeOptions();
                     callMenu();
-
+                    countit.cancel();
+                    handdown = true;
+                    removeswip();
                 } else if (scrollX < 0 && scrollX > -100) {
                     //idown[0] = false;
                 }
@@ -330,20 +273,27 @@ public class AllCategory extends Activity implements View.OnClickListener {
             }
 
             public void onViewScrollFinished(int currentPage) {
-                moveto="";
+                moveto = "";
                 if (currentPage == 1) {
                     if (!(CheckNetworkConnection.isConnectionAvailable(getBaseContext()))) {
                         showCustomAlert();
                     }
-                    if (listview.getVisibility()==View.GONE){
+                    if (onceTime) {
+                        onceTime = false;
+                        Log.e("Fetching", "Timeline");
                         loadingtimelinetv.setVisibility(View.VISIBLE);
                         new FetchTimeline().execute();
 
                     }
+                    countit.cancel();
+                    removeswip();
                     timelineheader.setVisibility(View.VISIBLE);
                     goupbutton.setVisibility(View.VISIBLE);
                     removeOptions();
                 } else {
+                    if (!handdown) {
+                        countit.start();
+                    }
                     timelineheader.setVisibility(View.GONE);
                     goupbutton.setVisibility(View.GONE);
 
@@ -352,6 +302,63 @@ public class AllCategory extends Activity implements View.OnClickListener {
         });
 
     }
+
+    private void initializeArrayLists() {
+        temp = new ArrayList<String>();
+        othertags = new ArrayList<String>();
+        public_idlist = new ArrayList<String>();
+        _id = new ArrayList<String>();
+        linktonews = new ArrayList<String>();
+        contents = new ArrayList<String>();
+        headlines = new ArrayList<String>();
+        timelinedate = new ArrayList<String>();
+        timelinepublicid = new ArrayList<String>();
+        timelinecredits = new ArrayList<String>();
+        timelines3 = new ArrayList<Boolean>();
+        timestamplist = new ArrayList<String>();
+        headlineslist= new ArrayList<String>();
+        isS3lis= new ArrayList<String>();
+        categorylist= new ArrayList<String>();
+    }
+
+    private void removeswip() {
+        swipedown.setVisibility(View.GONE);
+        swipeleft.setVisibility(View.GONE);
+    }
+
+    private void initializeviews() {
+        close2 = (RelativeLayout) findViewById(R.id.backlay2);
+        share = (RelativeLayout) findViewById(R.id.sharelayout);
+        loadingtimelinetv = (TextView) findViewById(R.id.loadingtimelinetv);
+        imagecredit = (TextView) findViewById(R.id.imagecredit);
+        refresh = (RelativeLayout) findViewById(R.id.refreshlayout);
+        watch = (LinearLayout) findViewById(R.id.allviewwatchvideolayout);
+        buttonlayout = (RelativeLayout) findViewById(R.id.allviewbuttonlayout);
+        viewPager = (ViewPager) findViewById(R.id.allpager);
+        listview = (ListView) findViewById(R.id.alllistview);
+        //scrollview = (ScrollView) findViewById(R.id.allscrollView);
+        newborading = (FrameLayout)findViewById(R.id.newboarding);
+        goupbutton = (Button) findViewById(R.id.goupbutton);
+        timelineheader = (TextView) findViewById(R.id.timelineheader);
+        loadingnewpost = (RelativeLayout) findViewById(R.id.loadingnewpost);
+        all = (LinearLayout) findViewById(R.id.allmenu);
+        science = (LinearLayout) findViewById(R.id.sciencemenu);
+        entertainment = (LinearLayout) findViewById(R.id.entertainmentmenu);
+        simplified = (LinearLayout) findViewById(R.id.simplifiedmenu);
+        viral = (LinearLayout) findViewById(R.id.viralmenu);
+        india = (LinearLayout) findViewById(R.id.indiamenu);
+        sports = (LinearLayout) findViewById(R.id.sportsmenu);
+        business = (LinearLayout) findViewById(R.id.businessmenu);
+        world = (LinearLayout) findViewById(R.id.worldmenu);
+        infolayout = (LinearLayout) findViewById(R.id.infolayout);
+        imagecreditlayout = (LinearLayout) findViewById(R.id.imagecreditlayout);
+        youareoffline = (TextView) findViewById(R.id.youareoffline);
+        handdownimgv = (ImageView) findViewById(R.id.handdown);
+        handleftimgv = (ImageView) findViewById(R.id.handleft);
+        swipedown = (RelativeLayout) findViewById(R.id.downlayout);
+        swipeleft = (RelativeLayout) findViewById(R.id.leftlayout);
+    }
+
     private void setSwitchContent(boolean isChecked) {
         all.setBackground(getResources().getDrawable(R.drawable.remove_border));
         science.setBackground(getResources().getDrawable(R.drawable.remove_border));
@@ -363,9 +370,6 @@ public class AllCategory extends Activity implements View.OnClickListener {
         world.setBackground(getResources().getDrawable(R.drawable.remove_border));
         simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
 
-        if (isChecked) {
-            newsimageview.setImageDrawable(getResources().getDrawable(R.drawable.newsled));
-            viralimageview.setImageDrawable(getResources().getDrawable(R.drawable.offled));
             Controller.getInstance().trackEvent("All", "Menu", "user");
             Controller.getInstance().trackScreenView("All");
             isviral = false;
@@ -381,29 +385,12 @@ public class AllCategory extends Activity implements View.OnClickListener {
             }
             resetViewPager();
             close2.setVisibility(View.GONE);
-        } else {
-            newsimageview.setImageDrawable(getResources().getDrawable(R.drawable.offled));
-            viralimageview.setImageDrawable(getResources().getDrawable(R.drawable.otherled));
-            Controller.getInstance().trackEvent("TRENDS", "Menu", "user");
-            Controller.getInstance().trackScreenView("All");
-            isviral = false;
-            currentCategory = "TRENDS";
-            try{
-                SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
-                savingPublicId.open();
-                temp.removeAll(temp);
-                temp = savingPublicId.getTrends();
-                savingPublicId.close();
-            }catch (Exception e){
 
-            }
-            resetViewPager();
-            close2.setVisibility(View.GONE);
-        }
     }
 
     private void removeOptions() {
         if (buttonlayout.getVisibility() == View.VISIBLE) {
+            imagecreditlayout.setVisibility(View.GONE);
             buttonlayout.setVisibility(View.GONE);
             Animation anim = AnimationUtils.loadAnimation(
                     AllCategory.this, R.anim.slide_out_to_bottom
@@ -421,6 +408,9 @@ public class AllCategory extends Activity implements View.OnClickListener {
             linktonews.removeAll(linktonews);
             _id.removeAll(_id);
             timestamplist.removeAll(timestamplist);
+            headlineslist.removeAll(headlineslist);
+            isS3lis.removeAll(headlineslist);
+            categorylist.removeAll(categorylist);
         }
         int index=0;
         ArrayList<String> tempPid = new ArrayList<String>();
@@ -428,13 +418,18 @@ public class AllCategory extends Activity implements View.OnClickListener {
         ArrayList<String> temp_id = new ArrayList<String>();
         ArrayList<String> templinktonews = new ArrayList<String>();
         ArrayList<String> temptimestamplist = new ArrayList<String>();
-
+        ArrayList<String> tempheadlineslist = new ArrayList<String>();
+        ArrayList<String> tempcategorylist = new ArrayList<String>();
+        ArrayList<String> tempisS3lis = new ArrayList<String>();
         for (int t = 0;t<temp.size();t++){
             tempPid.add(index,temp.get(t++));
             tempothertags.add(index,temp.get(t++));
             temp_id.add(index,temp.get(t++));
             templinktonews.add(index,temp.get(t++));
-            temptimestamplist.add(index++,temp.get(t));
+            temptimestamplist.add(index,temp.get(t++));
+            tempheadlineslist.add(index,temp.get(t++));
+            tempcategorylist.add(index,temp.get(t++));
+            tempisS3lis.add(index++,temp.get(t));
 
         }
         this.temp.removeAll(this.temp);
@@ -442,10 +437,16 @@ public class AllCategory extends Activity implements View.OnClickListener {
         int t=0;
             while (tempPid.size()>0){
             if(templinktonews.get(t).equals("n")){
-                setArraylists(t,tempPid,tempothertags,temp_id,templinktonews,temptimestamplist);
+                setArraylists(t,tempPid,tempothertags,temp_id,
+                        templinktonews,temptimestamplist,
+                        tempheadlineslist,tempcategorylist,tempisS3lis);
             }else {
-                searchLink(tempPid, tempothertags, temp_id, templinktonews.get(t), templinktonews,temptimestamplist);
-                setArraylists(t, tempPid, tempothertags, temp_id, templinktonews,temptimestamplist);
+                searchLink(tempPid, tempothertags, temp_id, templinktonews.get(t),
+                        templinktonews,temptimestamplist,
+                        tempheadlineslist,tempcategorylist,tempisS3lis);
+                setArraylists(t, tempPid, tempothertags, temp_id,
+                        templinktonews,temptimestamplist,
+                        tempheadlineslist, tempcategorylist, tempisS3lis);
             }
                 //t++;
         }
@@ -453,28 +454,36 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
     }
 
-    private void setArraylists(int t, ArrayList<String> tempPid, ArrayList<String> tempothertags, ArrayList<String> temp_id, ArrayList<String> templinktonews, ArrayList<String> temptimestamplist) {
+    private void setArraylists(int t, ArrayList<String> tempPid, ArrayList<String> tempothertags,
+                               ArrayList<String> temp_id, ArrayList<String> templinktonews,
+                               ArrayList<String> temptimestamplist, ArrayList<String> tempheadlineslist, ArrayList<String> tempcategorylist, ArrayList<String> tempisS3lis) {
         public_idlist.add(tempPid.get(t));
         othertags.add(tempothertags.get(t));
         _id.add(temp_id.get(t));
         linktonews.add(templinktonews.get(t));
         timestamplist.add(temptimestamplist.get(t));
+        headlineslist.add(tempheadlineslist.get(t));
+        categorylist.add(tempcategorylist.get(t));
+        isS3lis.add(tempisS3lis.get(t));
         tempPid.remove(t);
         tempothertags.remove(t);
         temp_id.remove(t);
         templinktonews.remove(t);
         temptimestamplist.remove(t);
+        tempheadlineslist.remove(t);
+        tempcategorylist.remove(t);
+        tempisS3lis.remove(t);
     }
 
-    private void searchLink(ArrayList<String> tempPid, ArrayList<String> tempothertags, ArrayList<String> temp_id, String s, ArrayList<String> templinktonews, ArrayList<String> temptimestamplist) {
+    private void searchLink(ArrayList<String> tempPid, ArrayList<String> tempothertags, ArrayList<String> temp_id, String s, ArrayList<String> templinktonews, ArrayList<String> temptimestamplist, ArrayList<String> tempheadlineslist, ArrayList<String> tempcategorylist, ArrayList<String> tempisS3lis) {
 
         for (int t= 0 ; t<temp_id.size();t++){
             if (temp_id.get(t).equals(s)) {
                 if (templinktonews.get(t).equals("")) {
-                    setArraylists(t, tempPid, tempothertags, temp_id, templinktonews, temptimestamplist);
+                    setArraylists(t, tempPid, tempothertags, temp_id, templinktonews, temptimestamplist, tempheadlineslist, tempcategorylist, tempisS3lis);
                 } else {
-                    searchLink(tempPid, tempothertags, temp_id, templinktonews.get(t), templinktonews, temptimestamplist);
-                    setArraylists(t, tempPid, tempothertags, temp_id, templinktonews, temptimestamplist);
+                    searchLink(tempPid, tempothertags, temp_id, templinktonews.get(t), templinktonews, temptimestamplist, tempheadlineslist, tempcategorylist, tempisS3lis);
+                    setArraylists(t, tempPid, tempothertags, temp_id, templinktonews, temptimestamplist, tempheadlineslist, tempcategorylist, tempisS3lis);
                 }break;
             }
         }
@@ -488,12 +497,14 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 getResources(),this,
                 buttonlayout,
                 isviral,
-                timestamplist
+                timestamplist,
+                imagecreditlayout,
+                headlineslist,categorylist,
+                swipedown,swipeleft,isS3lis
 
         );
-
+        viewPager.setAdapter(adapter);
         if (public_idlist.size()>0) {
-            viewPager.setAdapter(adapter);
             if (moveto.equals("")) {
                 viewPager.setCurrentItem(currenPosition);
                 name = public_idlist.get(currenPosition);
@@ -516,16 +527,6 @@ public class AllCategory extends Activity implements View.OnClickListener {
         //Log.e("Name ", name);
         Controller.getInstance().trackScreenView(getBaseContext().getResources().getString(R.string.url) + name + ".png");
 
-        try {
-            SavingPublicId savingPublicId = new SavingPublicId(this);
-            savingPublicId.open();
-            getting_id = savingPublicId.get_id(name);
-            Log.e("_id after", getting_id);
-            savingPublicId.close();
-        } catch (Exception e) {
-            Log.e("_id inAdapter", e.toString());
-
-        }
 
         getLink();
         setVisiblityofwatchbutton();
@@ -538,6 +539,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
         }else {
             timelineheader.setText("More on " + othertags.get(tagPosition) + ".");
         }
+
     }
 
     private void setVisiblityofwatchbutton() {
@@ -548,9 +550,10 @@ public class AllCategory extends Activity implements View.OnClickListener {
             Log.e("out", String.valueOf(videopost));
 
             if (!videopost){
-                if(videopostCounter<5) {
+                if(videopostCounter<1) {
                     Log.e("in", String.valueOf(videopost));
-                    youareoffline.setText("Tap screen to watch Video.");
+                    //youareoffline.setBackgroundResource(R.drawable.video_guide);
+                    youareoffline.setText("Tap screen to watch video.");
                     youareoffline.setVisibility(View.VISIBLE);
                     youareofflineC.start();
                     editor.putInt("videopostCounter", videopostCounter+1);
@@ -588,7 +591,17 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 pager.setCurrentPage(0);
                 break;
             case R.id.infolayout:
-                onborading.setVisibility(View.VISIBLE);
+                imagecreditlayout.setVisibility(View.VISIBLE);
+                try{
+                    SavingPublicId savingPublicId =new SavingPublicId(AllCategory.this);
+                    savingPublicId.open();
+                    String crts = savingPublicId.getCredits(public_idlist.get(currenPosition));
+                    savingPublicId.close();
+                    imagecredit.setText(Html.fromHtml("<b>Image Courtesy- </b>"+crts));
+                }catch (Exception e){
+                    imagecredit.setText(Html.fromHtml("<b>Image Courtesy- </b>"));
+                }
+
                 break;
         }
     }
@@ -609,8 +622,6 @@ public class AllCategory extends Activity implements View.OnClickListener {
     private class FetchTimeline extends AsyncTask<String,String,String> {
 
         private Custom_view cv;
-
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -618,31 +629,22 @@ public class AllCategory extends Activity implements View.OnClickListener {
             contents.removeAll(contents);
             timelinedate.removeAll(timelinedate);
             timelinepublicid.removeAll(timelinepublicid);
-            cv = new Custom_view(getBaseContext(), headlines, contents, timelinedate, timelinepublicid, getResources(), AllCategory.this);
+            timelines3.remove(timelines3);
+            timelinecredits.removeAll(timelinecredits);
+            cv = new Custom_view(getBaseContext(), headlines, contents, timelinedate, timelinepublicid, getResources(), AllCategory.this,timelines3,timelinecredits);
             listview.setAdapter(cv);
-        }
+                  }
 
         @Override
         protected String doInBackground(String... params) {
-            try {
-                SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
-                savingPublicId.open();
-                getting_id = savingPublicId.get_id(name);
-                Log.e("_id after", getting_id);
-                savingPublicId.close();
-            } catch (Exception e) {
-                Log.e("_id inAdapter", e.toString());
 
-            }
-
-
-
+            getting_id = _id.get(currenPosition);
             String _idl = getting_id;
             InputStream is = null;
             String line;
             try {
 
-                String strUrl = "http://52.25.155.157:8080/api/v1/news/related/"+_idl+"?apiKey="+gettoken;
+                String strUrl = getResources().getString(R.string.apiurl)+"/api/v1/news/related/"+_idl+"?apiKey="+gettoken;
                 strUrl = strUrl.replaceAll(" ", "%20");
                 URL url = new URL(strUrl);
                 HttpURLConnection urlConnection = null;
@@ -662,37 +664,36 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 result = sb.toString();
                 Log.e("pass 2", "connection success ");
 
-                headlines.removeAll(headlines);
-                contents.removeAll(contents);
-                timelinedate.removeAll(timelinedate);
-                timelinepublicid.removeAll(timelinepublicid);
                 JSONObject json_data = new JSONObject(result);
                 JSONArray array = json_data.getJSONArray("data");
                 int count = json_data.getInt("count");
+
                 for (int i=0;i<count;i++){
                         JSONObject data = array.getJSONObject(i);
                         JSONObject publish = data.getJSONObject("publish");
                         JSONObject portrait = publish.getJSONObject("portrait");
                         JSONObject url_id = portrait.getJSONObject("url");
                         JSONObject content = data.getJSONObject("content");
-                        //URLDecoder.decode(data.getString("headline"), "UTF-8");
+                        JSONObject source = data.getJSONObject("source");
+                        JSONObject image = source.getJSONObject("image");
                         String h = data.getString("headline");
                         headlines.add(i, h);
-                        //temp_header = temp_header + data.getString("headline");
-
-                    String com = content.getString("html");
-                    contents.add(i,com );
-                        //temp_content = temp_content + Html.fromHtml(content.getString("html"));
-                        timelinepublicid.add(i, url_id.getString("public_id"));
-                        //temp_public_ids = temp_public_ids + url_id.getString("public_id");
-                        //Log.e("Public" ,url_id.getString("public_id"));
-                        //Log.e("_id", _idl);
+                        String com = content.getString("html");
+                        contents.add(i,com );
+                        String p_id ="";
+                        try{
+                        p_id= url_id.getString("public_id");
+                            timelines3.add(false);
+                        }catch (Exception e){
+                        p_id= url_id.getString("filename");
+                            timelines3.add(false);
+                        }
+                        timelinepublicid.add(i, p_id);
+                        timelinecredits.add(image.getString("name"));
                         timelinedate.add(i, data.getString("timestampCreated"));
-                        //temp_date = temp_date + data.getString("timestampCreated");
+
                 }
 
-                //currentImage.setImageDrawable(imgDisplay.getDrawable());
-                //arrayAdapter.notifyDataSetChanged();
             } catch (Exception e) {
                 // TODO: handle exception
                 Log.e("log_tag", "Error parsing data " + e.toString());
@@ -704,12 +705,12 @@ public class AllCategory extends Activity implements View.OnClickListener {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            cv.notifyDataSetChanged();
-            //RelativeLayout.LayoutParams layoutParamss = new RelativeLayout.LayoutParams(width, headlines.size()*(height/4) + height/2);
-            //listview.setLayoutParams(layoutParamss);
-            setListViewHeightBasedOnChildren(listview,height);
-            listview.setVisibility(View.VISIBLE);
-            loadingtimelinetv.setVisibility(View.GONE);
+
+                cv.notifyDataSetChanged();
+                setListViewHeightBasedOnChildren(listview, height);
+                listview.setVisibility(View.VISIBLE);
+                loadingtimelinetv.setVisibility(View.GONE);
+
 
 
         }
@@ -737,24 +738,13 @@ public class AllCategory extends Activity implements View.OnClickListener {
         listView.setLayoutParams(params);
         listView.requestLayout();
     }
-    private void savingImage() {
-        if (scrollposition < public_idlist.size()) {
-            File file = new File(directory, public_idlist.get(scrollposition) + ".png");
-            if (!file.exists())
-                new SetImageView(null, public_idlist.get(scrollposition++), getBaseContext(), file);
-            else
-                scrollposition++;
-        }
-    }
 
     private void callMenu() {
         //final Dialog dialog = new Dialog(AllCategory.this, android.R.style.Theme_Translucent_NoTitleBar);
         //dialog.setContentView(R.layout.menu_dialog);
         final GridLayout close = (GridLayout) findViewById(R.id.backlay);
         close2.setVisibility(View.VISIBLE);
-        RelativeLayout switcherlayout = (RelativeLayout) findViewById(R.id.switcherlayout);
-        RelativeLayout.LayoutParams layoutPs = new RelativeLayout.LayoutParams(width,(int) (width/2.40));
-        switcherlayout.setLayoutParams(layoutPs);
+
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width/4,width/4);
 
@@ -839,14 +829,11 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 india.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 world.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                moveto="";
                 Controller.getInstance().trackEvent("ALL", "Menu", "user");
                 Controller.getInstance().trackScreenView("All");
                 isviral = false;
-                currenPosition = 0;
-                scrollposition=0;
-
                 currentCategory = "ALL";
+                currenPosition = 0;moveto="";
                 try{
                     SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
                     savingPublicId.open();
@@ -873,13 +860,11 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 india.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 world.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                moveto="";
-                currenPosition = 0;
-                scrollposition=0;
                 Controller.getInstance().trackEvent("Science", "Menu", "user");
                 Controller.getInstance().trackScreenView("Science");
                 isviral = false;
                 currentCategory = "SCIENCE_TECH";
+                currenPosition = 0;moveto="";
                 try{
                     SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
                     savingPublicId.open();
@@ -905,13 +890,11 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 india.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 world.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                moveto="";
                 Controller.getInstance().trackEvent("Sports", "Menu", "user");
                 Controller.getInstance().trackScreenView("Sports");
                 isviral = false;
-                currenPosition = 0;
-                scrollposition=0;
                 currentCategory = "SPORTS";
+                currenPosition = 0;moveto="";
                 try{
                     SavingPublicId savingPublicId = new SavingPublicId(AllCategory.this);
                     savingPublicId.open();
@@ -937,7 +920,6 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 india.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 world.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                moveto="";
                 Controller.getInstance().trackEvent("Entertainment", "Menu", "user");
                 Controller.getInstance().trackScreenView("Entertainment");
                 try{
@@ -948,10 +930,9 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 }catch (Exception e){
                     Log.e("Science", e.toString());
                 }
-                isviral = false;
-                currenPosition = 0;
-                scrollposition=0;
+                isviral = false;moveto="";
                 currentCategory = "ENTERTAINMENT";
+                currenPosition = 0;
                 resetViewPager();
                 close2.setVisibility(View.GONE);
 
@@ -969,7 +950,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 india.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 world.setBackground(getResources().getDrawable(R.drawable.menuborder));
                 simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                moveto="";
+
                 Controller.getInstance().trackEvent("World", "Menu", "user");
                 Controller.getInstance().trackScreenView("World");
                 try{
@@ -981,9 +962,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
                     Log.e("Science", e.toString());
                 }
                 isviral = false;
-                currenPosition = 0;
-                scrollposition=0;
                 currentCategory = "WORLD";
+                currenPosition = 0;moveto="";
                 resetViewPager();
                 close2.setVisibility(View.GONE);
 
@@ -1001,7 +981,6 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 india.setBackground(getResources().getDrawable(R.drawable.menuborder));
                 world.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                moveto="";
                 Controller.getInstance().trackEvent("India", "Menu", "user");
                 Controller.getInstance().trackScreenView("India");
                 try{
@@ -1013,9 +992,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
                     Log.e("Science", e.toString());
                 }
                 isviral = false;
-                currenPosition = 0;
-                scrollposition=0;
                 currentCategory = "INDIA";
+                currenPosition = 0;moveto="";
                 resetViewPager();
                 close2.setVisibility(View.GONE);
 
@@ -1033,7 +1011,6 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 india.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 world.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 simplified.setBackground(getResources().getDrawable(R.drawable.menuborder));
-                moveto="";
                 Controller.getInstance().trackEvent("Simplified", "Menu", "user");
                 Controller.getInstance().trackScreenView("Simplified");
                 try{
@@ -1045,9 +1022,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
                     Log.e("Businness", e.toString());
                 }
                 isviral = false;
-                currenPosition = 0;
-                scrollposition=0;
                 currentCategory = "SIMPLIFIED";
+                currenPosition = 0;moveto="";
                 resetViewPager();
                 close2.setVisibility(View.GONE);
 
@@ -1065,7 +1041,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 india.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 world.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                moveto="";
+
 
                 Controller.getInstance().trackEvent("Business", "Menu", "user");
                 Controller.getInstance().trackScreenView("Business");
@@ -1078,9 +1054,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
                     Log.e("Science", e.toString());
                 }
                 isviral = false;
-                currenPosition = 0;
-                scrollposition=0;
                 currentCategory = "BUSINESS";
+                currenPosition = 0;moveto="";
                 resetViewPager();
                 close2.setVisibility(View.GONE);
 
@@ -1098,7 +1073,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 india.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 world.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                moveto="";
+
                 Controller.getInstance().trackEvent("Viral", "Menu", "user");
                 Controller.getInstance().trackScreenView("Viral");
                 try{
@@ -1110,9 +1085,9 @@ public class AllCategory extends Activity implements View.OnClickListener {
                     Log.e("Businness", e.toString());
                 }
                 isviral = true;
-                currenPosition = 0;
-                scrollposition=0;
+
                 currentCategory = "VIRAL";
+                currenPosition = 0;moveto="";
                 resetViewPager();
                 close2.setVisibility(View.GONE);
             }
@@ -1133,9 +1108,9 @@ public class AllCategory extends Activity implements View.OnClickListener {
     }
 
     private void resetViewPager() {
+        scrollposition=0;
+        onceTime=true;
         fromdatabase(temp);
-        //adapter.notifyDataSetChanged();
-       // savingImage();
         countit.cancel();
         settingViewPager();
         removeOptions();
@@ -1180,7 +1155,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
         super.onPause();
         timer.start() ;
     }
-    CountDownTimer countit = new CountDownTimer(1* 1000, 100) {
+    CountDownTimer countit = new CountDownTimer(2* 1000, 500) {
 
         public void onTick(long millisUntilFinished) {
             //Some code
@@ -1189,10 +1164,52 @@ public class AllCategory extends Activity implements View.OnClickListener {
         public void onFinish() {
             //Logout
             //new FetchTimeline().execute();
+            Animation an1;
+
+            swipedown.setVisibility(View.GONE);
+            swipeleft.setVisibility(View.GONE);
+
+            if (handleft){
+                    if (handdown){
+                                newborading.setVisibility(View.GONE);
+                    }else {
+                        swipedown.setVisibility(View.VISIBLE);
+                        an1 = AnimationUtils.loadAnimation(AllCategory.this, R.anim.top_down);
+                        an1.setRepeatCount(5);  // animation repeat count
+                        an1.setRepeatMode(2);
+                        setCustmAnimation(handdownimgv, an1);
+                        editor.putBoolean("handdown", true);
+                        editor.commit();
+                        editor.apply();
+                    }
+            }else {
+                    swipeleft.setVisibility(View.VISIBLE);
+                    an1 = AnimationUtils.loadAnimation(AllCategory.this, R.anim.right_left);
+                    an1.setRepeatCount(5);  // animation repeat count
+                    an1.setRepeatMode(2);
+                    setCustmAnimation(handleftimgv, an1);
+                    editor.putBoolean("handleft",true);
+                    editor.commit();
+                    editor.apply();
+                    //setCustmAnimation(handleftimgv, an1);
+            }
         }
 
     };
-    CountDownTimer timer = new CountDownTimer(5 *60 * 1000, 1000) {
+
+    private void floatAnimation(ImageView swp) {
+        TranslateAnimation animation = new TranslateAnimation(0.0f,0.0f,0.0f,20.0f);
+        animation.setDuration(1500);
+        animation.setRepeatMode(2);
+        animation.setRepeatCount(Animation.INFINITE);
+        swp.startAnimation(animation);
+    }
+
+    private void setCustmAnimation(ImageView img, Animation an1) {
+        img.startAnimation(an1);
+    }
+
+    CountDownTimer timer = new CountDownTimer(5 *60 * 1000, 5000) {
 
         public void onTick(long millisUntilFinished) {
             //Some code
@@ -1218,7 +1235,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
             }
             if (public_idlist.size()>0) {
-                String tstamp = savingPublicId.gettimestampcreated(public_idlist.get(public_idlist.size()-1));
+                String tstamp = timestamplist.get(public_idlist.size()-1);
                 Log.e("timeStamp ", tstamp);
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                 sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -1242,21 +1259,17 @@ public class AllCategory extends Activity implements View.OnClickListener {
         @Override
         protected String doInBackground(String... params) {
             try{
-                String strUrl = "http://52.25.155.157:8080/api/v1/news/category/"+currentCategory+"/feed/"+gettime+"?apiKey="+gettoken;
+                String strUrl = getResources().getString(R.string.apiurl)+"/api/v1/news/category/"+currentCategory+"/feed/"+gettime+"?apiKey="+gettoken;
                 strUrl = strUrl.replaceAll(" ", "%20");
                 URL url = new URL(strUrl);
                 HttpURLConnection urlConnection = null;
                 urlConnection = (HttpURLConnection) url.openConnection();
-
-
                 urlConnection.connect();
-
-
                 InputStream is = urlConnection.getInputStream();
                 Log.e("pass 1", "connection success ");
 
                 BufferedReader reader = new BufferedReader
-                        (new InputStreamReader(is, "iso-8859-1"), 8);
+                        (new InputStreamReader(is, "UTF-8"), 8);
                 StringBuilder sb = new StringBuilder();
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -1281,6 +1294,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
                         JSONObject portrait = publish.getJSONObject("portrait");
                         JSONObject url_id = portrait.getJSONObject("url");
                         JSONObject attributes = data.getJSONObject("attributes");
+                        JSONObject source = data.getJSONObject("source");
+                        JSONObject image = source.getJSONObject("image");
                         JSONObject tags = data.getJSONObject("tags");
                         JSONArray others = tags.getJSONArray("other");
                         String othert = "";
@@ -1300,7 +1315,17 @@ public class AllCategory extends Activity implements View.OnClickListener {
                         Log.e("Tagi", othert);
                         //Temp Variables
                         String _id = data.getString("_id");
-                        String p_id = url_id.getString("public_id");
+                        String p_id ="";
+                        String isS3;
+                        try{
+                            p_id= url_id.getString("public_id");
+                            isS3 = "false";
+                        }catch (Exception e){
+                            p_id= url_id.getString("filename");
+                            isS3 = "true";
+                        }
+                        String heading = data.getString("headline");
+                        String creditname = image.getString("name");
                         String timestamp = data.getString("timestampCreated");
                         String category = tags.getString("category");
                         int editorRating = attributes.getInt("editorRating");
@@ -1341,9 +1366,9 @@ public class AllCategory extends Activity implements View.OnClickListener {
                         temp.add(_id);
                         temp.add(linkedToNews);
                         temp.add(timestamp);
-                        //public_idlist.add(p_id);
-                        //othertags.add(othert);
-
+                        temp.add(heading);
+                        temp.add(category);
+                        temp.add(isS3);
                         //Saving Recent Posts
                         savingPublicId.createEntry(i,
                                 _id,
@@ -1358,8 +1383,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
                                 enabled,
                                 othert,
                                 linkedToNews,
-                                isFact
-                        );
+                                isFact,
+                                heading, isS3, creditname);
                     }
 
                 }else {
@@ -1393,24 +1418,9 @@ public class AllCategory extends Activity implements View.OnClickListener {
         youareoffline.setVisibility(View.VISIBLE);
         youareofflineC.cancel();
         youareofflineC.start();
-        /*Context context = getApplicationContext();
-        // Create layout inflator object to inflate toast.xml file
-        LayoutInflater inflater = getLayoutInflater();
-
-        // Call toast.xml file for toast layout
-        View toastRoot = inflater.inflate(R.layout.toast, null);
-
-        Toast toast = new Toast(context);
-
-        // Set layout to toast
-        toast.setView(toastRoot);
-        toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL,
-                0, 0);
-        toast.setDuration(Toast.LENGTH_LONG);
-        toast.show();*/
 
     }
-    CountDownTimer youareofflineC = new CountDownTimer(3*1000, 1000) {
+    CountDownTimer youareofflineC = new CountDownTimer(2*1000, 1000) {
 
         public void onTick(long millisUntilFinished) {
             //Some code
@@ -1419,7 +1429,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
         public void onFinish() {
             //Logout
             youareoffline.setVisibility(View.GONE);
-            youareoffline.setText("Please connect to Internet.");
+            //youareoffline.setBackgroundResource(Color.parseColor("#000000"));
+            youareoffline.setText(getResources().getString(R.string.interneterror));
         }
     };
 

@@ -28,7 +28,6 @@ public class SavingCache {
 
 
 
-
     private static class SHHelper extends SQLiteOpenHelper{
 
         public SHHelper(Context context){
@@ -80,7 +79,7 @@ public class SavingCache {
         ContentValues cv = new ContentValues();
         cv.put(History_sno,sno);
         cv.put(History_cache_publicid,publicid);
-        cv.put(History_cache_timestamp,timestampcreated);
+        cv.put(History_cache_timestamp, timestampcreated);
 
         return ourdatabase.insert(DATABASE_TABLE1, null, cv);
     }
@@ -92,18 +91,22 @@ public class SavingCache {
         Cursor c= ourdatabase.query(DATABASE_TABLE1, colums, null, null, null, null, History_cache_timestamp + " DESC");
         ArrayList<String> result = new ArrayList<String>();
         int i_pid = c.getColumnIndex(History_cache_publicid);
-
-
-
         int i = 0;
-
         for(c.moveToLast();!c.isBeforeFirst();c.moveToPrevious()){
-            //result.add(c.getString(i_id));
             result.add(c.getString(i_pid));
 
         }
 
         return result;
+    }
+    public int getTotal() {
+        // TODO Auto-generated method stub
+        String colums[] = new String[]{History_cache_publicid,History_cache_timestamp};
+        Cursor c= ourdatabase.query(DATABASE_TABLE1, colums, null, null, null, null, History_cache_timestamp + " DESC");
+        return  c.getCount();
+    }
+    public void deleteItem(String name) {
+        ourdatabase.delete(DATABASE_TABLE1,History_cache_publicid+"='"+name+"'",null);
     }
 
     public void dropdb(){

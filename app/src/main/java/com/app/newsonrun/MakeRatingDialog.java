@@ -149,11 +149,11 @@ public class MakeRatingDialog{
             public void onClick(View v) {
                 editor.putBoolean("israted",true);
                 editor.commit();
-                final String appPackageName = allCategory.getPackageName(); // getPackageName() from Context or Activity object
+                //final String appPackageName = allCategory.; // getPackageName() from Context or Activity object
                 try {
-                    allCategory.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                    allCategory.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.app.newsonrun")));
                 } catch (android.content.ActivityNotFoundException anfe) {
-                    allCategory.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                    allCategory.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.app.newsonrun")));
                 }
             }
 
@@ -181,7 +181,7 @@ public class MakeRatingDialog{
                 gettoken  = prefs.getString("token", "");
 
                 Log.e("Token" , gettoken);
-                String url = "http://52.25.155.157:8080/api/v1/feedback/save";
+                String url = getactivity.getResources().getString(R.string.apiurl)+"/api/v1/feedback/save";
                 URL object = new URL(url);
                 HttpURLConnection con = (HttpURLConnection) object.openConnection();
 

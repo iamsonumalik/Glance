@@ -10,7 +10,7 @@ public final class Config {
 
     public static final String YOUTUBE_API_KEY = "AIzaSyBVdeYygQAEzqXOYXa7xjwXFgBzlKRZjBk";
     // CONSTANTS
-    public static final String YOUR_SERVER_URL =  "http://wheresmyfriend.in/iamsonumalik.byethost11.com/register.php";
+    public static final String YOUR_SERVER_URL =  "";
     // YOUR_SERVER_URL : Server url where you have placed your server files
     // Google project id
     public static final String GOOGLE_SENDER_ID = "978875855254";  // Place here your Google project id

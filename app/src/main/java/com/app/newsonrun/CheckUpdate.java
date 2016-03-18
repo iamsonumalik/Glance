@@ -52,7 +52,7 @@ public class CheckUpdate  extends AsyncTask<String,Boolean,Boolean>{
     protected Boolean doInBackground(String... params) {
         try {
 
-            String strUrl = "http://52.25.155.157:8080/api/v1/version/ANDROID/latest?apiKey="+gettoken;
+            String strUrl = activity.getResources().getString(R.string.apiurl)+"/api/v1/version/ANDROID/latest?apiKey="+gettoken;
             strUrl = strUrl.replaceAll(" ", "%20");
             URL url = new URL(strUrl);
             HttpURLConnection urlConnection = null;

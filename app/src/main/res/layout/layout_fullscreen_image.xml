@@ -2,12 +2,94 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:id="@+id/timelinebackground"
+    android:background="#e6e7e8"
     android:layout_height="match_parent" >
 
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="25dp"
+        android:background="@drawable/toast_border"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text=""
+            android:id="@+id/headingadapter"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:textColor="#231f20"
+            android:layout_centerVertical="true"
+            android:textSize="24sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text=""
+            android:id="@+id/loadingadapter"
+            android:textColor="#414042"
+            android:layout_marginLeft="10dp"
+            android:textSize="14sp"
+            android:layout_alignTop="@+id/progressBar2"
+            android:layout_toRightOf="@+id/progressBar2"
+            android:layout_toEndOf="@+id/progressBar2" />
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/progressBar2"
+            android:layout_below="@+id/headingadapter"
+            android:layout_alignLeft="@+id/headingadapter"
+            android:layout_alignStart="@+id/headingadapter"
+            android:layout_marginTop="23dp" />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=" "
+        android:textColor="#231f20"
+        android:id="@+id/dateadapter"
+        android:background="#e6e7e8"
+        android:gravity="center"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="14sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=" "
+        android:textColor="#231f20"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:background="#e6e7e8"
+        android:gravity="center"
+        android:id="@+id/categoryadapter"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="14sp" />
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/imageView2"
+        android:src="@drawable/pagecurl"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/imgDisplay"
+        android:scaleType="fitXY"
         android:background="@drawable/waiting"
         />
 
@@ -16,6 +98,7 @@
         android:layout_height="50dp"
         android:background="@drawable/playit"
         android:id="@+id/playit"
+        android:visibility="gone"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
@@ -23,11 +106,14 @@
         android:layout_width="40dp"
         android:layout_height="45dp"
         android:id="@+id/mainlogohide"
+        android:visibility="gone"
         android:background="@drawable/mainlogohide"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginLeft="10dp" />
+
+
 
 
 </RelativeLayout>

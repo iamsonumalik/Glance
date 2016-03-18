@@ -4,13 +4,11 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Environment;
+import android.support.v4.view.ViewPager;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +16,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.text.ParseException;
@@ -45,6 +39,8 @@ public class Custom_view extends ArrayAdapter {
     private final ArrayList<String> timelinepublicid;
     private final int width;
     private final int height;
+    private final Timeline_adapter adapter;
+    private final ArrayList<Boolean> timelines3;
     private File directory = null;
     private int prev;
     TextView headlinestv;
@@ -68,8 +64,8 @@ public class Custom_view extends ArrayAdapter {
                        ArrayList<String> gettimelinedate,
                        ArrayList<String> gettimelinepublicid,
                        Resources ress,
-                       Activity act
-                        ) {
+                       Activity act,
+                       ArrayList<Boolean> timelines3, ArrayList<String> timelinecredits) {
         super(context, R.layout.timeline_layout, getheadline);
         this.context = context;
         this.getres = ress;
@@ -78,6 +74,8 @@ public class Custom_view extends ArrayAdapter {
         headlines = getheadline;
         timelinedate = gettimelinedate;
         timelinepublicid = gettimelinepublicid;
+        this.timelines3 =timelines3;
+        adapter = new Timeline_adapter(act,gettimelinepublicid,context,gettimelinedate,timelines3,timelinecredits);
         returnColor = new
                 ReturnColor();
         prev =0;
@@ -126,6 +124,7 @@ public class Custom_view extends ArrayAdapter {
         headlinestv = (TextView) rowView.findViewById(R.id.timelineTitletv);
         contentstv = (TextView) rowView.findViewById(R.id.timelinecontenettv);
         timelinelayout = (LinearLayout) rowView.findViewById(R.id.timelinelayout);
+        TextView endoftimeline = (TextView) rowView.findViewById(R.id.endoftimeline);
         abovebox = (Button) rowView.findViewById(R.id.smalllineabovetimline);
         belowbox = (Button) rowView.findViewById(R.id.smalllinebelowtimline);
         box = (LinearLayout) rowView.findViewById(R.id.leftstyle);
@@ -135,8 +134,7 @@ public class Custom_view extends ArrayAdapter {
         datetv.setTextColor(getres.getColor(returnColor.colorint(col)));
         box.setBackgroundResource(returnColor.colorint(col));
         belowbox.setBackgroundResource(returnColor.colorint(col));
-
-                timelinelayout.setVisibility(View.VISIBLE);
+        timelinelayout.setVisibility(View.VISIBLE);
         String item_content="";
         String item_headline="";
         String item_timeline_public_id="";
@@ -164,7 +162,6 @@ public class Custom_view extends ArrayAdapter {
 
                 date = sdf.parse(dateget);
 
-            //Log.e("Get TIme" , String.valueOf(st));
                 dateFormatGmt.setTimeZone(TimeZone.getTimeZone("UTC"));
                 String formattedDate = dateFormatGmt.format(date);
                 datetv.setText(formattedDate);
@@ -175,6 +172,7 @@ public class Custom_view extends ArrayAdapter {
                 headlinestv.setTypeface(head);
                 contentstv.setTypeface(cont);
                 datetv.setTypeface(cont);
+                endoftimeline.setTypeface(head);
 
         final String finalItem_timeline_public_id = item_timeline_public_id;
         final Date finalDate = date;
@@ -182,52 +180,19 @@ public class Custom_view extends ArrayAdapter {
                     @Override
                     public void onClick(View v) {
 
-                        String t = "1 Feb 2016";
-                        currenttime = finalDate.getTime();
-
-                        SimpleDateFormat format  = new SimpleDateFormat("d MMM yyyy");
-                        long customtime = 0;
-                        try {
-                            Date tempdate = format.parse(t);
-                             customtime = tempdate.getTime();
-                        } catch (ParseException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-
 
                         Controller.getInstance().trackEvent("TimelineClicked", finalItem_timeline_public_id, "user");
                         final Dialog dialog = new Dialog(_activity, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
-                        String youtubelink = "";
-                        final File file = new File(directory, finalItem_timeline_public_id + ".png");
-                        try{
-                            SavingYoutubeLink savingYoutubeLink = new SavingYoutubeLink(_activity);
-                            savingYoutubeLink.open();
-                            youtubelink= savingYoutubeLink.get_youtubeVideoId(finalItem_timeline_public_id);
-                            savingYoutubeLink.close();
-                        }catch (Exception e){
 
-                        }
                         dialog.setContentView(R.layout.timeline_dialog);
 
-                        final ImageButton show = (ImageButton) dialog.findViewById(R.id.timelinedialogimageView);
-                        final RelativeLayout sharevideolayout = (RelativeLayout) dialog.findViewById(R.id.dialogviewbuttonlayout);
+                        final ViewPager show = (ViewPager) dialog.findViewById(R.id.timelinedialogimageView);
                         FrameLayout close = (FrameLayout) dialog.findViewById(R.id.timelinedialogbackground);
-                        Button shareit = (Button) dialog.findViewById(R.id.dialogshare);
                         Button closetimelinedialog = (Button) dialog.findViewById(R.id.closetimelinedialog);
                         ImageView logohide = (ImageView) dialog.findViewById(R.id.logohide);
-                        if (currenttime<customtime){
-                            logohide.setVisibility(View.VISIBLE);
-                        }else {
-                            logohide.setVisibility(View.GONE);
 
-                        }
-                        LinearLayout dialogviewwatchvideolayout = (LinearLayout) dialog.findViewById(R.id.dialogviewwatchvideolayout);
-                        if (youtubelink.equals(null)||youtubelink.equals("")){
-                            dialogviewwatchvideolayout.setVisibility(View.GONE);
-                        }else {
-                            dialogviewwatchvideolayout.setVisibility(View.VISIBLE);
-                        }
+                        show.setAdapter(adapter);
+                        show.setCurrentItem(view_pos);
                         closetimelinedialog.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -240,48 +205,6 @@ public class Custom_view extends ArrayAdapter {
                                 dialog.dismiss();
                             }
                         });
-                        final String finalYoutubelink = youtubelink;
-                        dialogviewwatchvideolayout.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent k = new Intent(_activity,VideoPlayer.class);
-                                k.putExtra("watch", finalYoutubelink);
-                                _activity.startActivity(k);
-                            }
-                        });
-                        show.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                                    if (sharevideolayout.getVisibility()==View.VISIBLE){
-                                        sharevideolayout.setVisibility(View.GONE);
-                                    }else {
-                                        sharevideolayout.setVisibility(View.VISIBLE);
-                                    }                                }
-
-
-                        });
-                        //Log.e("Prints", finalItem_headline);
-                        shareit.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                new DownloadImageTask(_activity,finalItem_timeline_public_id);
-                            }
-                        });
-
-                        if (file.exists()) {
-
-                            String imgPath = file.getAbsolutePath();
-                            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-                            Bitmap bp = BitmapFactory.decodeFile(imgPath, bmOptions);
-                            show.setImageBitmap(bp);
-                        }else {
-                            final String imgageUrl = getContext().getResources().getString(R.string.url)+ finalItem_timeline_public_id + ".png";
-                            Picasso.with(context)
-                                    .load(imgageUrl)
-                                    .into(show);
-                        }
-                        //final String imgageUrl = "http://res.cloudinary.com/innox-technologies/image/upload/c_scale,h_764,q_85/" + finalItem_timeline_public_id + ".jpg?_=4";
 
                         dialog.show();
 
@@ -299,12 +222,9 @@ public class Custom_view extends ArrayAdapter {
                 } else if (view_pos == headlines.size()-1){
                     belowbox.setBackgroundResource(returnColor.colorint(col));
                     belowbox.setVisibility(View.GONE);
+                    bottomlayout.setVisibility(View.VISIBLE);
                 }
 
-
-
-
-        //setCurrentImage(imgDisplay);
         return rowView;
 
 

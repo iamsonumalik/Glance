@@ -7,14 +7,7 @@
 
 
 
-    <LinearLayout
 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/bottomlayout"
-        android:visibility="gone"
-        android:orientation="horizontal"
-        android:layout_alignParentTop="true"></LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -143,6 +136,27 @@
 
         </RelativeLayout>
     </LinearLayout>
+    <LinearLayout
 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/bottomlayout"
+        android:visibility="gone"
+        android:layout_marginTop="175dp"
+        android:layout_below="@+id/timelinelayout"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="End of timeline."
+            android:textSize="14dp"
+            android:gravity="center"
+            android:id="@+id/endoftimeline"
+            android:textColor="#000"
+
+            />
+    </LinearLayout>
 
 </RelativeLayout>

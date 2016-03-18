@@ -6,7 +6,7 @@ package com.app.newsonrun;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,12 +18,12 @@ import android.widget.ImageView;
 import java.util.ArrayList;
 
 public class ImageAdapter extends BaseAdapter {
-    private final ArrayList<Bitmap> mimage_clips;
+    private final ArrayList<Drawable> mimage_clips;
     private final Activity mact;
     private Context mContext;
 
     // Constructor
-    public ImageAdapter(Activity loadingActivity, Context c, ArrayList<Bitmap> image_clips) {
+    public ImageAdapter(Activity loadingActivity, Context c, ArrayList<Drawable> image_clips) {
         mContext = c;
         mimage_clips = image_clips;
         mact = loadingActivity;
@@ -62,7 +62,8 @@ public class ImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
-        imageView.setImageBitmap(mimage_clips.get(position));
+        //imageView.setImageBitmap(mimage_clips.get(position));
+        imageView.setBackground(mimage_clips.get(position));
         return imageView;
     }
 

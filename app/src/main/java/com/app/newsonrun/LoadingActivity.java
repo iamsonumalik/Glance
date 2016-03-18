@@ -4,7 +4,6 @@ import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -14,8 +13,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -28,7 +25,7 @@ public class LoadingActivity extends Activity {
     private ProgressBar firstBar;
     private String gettoken;
     private GridView gridview;
-    static ArrayList<Bitmap> image_clips;
+    static ArrayList<Drawable> image_clips;
     private TextView time;
     private TextView totalnews;
     private GridImages gridImages;
@@ -39,7 +36,7 @@ public class LoadingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
 
-        image_clips = new ArrayList<Bitmap>();
+        image_clips = new ArrayList<Drawable>();
         backgroundlayout = (RelativeLayout) findViewById(R.id.background);
         time = (TextView) findViewById(R.id.time);
         totalnews = (TextView) findViewById(R.id.getnews);
@@ -48,59 +45,9 @@ public class LoadingActivity extends Activity {
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, 0);
         gridImages = new GridImages(getBaseContext());
         image_clips = gridImages.getArrayBitmap();
-        gridview.setAdapter(new ImageAdapter(LoadingActivity.this, this, image_clips));
-        Thread t2 = new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                for (; ; ) {
-                    try {
-                        Thread.sleep(100);
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Random random = new
-                                        Random();
-                                int one = random.nextInt(54);
-                                int two = random.nextInt(54);
-
-
-                                ObjectAnimator anim = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
-                                anim.setTarget(((ImageView) gridview.getChildAt(one)));
-                                anim.setDuration(500);
-                                anim.start();
-
-                                ObjectAnimator anim2 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
-                                anim2.setTarget(((ImageView) gridview.getChildAt(two)));
-                                anim2.setDuration(500);
-                                anim2.start();
-
-                                try {
-                                    Picasso.with(getBaseContext())
-                                            .load(gridImages.getUriPath(two))
-                                            .into(((ImageView) gridview.getChildAt(one)));
-                                    Picasso.with(getBaseContext())
-                                            .load(gridImages.getUriPath(one))
-                                            .into(((ImageView) gridview.getChildAt(two)));
-                                }catch (Exception e){
-
-                                }
-                                /*Bitmap temp = ((BitmapDrawable) ((ImageView) gridview.getChildAt(one)).getDrawable()).getBitmap();
-                                ((ImageView) gridview.getChildAt(one))
-                                        .setImageBitmap(((BitmapDrawable) ((ImageView) gridview.getChildAt(two)).getDrawable()).getBitmap());
-                                ((ImageView) gridview.getChildAt(two)).setImageBitmap(temp);*/
-
-                            }
-                        });
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        };
-        t2.start();
+        final ArrayList<Drawable> helper_clips = image_clips;
+        final ImageAdapter im = new ImageAdapter(LoadingActivity.this, this, image_clips);
+        gridview.setAdapter(im);
 
         Typeface greeting = Typeface.createFromAsset(getAssets(), "treench.otf");
         Typeface face = Typeface.createFromAsset(getAssets(), "lodingfont.ttf");
@@ -151,6 +98,68 @@ public class LoadingActivity extends Activity {
             }
         };
         t.start();
+
+        Thread t2 = new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                for (; ; ) {
+                    try {
+                        Thread.sleep(100);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Random random = new
+                                        Random();
+                                int one = random.nextInt(54);
+                                int two = random.nextInt(54);
+
+
+                                try {
+
+
+                                    ImageView oneim = ((ImageView) gridview.getChildAt(one));
+                                    ImageView twoim = ((ImageView) gridview.getChildAt(two));
+                                    if (oneim!=null && twoim!=null) {
+                                        ObjectAnimator anim = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                        anim.setTarget(((ImageView) gridview.getChildAt(one)));
+                                        anim.setDuration(500);
+                                        anim.start();
+
+                                        ObjectAnimator anim2 = (ObjectAnimator) AnimatorInflater.loadAnimator(getBaseContext(), R.animator.flip);
+                                        anim2.setTarget(((ImageView) gridview.getChildAt(two)));
+                                        anim2.setDuration(500);
+                                        anim2.start();
+                                    }
+                                    //oneim.setImageDrawable(helper_clips.get(two));
+                                    //twoim.setImageDrawable(helper_clips.get(one));
+
+                                    //Drawable t  = oneim.getDrawable();
+                                    //oneim.setImageDrawable(twoim.getDrawable());
+                                    //twoim.setImageDrawable(t);
+
+                                    /*Picasso.with(getBaseContext())
+                                            .load(gridImages.getUriPath(two))
+                                            .into(((ImageView) gridview.getChildAt(one)));
+                                    Picasso.with(getBaseContext())
+                                            .load(gridImages.getUriPath(one))
+                                            .into(((ImageView) gridview.getChildAt(two)));*/
+                                } catch (Exception e) {
+
+                                }
+
+
+                            }
+                        });
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        t2.start();
 
     }
 

@@ -87,7 +87,7 @@ public class GCMIntentService extends GCMBaseIntentService {
         if (aController == null)
             aController = (Controller) getApplicationContext();
 
-        Log.i(TAG, "Received message");
+        Log.e(TAG, "Received message");
         String title = intent.getExtras().getString("title");
         String body = intent.getExtras().getString("body");
         String sound = intent.getExtras().getString("sound");
@@ -95,7 +95,6 @@ public class GCMIntentService extends GCMBaseIntentService {
         String icon = intent.getExtras().getString("icon");
         String tag = intent.getExtras().getString("tag");
         String color = intent.getExtras().getString("color");
-
 
 
         aController.displayMessageOnScreen(context, title);

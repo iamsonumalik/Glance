@@ -43,8 +43,8 @@ public class DownloadImageTask{
                     Intent shareIntent = new Intent();
                     shareIntent.setAction(Intent.ACTION_SEND);
                     shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
-                    shareIntent.putExtra(Intent.EXTRA_TITLE, "market://details?id=com.app.newsonrun");
-                    shareIntent.setType("image/*");
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, "market://details?id=com.app.newsonrun");
+                    shareIntent.setType("*/*");
                     shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     // Launch sharing dialog for image
                     get.startActivity(Intent.createChooser(shareIntent, "Share Image"));
@@ -70,7 +70,7 @@ public class DownloadImageTask{
                         try {
 
                             FileOutputStream out = new FileOutputStream(file);
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 2, out);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                             out.flush();
                             Uri bmpUri = Uri.fromFile(file);
                             if (bmpUri != null) {
@@ -78,8 +78,8 @@ public class DownloadImageTask{
                                 Intent shareIntent = new Intent();
                                 shareIntent.setAction(Intent.ACTION_SEND);
                                 shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
-                                shareIntent.putExtra(Intent.EXTRA_TITLE, "market://details?id=com.app.newsonrun");
-                                shareIntent.setType("image/*");
+                                shareIntent.putExtra(Intent.EXTRA_TEXT, "market://details?id=com.app.newsonrun");
+                                shareIntent.setType("*/*");
                                 shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                 // Launch sharing dialog for image
                                 get.startActivity(Intent.createChooser(shareIntent, "Share Image"));

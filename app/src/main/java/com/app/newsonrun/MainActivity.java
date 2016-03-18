@@ -102,7 +102,7 @@ public class MainActivity extends Activity {
 
     protected void sendJson(final String email, final String pwd) {
         try {
-            String url = "http://52.25.155.157:8080/api/v1/user/authorize";
+            String url = getResources().getString(R.string.apiurl)+"/api/v1/user/authorize";
             URL object = new URL(url);
             HttpURLConnection con = (HttpURLConnection) object.openConnection();
             con.setDoOutput(true);

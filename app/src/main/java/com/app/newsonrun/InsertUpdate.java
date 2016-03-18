@@ -72,7 +72,7 @@ public class InsertUpdate extends AsyncTask<String ,String,String>{
 
             SharedPreferences prefs = baseContext.getSharedPreferences(MY_PREFS_NAME, 0);
             String gettoken = prefs.getString("token", "");
-            String strUrl = "http://52.25.155.157:8080/api/v1/news/post/" + newsPost + "?apiKey=" + gettoken;
+            String strUrl = baseContext.getResources().getString(R.string.apiurl)+"/api/v1/news/post/" + newsPost + "?apiKey=" + gettoken;
             strUrl = strUrl.replaceAll(" ", "%20");
             URL url = new URL(strUrl);
             HttpURLConnection urlConnection = null;
@@ -98,13 +98,13 @@ public class InsertUpdate extends AsyncTask<String ,String,String>{
             savingYoutubeLink.open();
 
 
-            //if (array.length()>0) {
-                //Log.e("L", String.valueOf(i));
 
                 JSONObject publish = json_data.getJSONObject("publish");
                 JSONObject portrait = publish.getJSONObject("portrait");
                 JSONObject url_id = portrait.getJSONObject("url");
                 JSONObject attributes = json_data.getJSONObject("attributes");
+                JSONObject source = json_data.getJSONObject("source");
+                JSONObject image = source.getJSONObject("image");
                 JSONObject tags = json_data.getJSONObject("tags");
                 JSONArray others = tags.getJSONArray("other");
                 String othertags = "";
@@ -121,10 +121,20 @@ public class InsertUpdate extends AsyncTask<String ,String,String>{
 
                     }
                 }
-                //Log.e("Tags",othertags);
+
                 //Temp Variables
                 String _id = json_data.getString("_id");
-                String p_id = url_id.getString("public_id");
+                String p_id ="";
+                String isS3;
+                try{
+                p_id= url_id.getString("public_id");
+                isS3 = "false";
+                }catch (Exception e){
+                p_id= url_id.getString("filename");
+                isS3 = "true";
+                }
+                String headline = json_data.getString("headline");
+                String creditname = image.getString("name");
                 String timestamp = json_data.getString("timestampCreated");
                 String category = tags.getString("category");
                 int editorRating = attributes.getInt("editorRating");
@@ -175,8 +185,8 @@ public class InsertUpdate extends AsyncTask<String ,String,String>{
                         enabled,
                         othertags,
                         linkedToNews,
-                        isFact
-                );
+                        isFact,
+                        headline, isS3, creditname);
                 Log.e("Updated",newsPost);
             savingYoutubeLink.close();
             if (breakit.equals("breaking.wav")){

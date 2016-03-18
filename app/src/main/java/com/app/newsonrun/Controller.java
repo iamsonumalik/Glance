@@ -39,13 +39,6 @@ public class Controller extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-/*
-        Picasso.Builder builder = new Picasso.Builder(this);
-        builder.downloader(new OkHttpDownloader(this,Integer.MAX_VALUE));
-        Picasso built = builder.build();
-        //built.setIndicatorsEnabled(true);
-        built.setLoggingEnabled(true);
-        Picasso.setSingletonInstance(built);*/
         mInstance = this;
         AnalyticsTrackers.initialize(this);
         AnalyticsTrackers.getInstance().get(AnalyticsTrackers.Target.APP);
@@ -202,11 +195,11 @@ public class Controller extends Application {
     }
 
     // Issue a POST request to the server.
-    private static void post(String endpoint,String acest)
+    private void post(String endpoint, String acest)
             throws IOException {
 
 
-        String strUrl = "http://52.25.155.157:8080/api/v1/User/gcmToken/"+endpoint+"?apiKey="+acest;
+        String strUrl = getResources().getString(R.string.apiurl)+"/api/v1/User/gcmToken/"+endpoint+"?apiKey="+acest;
         strUrl = strUrl.replaceAll(" ","%20");
         URL url = new URL(strUrl);
         HttpURLConnection urlConnection = null;
