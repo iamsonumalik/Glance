@@ -221,6 +221,7 @@ public class Timeline_adapter extends PagerAdapter {
             String imgageUrl;
             if (isS3){
                 imgageUrl = "http://d2vwmcbs3lyudp.cloudfront.net/"+imagename;
+                Log.e("imagname",imagename);
             }else {
                  imgageUrl = getcontext.getResources().getString(R.string.url) + imagename + ".png";
             }

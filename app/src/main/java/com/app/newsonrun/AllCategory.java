@@ -686,7 +686,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
                             timelines3.add(false);
                         }catch (Exception e){
                         p_id= url_id.getString("filename");
-                            timelines3.add(false);
+                            timelines3.add(true);
                         }
                         timelinepublicid.add(i, p_id);
                         timelinecredits.add(image.getString("name"));
