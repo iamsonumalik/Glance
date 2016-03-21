@@ -150,9 +150,9 @@ public   class GettingPosts extends AsyncTask<String, String, Void> {
                     } else if (j == 0) {
                         othertags += temptag;
                     } else if (j == (others.length() - 1)) {
-                        othertags += " and " + temptag;
+                        othertags += "," + temptag;
                     } else {
-                        othertags += ", " + temptag;
+                        othertags += "," + temptag;
 
                     }
                 }

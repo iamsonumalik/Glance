@@ -41,7 +41,6 @@ public class MakeRatingDialog{
         }else {
             AlertDialog.Builder dialog = new AlertDialog.Builder(allCategory);
             LayoutInflater inflater = (LayoutInflater) allCategory.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            Typeface cont = Typeface.createFromAsset(allCategory.getAssets(), "content.otf");
             Typeface head = Typeface.createFromAsset(allCategory.getAssets(), "lodingfont.ttf");
             View someLayout = inflater.inflate(R.layout.satisfactorydailog, null);
             TextView des = (TextView) someLayout.findViewById(R.id.satisfydescription);
@@ -86,7 +85,6 @@ public class MakeRatingDialog{
     private void sumbitFeedback(Activity allCategory, SharedPreferences.Editor editor) {
         final AlertDialog.Builder dialog = new AlertDialog.Builder(allCategory);
         LayoutInflater inflater = (LayoutInflater) allCategory.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        Typeface cont = Typeface.createFromAsset(allCategory.getAssets(), "content.otf");
         Typeface head = Typeface.createFromAsset(allCategory.getAssets(), "lodingfont.ttf");
         View someLayout = inflater.inflate(R.layout.sumbitdialog, null);
         TextView submittitle = (TextView) someLayout.findViewById(R.id.submittitle);
@@ -129,7 +127,6 @@ public class MakeRatingDialog{
     private void rateUs(final Activity allCategory,  final SharedPreferences.Editor editor) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(allCategory);
         LayoutInflater inflater = (LayoutInflater) allCategory.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        Typeface cont = Typeface.createFromAsset(allCategory.getAssets(), "content.otf");
         Typeface head = Typeface.createFromAsset(allCategory.getAssets(), "lodingfont.ttf");
         View someLayout = inflater.inflate(R.layout.rateusdialog, null);
         TextView des = (TextView) someLayout.findViewById(R.id.rateusdescription);

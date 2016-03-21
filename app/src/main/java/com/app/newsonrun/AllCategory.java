@@ -50,7 +50,6 @@ public class AllCategory extends Activity implements View.OnClickListener {
     RelativeLayout share;
     RelativeLayout refresh;
     LinearLayout watch;
-    TextView timelineheader;
     private ViewPager viewPager;
     private String gettoken;
     private FullScreenImageAdapter adapter;
@@ -74,16 +73,14 @@ public class AllCategory extends Activity implements View.OnClickListener {
     private int width;
     private int height;
     private String getting_id;
-    //private ScrollView scrollview;
     boolean doubleBackToExitPressedOnce = false;
     private int scrollposition=0;
     private File directory;
     private FrameLayout newborading;
     private ArrayList<String> temp;
     private boolean isviral;
-    private  String currentCategory;
+    private String currentCategory;
     private Typeface face;
-    private RelativeLayout loadingnewpost;
     private ProgressBar firstBar;
     private VerticalPager pager;
     private RelativeLayout close2;
@@ -119,6 +116,10 @@ public class AllCategory extends Activity implements View.OnClickListener {
     private RelativeLayout swipedown;
     private RelativeLayout swipeleft;
     private ArrayList<String> categorylist;
+    private Button moreonbutton;
+    private RelativeLayout tagslayout;
+    private ListView taglist;
+
 
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -162,7 +163,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
         handleft = prefs.getBoolean("handleft",false);
         handdown = prefs.getBoolean("handdown",false);
         final int[] count = {prefs.getInt("count", 0)};
-        videopost = prefs.getBoolean("videopost",false);
+        videopost = prefs.getBoolean("videopost", false);
         videopostCounter = prefs.getInt("videopostCounter",0);
 
         //Button Clicks
@@ -171,6 +172,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
         watch.setOnClickListener(this);
         goupbutton.setOnClickListener(this);
         infolayout.setOnClickListener(this);
+        moreonbutton.setOnClickListener(this);
+        tagslayout.setOnClickListener(this);
 
         //ListView Setting
         listview.setVisibility(View.GONE);
@@ -182,10 +185,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
         gettoken = prefs.getString("token", "");
 
         //Setting font
-        final Typeface head = Typeface.createFromAsset(getAssets(), "content.otf");
         Typeface cont = Typeface.createFromAsset(getAssets(), "headline.otf");
         face = Typeface.createFromAsset(getAssets(), "lodingfont.ttf");
-        timelineheader.setTypeface(face);
         loadingtimelinetv.setTypeface(face);
         youareoffline.setTypeface(face);
         imagecredit.setTypeface(cont);
@@ -231,7 +232,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 }
                 Controller.getInstance().trackScreenView(getBaseContext().getResources().getString(R.string.url) + name + ".png");
                 name = public_idlist.get(position);
-                setOthertags(position);
+                //setOthertags(position);
                 if ((!(CheckNetworkConnection.isConnectionAvailable(getBaseContext())) && position%3==0)) {
                     showCustomAlert();
                 }
@@ -287,15 +288,15 @@ public class AllCategory extends Activity implements View.OnClickListener {
                     }
                     countit.cancel();
                     removeswip();
-                    timelineheader.setVisibility(View.VISIBLE);
-                    goupbutton.setVisibility(View.VISIBLE);
+                    //goupbutton.setVisibility(View.VISIBLE);
+                    moreonbutton.setVisibility(View.VISIBLE);
                     removeOptions();
                 } else {
                     if (!handdown) {
                         countit.start();
                     }
-                    timelineheader.setVisibility(View.GONE);
-                    goupbutton.setVisibility(View.GONE);
+                    //goupbutton.setVisibility(View.GONE);
+                    moreonbutton.setVisibility(View.GONE);
 
                 }
             }
@@ -328,6 +329,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
     private void initializeviews() {
         close2 = (RelativeLayout) findViewById(R.id.backlay2);
+        taglist = (ListView) findViewById(R.id.timlinetagslistView);
         share = (RelativeLayout) findViewById(R.id.sharelayout);
         loadingtimelinetv = (TextView) findViewById(R.id.loadingtimelinetv);
         imagecredit = (TextView) findViewById(R.id.imagecredit);
@@ -339,8 +341,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
         //scrollview = (ScrollView) findViewById(R.id.allscrollView);
         newborading = (FrameLayout)findViewById(R.id.newboarding);
         goupbutton = (Button) findViewById(R.id.goupbutton);
-        timelineheader = (TextView) findViewById(R.id.timelineheader);
-        loadingnewpost = (RelativeLayout) findViewById(R.id.loadingnewpost);
+        moreonbutton = (Button) findViewById(R.id.moreonbutton);
+
         all = (LinearLayout) findViewById(R.id.allmenu);
         science = (LinearLayout) findViewById(R.id.sciencemenu);
         entertainment = (LinearLayout) findViewById(R.id.entertainmentmenu);
@@ -357,6 +359,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
         handleftimgv = (ImageView) findViewById(R.id.handleft);
         swipedown = (RelativeLayout) findViewById(R.id.downlayout);
         swipeleft = (RelativeLayout) findViewById(R.id.leftlayout);
+        tagslayout =(RelativeLayout) findViewById(R.id.tagslayout);
     }
 
     private void setSwitchContent(boolean isChecked) {
@@ -409,7 +412,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
             _id.removeAll(_id);
             timestamplist.removeAll(timestamplist);
             headlineslist.removeAll(headlineslist);
-            isS3lis.removeAll(headlineslist);
+            isS3lis.removeAll(isS3lis);
             categorylist.removeAll(categorylist);
         }
         int index=0;
@@ -505,16 +508,18 @@ public class AllCategory extends Activity implements View.OnClickListener {
         );
         viewPager.setAdapter(adapter);
         if (public_idlist.size()>0) {
+            if (public_idlist.size()==1){
+                new ExtendCategory().execute();
+            }
             if (moveto.equals("")) {
                 viewPager.setCurrentItem(currenPosition);
                 name = public_idlist.get(currenPosition);
-                setOthertags(currenPosition);
+                //setOthertags(currenPosition);
             } else {
                 for (int move = 0; move < public_idlist.size(); move++) {
                     if (public_idlist.get(move).equals(moveto)) {
                         viewPager.setCurrentItem(move);
                         name = public_idlist.get(move);
-                        setOthertags(currenPosition);
                         moveto="";
                         break;
                     }
@@ -534,10 +539,26 @@ public class AllCategory extends Activity implements View.OnClickListener {
     }
 
     private void setOthertags(int tagPosition) {
+
         if (othertags.get(tagPosition).equals("")){
-            timelineheader.setText("No Timeline for this News.");
+            //timelineheader.setText("No Timeline for this News.");
+            ArrayList<String> tagsji = new ArrayList<String>();
+            tagsji.add(0,"No Timeline for this News.");
+
+            Tag_View tag_view = new Tag_View(getBaseContext(),tagsji);
+            taglist.setAdapter(tag_view);
+            tagslayout.setVisibility(View.VISIBLE);
         }else {
-            timelineheader.setText("More on " + othertags.get(tagPosition) + ".");
+            String[] temptags = othertags.get(tagPosition).split(",");
+            //timelineheader.setText("More on " + othertags.get(tagPosition) + ".");
+            ArrayList<String> tagsji = new ArrayList<String>();
+            tagsji.add(0,"Timeline on:");
+            for (int i=0;i<temptags.length;i++){
+                tagsji.add(i+1,temptags[i]);
+            }
+            Tag_View tag_view = new Tag_View(getBaseContext(),tagsji);
+            taglist.setAdapter(tag_view);
+            tagslayout.setVisibility(View.VISIBLE);
         }
 
     }
@@ -572,14 +593,19 @@ public class AllCategory extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case R.id.tagslayout:
+                tagslayout.setVisibility(View.GONE);
+                break;
+            case R.id.moreonbutton:
+                setOthertags(currenPosition);
+                break;
             case R.id.sharelayout:
                 new DownloadImageTask(AllCategory.this,name);
                 break;
             case R.id.refreshlayout:
-                final int[] i = {0};
-                loadingnewpost.setVisibility(View.VISIBLE);
-                new GettingPosts(AllCategory.this,gettoken,null).execute();
 
+                removeOptions();
+                callMenu();
                 break;
             case R.id.allviewwatchvideolayout:
                 Intent k = new Intent(AllCategory.this,VideoPlayer.class);
@@ -631,7 +657,9 @@ public class AllCategory extends Activity implements View.OnClickListener {
             timelinepublicid.removeAll(timelinepublicid);
             timelines3.remove(timelines3);
             timelinecredits.removeAll(timelinecredits);
-            cv = new Custom_view(getBaseContext(), headlines, contents, timelinedate, timelinepublicid, getResources(), AllCategory.this,timelines3,timelinecredits);
+            cv = new Custom_view(getBaseContext(), headlines,
+                    contents, timelinedate, timelinepublicid, getResources(), AllCategory.this,
+                    timelines3,timelinecredits,name);
             listview.setAdapter(cv);
                   }
 
@@ -1118,7 +1146,10 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
     @Override
     public void onBackPressed() {
-        if (timelineheader.getVisibility()==View.VISIBLE) {
+        if (tagslayout.getVisibility()==View.VISIBLE){
+            tagslayout.setVisibility(View.GONE);
+        }else
+        if (moreonbutton.getVisibility()==View.VISIBLE) {
             pager.setCurrentPage(0);
         }else if (close2.getVisibility()==View.VISIBLE){
             close2.setVisibility(View.GONE);
@@ -1306,7 +1337,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
                             } else if (j == 0) {
                                 othert += temptag;
                             } else if (j == (others.length() - 1)) {
-                                othert += " and " + temptag;
+                                othert += "," + temptag;
                             } else {
                                 othert += "," + temptag;
 

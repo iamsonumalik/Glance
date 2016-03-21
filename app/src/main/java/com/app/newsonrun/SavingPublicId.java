@@ -187,7 +187,9 @@ public class SavingPublicId {
 
     public ArrayList<String> getByCategory(String category) {
         // TODO Auto-generated method stub
-        String colums[] = new String[]{History__id,History_public_id,History_isS3,History_category,History_timestampcreated,History_headline,History_isviral,History_othertags,History_linkedToNews};
+        String colums[] = new String[]{History__id,History_public_id,History_isS3,
+                History_category,History_timestampcreated,History_headline,
+                History_isviral,History_othertags,History_linkedToNews};
         Cursor c= ourdatabase.query(DATABASE_TABLE1,colums,History_category+"='"+category+"' AND "+History_isviral+"='false' AND "+History_isFact+"='false'",null, null,  null,History_timestampcreated+" ASC");
         ArrayList<String> result = new ArrayList<String>();
         //int i_id = c.getColumnIndex(History__id);

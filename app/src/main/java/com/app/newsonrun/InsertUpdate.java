@@ -115,7 +115,7 @@ public class InsertUpdate extends AsyncTask<String ,String,String>{
                     } else if (j == 0) {
                         othertags += temptag;
                     } else if (j == (others.length() - 1)) {
-                        othertags += " and " + temptag;
+                        othertags += "," + temptag;
                     } else {
                         othertags += ", " + temptag;
 

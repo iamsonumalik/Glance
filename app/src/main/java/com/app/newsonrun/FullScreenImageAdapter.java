@@ -255,6 +255,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
                     .into(imgDisplay);
         }else {
             String imgageUrl;
+            Log.e("isS3",isS3);
             if (isS3.equals("true")){
                 imgageUrl = "http://d2vwmcbs3lyudp.cloudfront.net/"+imagename;
             }else {

@@ -31,7 +31,11 @@ public class DownloadImageTask{
         try {
             myDirectory = new MyDirectory();
             File SDCardRoot = myDirectory.getDirectory();
-            String filename=phone+".png";
+            String filename;
+            if (phone.contains(".png")){
+                filename=phone;
+            }else
+             filename=phone+".png";
             Log.i("Local filename:",""+filename);
             file = new File(SDCardRoot,filename);
             if (!file.exists()){
@@ -62,15 +66,20 @@ public class DownloadImageTask{
 
     private void downloadnow() {
 
+        String url;
+        if (!(phone.contains(".png")))
+             url = get.getResources().getString(R.string.url) + phone + ".png";
+        else
+            url="http://d2vwmcbs3lyudp.cloudfront.net/"+phone;
         Picasso.with(get)
-                .load(get.getResources().getString(R.string.url) + phone + ".png")
+                .load(url)
                 .into(new Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom loadedFrom) {
                         try {
 
                             FileOutputStream out = new FileOutputStream(file);
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
                             out.flush();
                             Uri bmpUri = Uri.fromFile(file);
                             if (bmpUri != null) {

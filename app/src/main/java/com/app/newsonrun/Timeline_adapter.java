@@ -11,8 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.util.Log;
 import android.view.Display;
@@ -27,6 +25,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.app.newsonrun.ryanharter.viewpager.PagerAdapter;
+import com.app.newsonrun.ryanharter.viewpager.ViewPager;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;

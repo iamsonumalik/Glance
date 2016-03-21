@@ -5,10 +5,10 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Environment;
-import android.support.v4.view.ViewPager;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +18,10 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.app.newsonrun.ryanharter.viewpager.ViewPager;
 
 import java.io.File;
 import java.text.ParseException;
@@ -41,6 +44,7 @@ public class Custom_view extends ArrayAdapter {
     private final int height;
     private final Timeline_adapter adapter;
     private final ArrayList<Boolean> timelines3;
+    private final String name;
     private File directory = null;
     private int prev;
     TextView headlinestv;
@@ -56,6 +60,7 @@ public class Custom_view extends ArrayAdapter {
     private Resources getres;
     private Activity _activity;
     private long currenttime;
+    private ProgressBar timelineprogressbar;
 
 
     public Custom_view(Context context,
@@ -65,7 +70,7 @@ public class Custom_view extends ArrayAdapter {
                        ArrayList<String> gettimelinepublicid,
                        Resources ress,
                        Activity act,
-                       ArrayList<Boolean> timelines3, ArrayList<String> timelinecredits) {
+                       ArrayList<Boolean> timelines3, ArrayList<String> timelinecredits, String name) {
         super(context, R.layout.timeline_layout, getheadline);
         this.context = context;
         this.getres = ress;
@@ -75,6 +80,7 @@ public class Custom_view extends ArrayAdapter {
         timelinedate = gettimelinedate;
         timelinepublicid = gettimelinepublicid;
         this.timelines3 =timelines3;
+        this.name = name;
         adapter = new Timeline_adapter(act,gettimelinepublicid,context,gettimelinedate,timelines3,timelinecredits);
         returnColor = new
                 ReturnColor();
@@ -129,7 +135,7 @@ public class Custom_view extends ArrayAdapter {
         belowbox = (Button) rowView.findViewById(R.id.smalllinebelowtimline);
         box = (LinearLayout) rowView.findViewById(R.id.leftstyle);
         bottomlayout = (LinearLayout) rowView.findViewById(R.id.bottomlayout);
-        final boolean[] chck = {false};
+        timelineprogressbar = (ProgressBar) rowView.findViewById(R.id.timelineprogressbar);
         int col = (view_pos)%9;
         datetv.setTextColor(getres.getColor(returnColor.colorint(col)));
         box.setBackgroundResource(returnColor.colorint(col));
@@ -175,7 +181,6 @@ public class Custom_view extends ArrayAdapter {
                 endoftimeline.setTypeface(head);
 
         final String finalItem_timeline_public_id = item_timeline_public_id;
-        final Date finalDate = date;
         timelinelayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -185,7 +190,7 @@ public class Custom_view extends ArrayAdapter {
                         final Dialog dialog = new Dialog(_activity, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
 
                         dialog.setContentView(R.layout.timeline_dialog);
-
+                        //dialog.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
                         final ViewPager show = (ViewPager) dialog.findViewById(R.id.timelinedialogimageView);
                         FrameLayout close = (FrameLayout) dialog.findViewById(R.id.timelinedialogbackground);
                         Button closetimelinedialog = (Button) dialog.findViewById(R.id.closetimelinedialog);
@@ -193,6 +198,7 @@ public class Custom_view extends ArrayAdapter {
 
                         show.setAdapter(adapter);
                         show.setCurrentItem(view_pos);
+
                         closetimelinedialog.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -211,6 +217,19 @@ public class Custom_view extends ArrayAdapter {
                     }
                 });
 
+                if (item_timeline_public_id.equals(name)){
+                    headlinestv.setBackgroundColor(Color.parseColor("#eca140"));
+                    headlinestv.setPadding(2, 2, 0, 0);
+                    contentstv.setVisibility(View.GONE);
+                    datetv.setTextColor(Color.BLACK);
+                    box.setBackgroundColor(Color.BLACK);
+                    belowbox.setBackgroundColor(Color.BLACK);
+                    if (view_pos==0){
+                        abovebox.setBackgroundColor(Color.BLACK);
+                    }
+                }else {
+
+                }
                 if (view_pos == 0 && headlines.size() == 1) {
 
                     belowbox.setVisibility(View.GONE);

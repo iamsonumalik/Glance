@@ -54,7 +54,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#EFEFEF"
-            android:paddingTop="43dp"
             android:layout_below="@+id/allframelayout"
             android:id="@+id/alltimelinelayout"
 
@@ -79,7 +78,6 @@
         android:background="#cc000000"
         android:id="@+id/backlay2"
         android:visibility="gone"
-        android:gravity="center"
 
         >
 
@@ -143,7 +141,6 @@
                     android:textColor="#FFF"
                     android:textSize="14sp" />
             </LinearLayout>
-
 
             <LinearLayout
                 android:orientation="vertical"
@@ -252,7 +249,6 @@
                     android:textSize="14sp" />
             </LinearLayout>
 
-
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
@@ -334,7 +330,14 @@
 
         </GridLayout>
 
-
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/closemenu"
+            />
     </RelativeLayout>
     <RelativeLayout
         android:id="@+id/allviewbuttonlayout"
@@ -359,7 +362,7 @@
             android:layout_width="38dp"
             android:layout_height="38dp"
             android:id="@+id/allviewrefresh"
-            android:background="@drawable/refresh"
+            android:background="@drawable/menu"
 
             />
         </RelativeLayout>
@@ -474,54 +477,7 @@
 
 
     </FrameLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:background="#000"
-        android:id="@+id/loadingnewpost"
-        android:clickable="true"
-        android:visibility="gone"
-        android:layout_height="match_parent">
 
-
-        <ImageView
-            android:layout_width="85dp"
-            android:layout_height="100dp"
-            android:id="@+id/loadingnewpostsplash"
-            android:background="@drawable/splash"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"/>
-
-        <ProgressBar
-            style="?android:attr/progressBarStyleSmall"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:id="@+id/loadingnewpostsplashfirstbar"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            />
-
-
-    </RelativeLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:padding="10dp"
-        android:visibility="gone"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="More on: "
-        android:singleLine="true"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:freezesText="true"
-        android:ellipsize="marquee"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:scrollHorizontally="true"
-        android:background="@drawable/timelineheader"
-        android:textSize="15dp"
-        android:textColor="#e4e4e4"
-        android:id="@+id/timelineheader"
-        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -540,14 +496,60 @@
         android:id="@+id/youareoffline"
         android:layout_gravity="center" />
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:layout_margin="10dp"
+        >
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/timelineplus"
+            android:id="@+id/moreonbutton"
+            android:layout_marginLeft="5dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            />
     <Button
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:background="@drawable/goup"
-        android:layout_margin="10dp"
         android:visibility="gone"
+        android:background="@drawable/goup"
         android:id="@+id/goupbutton"
-        android:layout_gravity="right|bottom" />
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/moreonbutton"
+        android:layout_toStartOf="@+id/moreonbutton" />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#cc000000"
+        android:id="@+id/tagslayout"
+        android:visibility="gone"
+        >
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:id="@+id/imageView3"
+            android:layout_margin="10dp"
+            android:src="@drawable/timelineclose"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/timlinetagslistView"
+            android:dividerHeight="0dp"
+            android:divider="@null"
+            android:layout_above="@+id/imageView3"
+            android:layout_alignRight="@+id/imageView3"
+            android:layout_alignEnd="@+id/imageView3" />
+    </RelativeLayout>
 
     <TextView
         android:layout_width="wrap_content"
