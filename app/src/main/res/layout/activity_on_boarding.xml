@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.app.newsonrun.OnBoarding">
+
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/boardingPager"
+        >
+    </android.support.v4.view.ViewPager>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_centerHorizontal="true">
+
+        <ImageView
+            android:layout_width="3dp"
+            android:layout_height="3dp"
+            android:id="@+id/image1"
+            android:layout_marginRight="7dp"
+            />
+        <ImageView
+            android:layout_width="3dp"
+            android:layout_height="3dp"
+            android:id="@+id/image2"
+            android:layout_marginRight="7dp"
+            />
+        <ImageView
+            android:layout_width="3dp"
+            android:layout_height="3dp"
+            android:id="@+id/image3"
+            android:layout_marginRight="7dp"
+            />
+        <ImageView
+            android:layout_width="3dp"
+            android:layout_height="3dp"
+            android:id="@+id/image4"
+            android:layout_marginRight="7dp"
+            />
+        <ImageView
+            android:layout_width="3dp"
+            android:layout_height="3dp"
+            android:id="@+id/image5"
+            android:layout_marginRight="7dp"
+            />
+        <ImageView
+            android:layout_width="3dp"
+            android:layout_height="3dp"
+            android:id="@+id/image6"
+            android:layout_marginRight="7dp"
+            />
+        <ImageView
+            android:layout_width="3dp"
+            android:layout_height="3dp"
+            android:id="@+id/image7"
+            />
+    </LinearLayout>
+</RelativeLayout>

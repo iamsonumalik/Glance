@@ -142,11 +142,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
         //Intialize ArrayLists
         initializeArrayLists();
 
-
         //Intialize Views
         initializeviews();
-
-
        pager = (VerticalPager) findViewById(R.id.verticalpager);
 
         //SharedPreferences
@@ -160,8 +157,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
         final boolean isfirst = prefs.getBoolean("isfirst", false);
         final boolean israted = prefs.getBoolean("israted",false);
         final boolean didyes = prefs.getBoolean("didyes",false);
-        handleft = prefs.getBoolean("handleft",false);
-        handdown = prefs.getBoolean("handdown",false);
+        handleft = prefs.getBoolean("handleft",true);
+        handdown = prefs.getBoolean("handdown",true);
         final int[] count = {prefs.getInt("count", 0)};
         videopost = prefs.getBoolean("videopost", false);
         videopostCounter = prefs.getInt("videopostCounter",0);
@@ -213,9 +210,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
                 handleft=true;
                 removeswip();
 
-                if (!handdown) {
-                    countit.start();
-                }
+
                 videopost = prefs.getBoolean("videopost",false);
                 videopostCounter = prefs.getInt("videopostCounter",0);
                 RelativeLayout.LayoutParams layoutParamss = new RelativeLayout.LayoutParams(width, 0);
@@ -292,9 +287,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
                     moreonbutton.setVisibility(View.VISIBLE);
                     removeOptions();
                 } else {
-                    if (!handdown) {
-                        countit.start();
-                    }
+
                     //goupbutton.setVisibility(View.GONE);
                     moreonbutton.setVisibility(View.GONE);
 
@@ -363,16 +356,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
     }
 
     private void setSwitchContent(boolean isChecked) {
-        all.setBackground(getResources().getDrawable(R.drawable.remove_border));
-        science.setBackground(getResources().getDrawable(R.drawable.remove_border));
-        entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
-        sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
-        viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
-        business.setBackground(getResources().getDrawable(R.drawable.remove_border));
-        india.setBackground(getResources().getDrawable(R.drawable.remove_border));
-        world.setBackground(getResources().getDrawable(R.drawable.remove_border));
-        simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
-
+        removeBorder();
+        //all.setBackground(getResources().getDrawable(R.drawable.menuborder));
             Controller.getInstance().trackEvent("All", "Menu", "user");
             Controller.getInstance().trackScreenView("All");
             isviral = false;
@@ -529,13 +514,13 @@ public class AllCategory extends Activity implements View.OnClickListener {
         }else {
             new ExtendCategory().execute();
         }
+        viewPager.setOffscreenPageLimit(3);
         //Log.e("Name ", name);
         Controller.getInstance().trackScreenView(getBaseContext().getResources().getString(R.string.url) + name + ".png");
 
 
         getLink();
         setVisiblityofwatchbutton();
-        countit.start();
     }
 
     private void setOthertags(int tagPosition) {
@@ -572,20 +557,13 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
             if (!videopost){
                 if(videopostCounter<1) {
-                    Log.e("in", String.valueOf(videopost));
+                    countit.start();
+                    //Log.e("in", String.valueOf(videopost));
                     //youareoffline.setBackgroundResource(R.drawable.video_guide);
-                    youareoffline.setText("Tap screen to watch video.");
-                    youareoffline.setVisibility(View.VISIBLE);
-                    youareofflineC.start();
-                    editor.putInt("videopostCounter", videopostCounter+1);
-                    editor.commit();
-                    editor.apply();
-                }else {
-                    //Toast.makeText(getBaseContext(),"Tap to watch Video.",Toast.LENGTH_SHORT).show();
-                    editor.putBoolean("videopost", true);
-                    editor.commit();
-                    editor.apply();
                 }
+                editor.putBoolean("videopost", true);
+                editor.commit();
+                editor.apply();
             }
         }
     }
@@ -762,7 +740,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight * (listAdapter.getCount()+5);
+        params.height = totalHeight * (listAdapter.getCount()+10);
         listView.setLayoutParams(params);
         listView.requestLayout();
     }
@@ -838,7 +816,6 @@ public class AllCategory extends Activity implements View.OnClickListener {
         viraltv.setTypeface(face);
         TextView toptv = (TextView) findViewById(R.id.toptv);
         toptv.setTypeface(face);
-
         Animation anim2 = AnimationUtils.loadAnimation(
                 AllCategory.this,R.anim.bounce
         );
@@ -847,16 +824,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
         all.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                all.setBackground(getResources().getDrawable(R.drawable.menuborder));
-                science.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                business.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                india.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                world.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                removeBorder();
+                //all.setBackground(getResources().getDrawable(R.drawable.menuborder));
                 Controller.getInstance().trackEvent("ALL", "Menu", "user");
                 Controller.getInstance().trackScreenView("All");
                 isviral = false;
@@ -879,15 +848,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
         science.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                all.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                removeBorder();
                 science.setBackground(getResources().getDrawable(R.drawable.menuborder));
-                entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                business.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                india.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                world.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 Controller.getInstance().trackEvent("Science", "Menu", "user");
                 Controller.getInstance().trackScreenView("Science");
                 isviral = false;
@@ -909,15 +871,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
         sports.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                all.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                science.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                removeBorder();
                 sports.setBackground(getResources().getDrawable(R.drawable.menuborder));
-                viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                business.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                india.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                world.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 Controller.getInstance().trackEvent("Sports", "Menu", "user");
                 Controller.getInstance().trackScreenView("Sports");
                 isviral = false;
@@ -939,15 +894,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
         entertainment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                all.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                science.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                removeBorder();
                 entertainment.setBackground(getResources().getDrawable(R.drawable.menuborder));
-                sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                business.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                india.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                world.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 Controller.getInstance().trackEvent("Entertainment", "Menu", "user");
                 Controller.getInstance().trackScreenView("Entertainment");
                 try{
@@ -969,15 +917,9 @@ public class AllCategory extends Activity implements View.OnClickListener {
         world.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                all.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                science.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                business.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                india.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                removeBorder();
                 world.setBackground(getResources().getDrawable(R.drawable.menuborder));
-                simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
+
 
                 Controller.getInstance().trackEvent("World", "Menu", "user");
                 Controller.getInstance().trackScreenView("World");
@@ -1000,15 +942,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
         india.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                all.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                science.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                business.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                removeBorder();
                 india.setBackground(getResources().getDrawable(R.drawable.menuborder));
-                world.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
                 Controller.getInstance().trackEvent("India", "Menu", "user");
                 Controller.getInstance().trackScreenView("India");
                 try{
@@ -1030,14 +965,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
         simplified.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                all.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                science.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                business.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                india.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                world.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                removeBorder();
                 simplified.setBackground(getResources().getDrawable(R.drawable.menuborder));
                 Controller.getInstance().trackEvent("Simplified", "Menu", "user");
                 Controller.getInstance().trackScreenView("Simplified");
@@ -1060,16 +988,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
         business.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                all.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                science.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                removeBorder();
                 business.setBackground(getResources().getDrawable(R.drawable.menuborder));
-                india.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                world.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
-
 
                 Controller.getInstance().trackEvent("Business", "Menu", "user");
                 Controller.getInstance().trackScreenView("Business");
@@ -1092,16 +1012,8 @@ public class AllCategory extends Activity implements View.OnClickListener {
         viral.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                all.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                science.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
+                removeBorder();
                 viral.setBackground(getResources().getDrawable(R.drawable.menuborder));
-                business.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                india.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                world.setBackground(getResources().getDrawable(R.drawable.remove_border));
-                simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
-
                 Controller.getInstance().trackEvent("Viral", "Menu", "user");
                 Controller.getInstance().trackScreenView("Viral");
                 try{
@@ -1135,11 +1047,22 @@ public class AllCategory extends Activity implements View.OnClickListener {
 
     }
 
+    private void removeBorder() {
+        all.setBackground(getResources().getDrawable(R.drawable.remove_border));
+        science.setBackground(getResources().getDrawable(R.drawable.remove_border));
+        entertainment.setBackground(getResources().getDrawable(R.drawable.remove_border));
+        sports.setBackground(getResources().getDrawable(R.drawable.remove_border));
+        viral.setBackground(getResources().getDrawable(R.drawable.remove_border));
+        business.setBackground(getResources().getDrawable(R.drawable.remove_border));
+        india.setBackground(getResources().getDrawable(R.drawable.remove_border));
+        world.setBackground(getResources().getDrawable(R.drawable.remove_border));
+        simplified.setBackground(getResources().getDrawable(R.drawable.remove_border));
+    }
+
     private void resetViewPager() {
         scrollposition=0;
         onceTime=true;
         fromdatabase(temp);
-        countit.cancel();
         settingViewPager();
         removeOptions();
     }
@@ -1186,7 +1109,7 @@ public class AllCategory extends Activity implements View.OnClickListener {
         super.onPause();
         timer.start() ;
     }
-    CountDownTimer countit = new CountDownTimer(2* 1000, 500) {
+    CountDownTimer countit = new CountDownTimer(1* 1000, 500) {
 
         public void onTick(long millisUntilFinished) {
             //Some code
@@ -1195,35 +1118,15 @@ public class AllCategory extends Activity implements View.OnClickListener {
         public void onFinish() {
             //Logout
             //new FetchTimeline().execute();
-            Animation an1;
+            final LinearLayout watchvideo = (LinearLayout) findViewById(R.id.watchvideotut);
+            watchvideo.setVisibility(View.VISIBLE);
+            watchvideo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    watchvideo.setVisibility(View.GONE);
 
-            swipedown.setVisibility(View.GONE);
-            swipeleft.setVisibility(View.GONE);
-
-            if (handleft){
-                    if (handdown){
-                                newborading.setVisibility(View.GONE);
-                    }else {
-                        swipedown.setVisibility(View.VISIBLE);
-                        an1 = AnimationUtils.loadAnimation(AllCategory.this, R.anim.top_down);
-                        an1.setRepeatCount(5);  // animation repeat count
-                        an1.setRepeatMode(2);
-                        setCustmAnimation(handdownimgv, an1);
-                        editor.putBoolean("handdown", true);
-                        editor.commit();
-                        editor.apply();
-                    }
-            }else {
-                    swipeleft.setVisibility(View.VISIBLE);
-                    an1 = AnimationUtils.loadAnimation(AllCategory.this, R.anim.right_left);
-                    an1.setRepeatCount(5);  // animation repeat count
-                    an1.setRepeatMode(2);
-                    setCustmAnimation(handleftimgv, an1);
-                    editor.putBoolean("handleft",true);
-                    editor.commit();
-                    editor.apply();
-                    //setCustmAnimation(handleftimgv, an1);
-            }
+                }
+            });
         }
 
     };

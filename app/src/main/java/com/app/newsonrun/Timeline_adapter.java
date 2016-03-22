@@ -93,8 +93,8 @@ public class Timeline_adapter extends PagerAdapter {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View viewLayout = inflater.inflate(R.layout.timeline_viewpageradapter, container,
                 false);
-
         imgDisplay = (ImageView) viewLayout.findViewById(R.id.timelineadapterimageView);
+
         Button dialogshare = (Button) viewLayout.findViewById(R.id.dialogshare);
         TextView dialogimagecredit = (TextView) viewLayout.findViewById(R.id.dialogimagecredit);
         LinearLayout playit =(LinearLayout) viewLayout.findViewById(R.id.dialogviewwatchvideolayout);
@@ -180,6 +180,7 @@ public class Timeline_adapter extends PagerAdapter {
                     getmenu.setAnimation(anim);
                     getmenu.setVisibility(View.VISIBLE);
                 }
+                //timelineguide.setVisibility(View.GONE);
             }
         });
 
@@ -209,7 +210,10 @@ public class Timeline_adapter extends PagerAdapter {
         final File file;
         MyDirectory myDirectory = new MyDirectory();
         directory = myDirectory.getDirectory();
-        file = new File(directory, imagename+".png");
+        if (imagename.contains(".png"))
+            file = new File(directory, imagename);
+        else
+            file = new File(directory, imagename+".png");
         if (file.exists()) {
 
             String imgPath = file.getAbsolutePath();

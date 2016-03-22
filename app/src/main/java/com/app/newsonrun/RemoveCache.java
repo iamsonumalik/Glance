@@ -57,7 +57,14 @@ public class RemoveCache extends Service {
                                 Log.e("Array Size", String.valueOf(saveditems.size()));
                                 while (saveditems.size()>99){
                                     String name = saveditems.get(i);
-                                    final String imgageUrl =getBaseContext().getResources().getString(R.string.url) + name + ".png";
+                                    String imgageUrl;
+                                    if (name.contains(".png")){
+                                        imgageUrl = "http://d2vwmcbs3lyudp.cloudfront.net/"+name;
+
+                                    }else {
+                                        imgageUrl =getBaseContext().getResources().getString(R.string.url) + name + ".png";
+                                    }
+
                                     Picasso.with(getBaseContext()).invalidate(imgageUrl);
                                     savingCache.deleteItem(name);
                                     saveditems.remove(i);

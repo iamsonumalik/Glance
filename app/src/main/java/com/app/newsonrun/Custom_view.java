@@ -13,6 +13,7 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -193,12 +194,39 @@ public class Custom_view extends ArrayAdapter {
                         //dialog.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
                         final ViewPager show = (ViewPager) dialog.findViewById(R.id.timelinedialogimageView);
                         FrameLayout close = (FrameLayout) dialog.findViewById(R.id.timelinedialogbackground);
+                        final ImageView timelineguide = (ImageView) dialog.findViewById(R.id.timelineguide);
+                        final TranslateAnimation animation = new TranslateAnimation(0.0f,0.0f,0.0f,-50.0f);
+                        animation.setDuration(1500);
+                        //animation.setRepeatMode(2);
+                        animation.setRepeatCount(2);
+                        timelineguide.startAnimation(animation);
                         Button closetimelinedialog = (Button) dialog.findViewById(R.id.closetimelinedialog);
                         ImageView logohide = (ImageView) dialog.findViewById(R.id.logohide);
 
                         show.setAdapter(adapter);
                         show.setCurrentItem(view_pos);
+                        if (view_pos==(headlines.size()-1))
+                        {
+                            timelineguide.clearAnimation();
+                            timelineguide.setVisibility(View.GONE);
+                        }
+                        show.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                            @Override
+                            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+                            }
+
+                            @Override
+                            public void onPageSelected(int position) {
+                                timelineguide.clearAnimation();
+                                timelineguide.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onPageScrollStateChanged(int state) {
+
+                            }
+                        });
                         closetimelinedialog.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -219,7 +247,7 @@ public class Custom_view extends ArrayAdapter {
 
                 if (item_timeline_public_id.equals(name)){
                     headlinestv.setBackgroundColor(Color.parseColor("#eca140"));
-                    headlinestv.setPadding(2, 2, 0, 0);
+                    headlinestv.setPadding(10, 10, 3, 3);
                     contentstv.setVisibility(View.GONE);
                     datetv.setTextColor(Color.BLACK);
                     box.setBackgroundColor(Color.BLACK);

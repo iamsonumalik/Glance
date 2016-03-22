@@ -245,6 +245,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
         final File file;
         MyDirectory myDirectory = new MyDirectory();
         directory = myDirectory.getDirectory();
+        if (imagename.contains(".png"))
+            file = new File(directory, imagename);
+        else
         file = new File(directory, imagename+".png");
         if (file.exists()) {
 

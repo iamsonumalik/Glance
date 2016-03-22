@@ -8,7 +8,6 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,6 +45,7 @@ public   class GettingPosts extends AsyncTask<String, String, Void> {
     private SavingPublicId savingPublicId;
     private ArrayList<String> public_ids;
     private boolean isnews=true;
+    private boolean isfirst;
 
     public GettingPosts(final Activity loadingActivity, String gettoken,
                         TextView totalnews
@@ -66,7 +66,7 @@ public   class GettingPosts extends AsyncTask<String, String, Void> {
             e.printStackTrace();
         }
         SharedPreferences prefs = activity.getSharedPreferences(MY_PREFS_NAME, 0);
-        final boolean isfirst = prefs.getBoolean("isfirst", false);
+        isfirst = prefs.getBoolean("isfirst", false);
         if (!isfirst) {
             fetchnew = "-1";
         } else {
@@ -206,8 +206,9 @@ public   class GettingPosts extends AsyncTask<String, String, Void> {
 
                 }
 
-                if (i<3) {
+                if (i<2) {
                     public_ids.add(i, p_id);
+                    //saveImage(p_id);
                 }
                 //Saving Recent Posts
                 savingPublicId.createEntry(i,
@@ -228,7 +229,7 @@ public   class GettingPosts extends AsyncTask<String, String, Void> {
                         isS3,
                         creditname
                 );
-                Log.e("Save",headline);
+                //Log.e("Save",headline);
                 if (issimplified.equals("true")||isviral.equals("true")){
                     trends++;
                 }else {
@@ -257,26 +258,33 @@ public   class GettingPosts extends AsyncTask<String, String, Void> {
             Log.e("log_tag", "Error parsing data " + e.toString());
 
         }
+        for (int X=0;X<public_ids.size();X++){
+           saveImage(public_ids.get(X));
+        }
         return null;
 
     }
 
     protected void onPostExecute(Void v) {
          //public_ids = savingPublicId.getthree();
-        for (int X=0;X<public_ids.size();X++){
-            saveImage(public_ids.get(X));
-        }
+
         try {
             savingPublicId.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Intent i = new Intent(activity, AllCategory.class);
-        i.putExtra("moveto","");
-        i.putExtra("isnews",isnews);
-        i.putExtra("fromnoti",false);
-        activity.startActivity(i);
-        activity.finish();
+        if (isfirst) {
+            Intent i = new Intent(activity, AllCategory.class);
+            i.putExtra("moveto", "");
+            i.putExtra("isnews", isnews);
+            i.putExtra("fromnoti", false);
+            activity.startActivity(i);
+            activity.finish();
+        }else {
+            Intent i = new Intent(activity, OnBoarding.class);
+            activity.startActivity(i);
+            activity.finish();
+        }
 
     }
 
@@ -286,25 +294,32 @@ public   class GettingPosts extends AsyncTask<String, String, Void> {
         File file = null;
         MyDirectory myDirectory = new MyDirectory();
         directory = myDirectory.getDirectory();
+        if (name.contains(".png"))
+            file = new File(directory, name);
+        else
         file = new File(directory, name + ".png");
         if (!file.exists()) {
 
-            String imgageUrl = activity.getResources().getString(R.string.url) + name + ".png";
-
+            String imgageUrl ;
+            String url;
+            if (!(name.contains(".png")))
+                imgageUrl = activity.getResources().getString(R.string.url) + name + ".png";
+            else
+                imgageUrl="http://d2vwmcbs3lyudp.cloudfront.net/"+name;
             try {
                 InputStream in = new java.net.URL(imgageUrl).openStream();
                 Bitmap mIcon11 = BitmapFactory.decodeStream(in);
                 FileOutputStream ourstream = new FileOutputStream(file);
-                mIcon11.compress(Bitmap.CompressFormat.PNG, 2, ourstream);
+                mIcon11.compress(Bitmap.CompressFormat.PNG, 100, ourstream);
                 ourstream.flush();
                 ourstream.close();
                 Log.e("Saved","Loading");
             } catch (FileNotFoundException e) {
                 // TODO Auto-generated catch block
-                Toast.makeText(activity, e.toString(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(activity, e.toString(), Toast.LENGTH_LONG).show();
             } catch (IOException e) {
                 // TODO Auto-generated catch block
-                Toast.makeText(activity, e.toString(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(activity, e.toString(), Toast.LENGTH_LONG).show();
             } catch (Exception e) {
 
             }

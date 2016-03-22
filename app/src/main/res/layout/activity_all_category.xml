@@ -343,7 +343,7 @@
         android:id="@+id/allviewbuttonlayout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#aa000000"
+        android:background="#cc000000"
         android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
@@ -356,6 +356,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/refreshlayout"
             android:padding="5dp"
+            android:visibility="gone"
             android:gravity="center"
             >
         <ImageView
@@ -503,11 +504,10 @@
         android:layout_margin="10dp"
         >
         <Button
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
             android:background="@drawable/timelineplus"
             android:id="@+id/moreonbutton"
-            android:layout_marginLeft="5dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             />
@@ -588,5 +588,16 @@
             android:src="@drawable/tooltiptriangle"
             />
     </LinearLayout>
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:id="@+id/watchvideotut"
+        android:visibility="gone"
+        android:layout_height="match_parent">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/boardingh"
+        />
+    </LinearLayout>
 </FrameLayout>

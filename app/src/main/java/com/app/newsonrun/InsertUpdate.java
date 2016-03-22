@@ -221,7 +221,7 @@ public class InsertUpdate extends AsyncTask<String ,String,String>{
 
                 try {
                     Bitmap remote_picture = BitmapFactory.decodeStream(
-                            (InputStream) new URL(icon).getContent());
+                            (InputStream) new URL("http://d2vwmcbs3lyudp.cloudfront.net/"+icon).getContent());
                     remoteViews.setImageViewBitmap(R.id.imagenotiright, remote_picture);
 
                 } catch (IOException e) {
@@ -256,12 +256,15 @@ public class InsertUpdate extends AsyncTask<String ,String,String>{
         super.onPostExecute(s);
 
         try {
-            Uri no = Uri.parse("android.resource://" + baseContext.getPackageName() + "/" + R.raw.notification_tone);
-            Ringtone rp = RingtoneManager.getRingtone(baseContext.getApplicationContext(), no);
-            rp.play();
-            Vibrator v = (Vibrator) baseContext.getSystemService(Context.VIBRATOR_SERVICE);
-            // Vibrate for 500 milliseconds
-            v.vibrate(500);
+            if (breakit.equals("breaking.wav")) {
+
+                Uri no = Uri.parse("android.resource://" + baseContext.getPackageName() + "/" + R.raw.notification_tone);
+                Ringtone rp = RingtoneManager.getRingtone(baseContext.getApplicationContext(), no);
+                rp.play();
+                Vibrator v = (Vibrator) baseContext.getSystemService(Context.VIBRATOR_SERVICE);
+                // Vibrate for 500 milliseconds
+                v.vibrate(500);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

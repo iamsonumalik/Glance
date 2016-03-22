@@ -19,10 +19,10 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.app.newsonrun.gcm.GCMBaseIntentService;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -101,18 +101,17 @@ public class GCMIntentService extends GCMBaseIntentService {
         // notifies user
 
         try {
+            Log.e("Make Icon ",icon);
             JSONObject json_data = new JSONObject(icon);
-            icon = json_data.getString("secure_url");
+            icon = json_data.getString("filename");
         }catch (Exception e){
-
+            Log.e("Make Icon ",e.toString());
         }
 
         try {
             Log.e("body", body);
             if (sound.contains("breaking.wav")) {
-
                 new InsertUpdate(clickAction,getBaseContext(),"breaking.wav",title,body,icon).execute();
-
             }else {
                 generateNotificationNews(context, title, body, sound, icon, clickAction, tag, color);
                 try {
@@ -159,14 +158,23 @@ public class GCMIntentService extends GCMBaseIntentService {
             savingYoutubeLink.close();
 
             //Delete Cache image if exists
-            MyDirectory myDirectory = new MyDirectory();
+            String imgageUrl;
+            if (p_id.contains(".png")){
+                imgageUrl = "http://d2vwmcbs3lyudp.cloudfront.net/"+p_id;
+
+            }else {
+                imgageUrl =getBaseContext().getResources().getString(R.string.url) + p_id + ".png";
+            }
+
+            Picasso.with(getBaseContext()).invalidate(imgageUrl);
+            /*MyDirectory myDirectory = new MyDirectory();
             File directory = myDirectory.getDirectory();
             try {
                 new File(directory, p_id+".png").delete();
                 Log.e("Deleted", p_id);
             }catch (Exception e){
 
-            }
+            }*/
         }catch (Exception e){
 
         }
@@ -250,7 +258,7 @@ public class GCMIntentService extends GCMBaseIntentService {
             remoteViews.setImageViewResource(R.id.imagenotileft, R.drawable.digest);
             try {
                 Bitmap remote_picture = BitmapFactory.decodeStream(
-                        (InputStream) new URL(icon).getContent());
+                        (InputStream) new URL("http://d2vwmcbs3lyudp.cloudfront.net/"+icon).getContent());
                 remoteViews.setImageViewBitmap(R.id.imagenotiright, remote_picture);
 
             } catch (IOException e) {
